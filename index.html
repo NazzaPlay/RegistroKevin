@@ -1881,7 +1881,7 @@ function initDiario() {
     params.append('Circuito', datos.circuito);
     params.append('Ansiedad Atacar', datos.ansAtacar);
     params.append('Ansiedad Defender', datos.ansDefender);
-    params.append('Nervios Lentas', datos.ansLentas);
+    params.append('Nervios en curvas lentas', datos.ansLentas);
     params.append('Comentarios', datos.nota || '');
 
     await fetch(GOOGLE_SCRIPT_URL, {
