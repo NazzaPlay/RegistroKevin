@@ -1879,7 +1879,9 @@ function initDiario() {
     const params = new URLSearchParams();
     params.append('Coche', datos.coche);
     params.append('Circuito', datos.circuito);
-    params.append('Ansiedad', datos.ansAtacar);
+    params.append('Ansiedad Atacar', datos.ansAtacar);
+    params.append('Ansiedad Defender', datos.ansDefender);
+    params.append('Nervios Lentas', datos.ansLentas);
     params.append('Comentarios', datos.nota || '');
 
     await fetch(GOOGLE_SCRIPT_URL, {
