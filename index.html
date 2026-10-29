@@ -1181,6 +1181,7 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
      DeployID: AKfycbxFSyItRS6dv1c55IIocjRdWU45XaEJ8wzQi5lB6QdgCPlef3KRFWlp6UU9UuUeZJAldQ
    Para cambiar de hoja: pega aquí otra URL /exec y listo.             */
 const GOOGLE_SHEETS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxFSyItRS6dv1c55IIocjRdWU45XaEJ8wzQi5lB6QdgCPlef3KRFWlp6UU9UuUeZJAldQ/exec';
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxFSyItRS6dv1c55IIocjRdWU45XaEJ8wzQi5lB6QdgCPlef3KRFWlp6UU9UuUeZJAldQ/exec";
 
 /* ── §1 · UTILIDADES ────────────────────────────────────────────── */
 const $  = (s, c = document) => c.querySelector(s);
@@ -1873,12 +1874,24 @@ function initDiario() {
     entries.unshift(datos);
     setEntries(entries);
     renderEntries();
-    const enviado = await enviarAGoogleSheets(datos);   // ← webhook de Google Sheets ACTIVO
-    if (enviado) {
-      toast('Sesión guardada: navegador + Google Sheets. Buena honestidad, Kevin: eso también se entrena.');
-    } else {
-      toast('Sesión guardada solo en este navegador (no llegó a Google Sheets, ¿sin internet?). Usá «Exportar CSV» como respaldo.', 'err');
-    }
+
+    // Envío a Google Sheets con parámetros exactos: Coche, Circuito, Ansiedad, Comentarios
+    const params = new URLSearchParams();
+    params.append('Coche', datos.coche);
+    params.append('Circuito', datos.circuito);
+    params.append('Ansiedad', datos.ansAtacar);
+    params.append('Comentarios', datos.nota);
+
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: params.toString()
+    });
+
+    toast('¡Registro guardado exitosamente!');
     form.reset();
     fFecha.value = hoy();
     fDelta.textContent = '—';
