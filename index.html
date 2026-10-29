@@ -1880,7 +1880,7 @@ function initDiario() {
     params.append('Coche', datos.coche);
     params.append('Circuito', datos.circuito);
     params.append('Ansiedad', datos.ansAtacar);
-    params.append('Comentarios', datos.nota);
+    params.append('Comentarios', datos.nota || '');
 
     await fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
