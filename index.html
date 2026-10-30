@@ -127,6 +127,45 @@ kbd{
   background:rgba(255,255,255,.06);color:var(--text);
 }
 
+/* ── SELECTOR DE PILOTO (cabecera + diario) ──────────────────── */
+.selector-piloto{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:6px 14px 6px 8px;border-radius:999px;
+  background:rgba(20,20,20,.6);
+  border:1px solid rgba(255,255,255,.08);
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  box-shadow:0 0 0 rgba(59,130,246,0);
+  transition:box-shadow .3s cubic-bezier(.4,0,.2,1), border-color .3s;
+}
+.selector-piloto:hover{box-shadow:0 0 20px rgba(59,130,246,.25)}
+@keyframes pilotoFlash{
+  0%{border-color:#22c55e;box-shadow:0 0 18px rgba(34,197,94,.5)}
+  100%{border-color:rgba(255,255,255,.08);box-shadow:0 0 0 rgba(59,130,246,0)}
+}
+.selector-piloto.piloto-confirmado{animation:pilotoFlash .6s ease-out forwards}
+.avatar-iniciales{
+  width:30px;height:30px;border-radius:50%;flex:none;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,#3b82f6,#2563eb);
+  color:#fff;font:800 .7rem var(--font-mono);letter-spacing:.04em;
+  text-transform:uppercase;
+  box-shadow:0 0 10px rgba(59,130,246,.35);
+}
+.input-piloto-header{
+  width:110px;background:transparent;border:none;outline:none;
+  color:var(--text);font:700 .82rem var(--font-ui);letter-spacing:.06em;text-transform:uppercase;
+}
+.input-piloto-header::placeholder{color:var(--faint);text-transform:none}
+.nuevo-piloto-wrap{display:flex;align-items:center;gap:8px;margin-top:8px}
+.nuevo-piloto-wrap input{flex:1}
+.nuevo-piloto-wrap[hidden]{display:none !important}
+
+@media(max-width:768px){
+  .selector-piloto{padding:5px 10px 5px 6px;gap:8px}
+  .input-piloto-header{width:80px;font-size:.76rem}
+  .avatar-iniciales{width:26px;height:26px;font-size:.62rem}
+}
+
 /* ── 4 · CABECERA FIJA ───────────────────────────────────────── */
 #topbar{
   position:fixed;top:0;left:0;right:0;z-index:60;
@@ -611,6 +650,12 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
       <a href="#ruta">04 · Ruta</a>
     </nav>
     <div class="topbar-actions">
+      <!-- Selector de piloto en cabecera -->
+      <div class="selector-piloto" id="selectorPilotoHeader">
+        <span class="avatar-iniciales" id="avatarPiloto" aria-hidden="true">K</span>
+        <input class="input-piloto-header" id="inputPilotoHeader" type="text" list="listaPilotosDatalist" placeholder="Piloto…" autocomplete="off" spellcheck="false" aria-label="Nombre del piloto activo">
+        <datalist id="listaPilotosDatalist"></datalist>
+      </div>
       <button class="btn btn-primary btn-sm" id="btnClase" type="button">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
         Modo Clase
@@ -832,6 +877,15 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
       <form class="form-card glass reveal" id="formDiario" novalidate>
         <h3>Registro de sesión</h3>
         <div class="form-grid">
+          <!-- Campo Piloto sincronizado con la cabecera -->
+          <div class="field">
+            <label for="selectPilotoDiario">Piloto</label>
+            <select id="selectPilotoDiario" name="piloto"></select>
+            <div class="nuevo-piloto-wrap" id="nuevoPilotoWrap" hidden>
+              <input type="text" id="inputNuevoPiloto" placeholder="Nombre del nuevo piloto…" autocomplete="off" spellcheck="false">
+              <button type="button" class="btn btn-ghost btn-sm" id="btnConfirmarPiloto">Añadir</button>
+            </div>
+          </div>
           <div class="field">
             <label for="fFecha">Fecha</label>
             <input type="date" id="fFecha" name="fecha">
@@ -1182,6 +1236,170 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
    Para cambiar de hoja: pega aquí otra URL /exec y listo.             */
 const GOOGLE_SHEETS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxFSyItRS6dv1c55IIocjRdWU45XaEJ8wzQi5lB6QdgCPlef3KRFWlp6UU9UuUeZJAldQ/exec';
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxFSyItRS6dv1c55IIocjRdWU45XaEJ8wzQi5lB6QdgCPlef3KRFWlp6UU9UuUeZJAldQ/exec";
+
+/* ── §0.5 · ESTADO GLOBAL DEL PILOTO (multi-alumno) ────────────── */
+const LS_PILOTO_ACTUAL = 'pilotoActual';
+const LS_LISTA_PILOTOS = 'listaPilotos';
+
+// Capitaliza primera letra de cada palabra ("kevin" → "Kevin")
+function capitalizar(nombre) {
+  return nombre.replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function getPilotoActual() {
+  const v = localStorage.getItem(LS_PILOTO_ACTUAL);
+  return v ? v.trim() : 'Kevin';
+}
+
+function getListaPilotos() {
+  try {
+    const arr = JSON.parse(localStorage.getItem(LS_LISTA_PILOTOS));
+    if (Array.isArray(arr) && arr.length) return arr;
+  } catch (e) { /* ignorar */ }
+  return ['Kevin'];
+}
+
+function setPilotoActual(nombre) {
+  const limpio = capitalizar(nombre.trim());
+  if (!limpio) return;
+  localStorage.setItem(LS_PILOTO_ACTUAL, limpio);
+  document.dispatchEvent(new CustomEvent('pilotoCambiado', { detail: { nombre: limpio } }));
+}
+
+function agregarPiloto(nombre) {
+  const limpio = capitalizar(nombre.trim());
+  if (!limpio) return;
+  const lista = getListaPilotos();
+  const existe = lista.some(p => p.toLowerCase() === limpio.toLowerCase());
+  if (!existe) {
+    lista.push(limpio);
+    localStorage.setItem(LS_LISTA_PILOTOS, JSON.stringify(lista));
+  }
+  setPilotoActual(limpio);
+}
+
+// Extrae iniciales (máx. 2 caracteres) para el avatar
+function iniciales(nombre) {
+  const partes = nombre.trim().split(/\s+/);
+  if (partes.length >= 2) return (partes[0][0] + partes[1][0]).toUpperCase();
+  return nombre.slice(0, 2).toUpperCase();
+}
+
+// Refresca todos los componentes UI que dependen del piloto activo
+function refrescarUIPiloto() {
+  const nombre = getPilotoActual();
+  const lista = getListaPilotos();
+
+  // Avatar e input de cabecera
+  const avatar = $('#avatarPiloto');
+  const inputH = $('#inputPilotoHeader');
+  if (avatar) avatar.textContent = iniciales(nombre);
+  if (inputH) inputH.value = nombre;
+
+  // Datalist de cabecera
+  const dl = $('#listaPilotosDatalist');
+  if (dl) {
+    dl.innerHTML = lista.map(p => `<option value="${escapeHtml(p)}">`).join('');
+  }
+
+  // Select del Diario Emocional
+  const sel = $('#selectPilotoDiario');
+  if (sel) {
+    const valorAnterior = sel.value;
+    sel.innerHTML = lista.map(p =>
+      `<option value="${escapeHtml(p)}"${p === nombre ? ' selected' : ''}>${escapeHtml(p)}</option>`
+    ).join('') + '<option value="__nuevo__">+ Nuevo piloto…</option>';
+    // Si el select tenía un valor válido, respetarlo; si no, usar el actual
+    if (valorAnterior !== '__nuevo__' && lista.includes(valorAnterior)) {
+      sel.value = valorAnterior;
+    } else {
+      sel.value = nombre;
+    }
+  }
+
+  // Ocultar campo de nuevo piloto si no está activo
+  const wrap = $('#nuevoPilotoWrap');
+  if (wrap && sel && sel.value !== '__nuevo__') wrap.hidden = true;
+}
+
+// Flash verde neón al confirmar cambio de piloto
+function flashPilotoConfirmado() {
+  const el = $('#selectorPilotoHeader');
+  if (!el) return;
+  el.classList.remove('piloto-confirmado');
+  void el.offsetWidth; // forzar reflow para reiniciar animación
+  el.classList.add('piloto-confirmado');
+  setTimeout(() => el.classList.remove('piloto-confirmado'), 650);
+}
+
+function initSelectorPiloto() {
+  // Asegurar valores por defecto en localStorage
+  if (!localStorage.getItem(LS_PILOTO_ACTUAL)) localStorage.setItem(LS_PILOTO_ACTUAL, 'Kevin');
+  if (!localStorage.getItem(LS_LISTA_PILOTOS)) localStorage.setItem(LS_LISTA_PILOTOS, JSON.stringify(['Kevin']));
+
+  const inputH = $('#inputPilotoHeader');
+  const sel = $('#selectPilotoDiario');
+  const inputNuevo = $('#inputNuevoPiloto');
+  const btnNuevo = $('#btnConfirmarPiloto');
+
+  // Cabecera: confirmar al perder foco o pulsar Enter
+  if (inputH) {
+    const confirmar = () => {
+      const v = inputH.value.trim();
+      if (v) {
+        agregarPiloto(v);
+        flashPilotoConfirmado();
+      } else {
+        inputH.value = getPilotoActual();
+      }
+    };
+    inputH.addEventListener('change', confirmar);
+    inputH.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); confirmar(); inputH.blur(); } });
+  }
+
+  // Diario: cambiar piloto desde el select
+  if (sel) {
+    sel.addEventListener('change', () => {
+      const wrap = $('#nuevoPilotoWrap');
+      if (sel.value === '__nuevo__') {
+        if (wrap) wrap.hidden = false;
+        if (inputNuevo) { inputNuevo.value = ''; inputNuevo.focus(); }
+      } else {
+        if (wrap) wrap.hidden = true;
+        setPilotoActual(sel.value);
+        flashPilotoConfirmado();
+      }
+    });
+  }
+
+  // Confirmar nuevo piloto inline (sin modal)
+  const confirmarNuevo = () => {
+    if (!inputNuevo) return;
+    const v = inputNuevo.value.trim();
+    if (v) {
+      agregarPiloto(v);
+      flashPilotoConfirmado();
+      const wrap = $('#nuevoPilotoWrap');
+      if (wrap) wrap.hidden = true;
+    } else {
+      // Cancelar: volver al piloto actual
+      const wrap = $('#nuevoPilotoWrap');
+      if (wrap) wrap.hidden = true;
+      if (sel) sel.value = getPilotoActual();
+    }
+  };
+  if (inputNuevo) {
+    inputNuevo.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); confirmarNuevo(); } });
+    inputNuevo.addEventListener('blur', confirmarNuevo);
+  }
+  if (btnNuevo) btnNuevo.addEventListener('click', confirmarNuevo);
+
+  // Escuchar cambios globales (sincronía bidireccional)
+  document.addEventListener('pilotoCambiado', refrescarUIPiloto);
+
+  // Pintar estado inicial
+  refrescarUIPiloto();
+}
 
 /* ── §1 · UTILIDADES ────────────────────────────────────────────── */
 const $  = (s, c = document) => c.querySelector(s);
@@ -1846,6 +2064,16 @@ function initDiario() {
 
   form.addEventListener('submit', async ev => {
     ev.preventDefault();
+
+    // Validar que haya un piloto seleccionado
+    const piloto = getPilotoActual();
+    if (!piloto || !piloto.trim()) {
+      toast('Selecciona o escribe el nombre del piloto antes de guardar.', 'err');
+      const selP = $('#selectPilotoDiario');
+      if (selP) { selP.closest('.field').classList.add('shake'); setTimeout(() => selP.closest('.field').classList.remove('shake'), 550); selP.focus(); }
+      return;
+    }
+
     const nota = fNota.value.trim();
     if (!nota) {
       toast('Cuenta la curva donde perdiste la cabeza: ese campo es oro para la clase.', 'err');
@@ -1859,6 +2087,7 @@ function initDiario() {
     const radios = n => form.querySelector(`input[name="${n}"]:checked`);
     const datos = {
       fecha: fFecha.value || hoy(),
+      piloto: getPilotoActual(),
       coche: $('#fCoche').value,
       circuito,
       mejor: fMejor.value.trim(),
@@ -1875,8 +2104,9 @@ function initDiario() {
     setEntries(entries);
     renderEntries();
 
-    // Envío a Google Sheets con parámetros exactos: Coche, Circuito, Ansiedad, Comentarios
+    // Envío a Google Sheets con las 7 claves exactas: Piloto, Coche, Circuito, Ansiedad, Comentarios
     const params = new URLSearchParams();
+    params.append('Piloto', datos.piloto);
     params.append('Coche', datos.coche);
     params.append('Circuito', datos.circuito);
     params.append('Ansiedad Atacar', datos.ansAtacar);
@@ -1903,8 +2133,8 @@ function initDiario() {
   $('#btnCSV').addEventListener('click', () => {
     const entries = getEntries();
     if (!entries.length) { toast('No hay sesiones que exportar todavía.', 'info'); return; }
-    const head = ['Fecha', 'Coche', 'Circuito', 'Mejor vuelta', 'Referencia', 'Delta', 'Ans. atacar', 'Ans. defender', 'Ans. curvas lentas', 'Nota'];
-    const rows = entries.map(e => [e.fecha, e.coche, e.circuito, e.mejor, e.referencia, e.delta, e.ansAtacar, e.ansDefender, e.ansLentas, e.nota]);
+    const head = ['Fecha', 'Piloto', 'Coche', 'Circuito', 'Mejor vuelta', 'Referencia', 'Delta', 'Ans. atacar', 'Ans. defender', 'Ans. curvas lentas', 'Nota'];
+    const rows = entries.map(e => [e.fecha, e.piloto || '', e.coche, e.circuito, e.mejor, e.referencia, e.delta, e.ansAtacar, e.ansDefender, e.ansLentas, e.nota]);
     const csv = '\uFEFF' + [head, ...rows]
       .map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(';'))
       .join('\r\n');
@@ -2141,6 +2371,7 @@ function initRuta() {
 /* ── ARRANQUE ───────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   const safe = fn => { try { fn(); } catch (err) { console.warn('Init:', err); } };
+  safe(initSelectorPiloto); // Inicializar selector multi-alumno antes que todo
   safe(initHeader);
   safe(initReveal);
   safe(initDemos);
