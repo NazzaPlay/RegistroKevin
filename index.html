@@ -789,33 +789,12 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
         </button>
       </div>
     </div>
-    <aside class="profile-card glass reveal" aria-label="Perfil del piloto">
+    <aside class="profile-card glass reveal" aria-label="Perfil del piloto" id="profileCard">
       <div class="profile-head">
         <h2>Perfil del piloto</h2>
-        <span class="mono">KEVIN · 26</span>
+        <button class="btn-ghost" id="btnEditarPerfil" type="button" style="padding:4px 10px;font-size:.75rem">Editar</button>
       </div>
-      <p class="profile-sub">Viene del karting real. Corre con G29 y solo ABS como ayuda.</p>
-      <div class="stat-bar" style="--w:85%">
-        <div class="sb-head"><span>Control del auto (base karting)</span><b>8.5</b></div>
-        <div class="sb-track"><i></i></div>
-      </div>
-      <div class="stat-bar" style="--w:62%">
-        <div class="sb-head"><span>Consistencia de ritmo</span><b>6.2</b></div>
-        <div class="sb-track"><i></i></div>
-      </div>
-      <div class="stat-bar" style="--w:58%">
-        <div class="sb-head"><span>Frenada y trazada</span><b>5.8</b></div>
-        <div class="sb-track"><i></i></div>
-      </div>
-      <div class="stat-bar low" style="--w:36%">
-        <div class="sb-head"><span>Gestión emocional</span><b>3.6</b></div>
-        <div class="sb-track"><i></i></div>
-      </div>
-      <div class="stat-bar low" style="--w:42%">
-        <div class="sb-head"><span>Racecraft en duelo</span><b>4.2</b></div>
-        <div class="sb-track"><i></i></div>
-      </div>
-      <p class="profile-note">Lectura inicial del entrenador · se recalibra cada mes con los datos del diario emocional.</p>
+      <div id="profileBody"></div>
     </aside>
   </div>
   <div class="container protocols reveal">
@@ -1336,6 +1315,19 @@ const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxFSyItRS6dv1
 /* ── §0.5 · ESTADO GLOBAL DEL PILOTO (multi-alumno) ────────────── */
 const LS_PILOTO_ACTUAL = 'pilotoActual';
 const LS_LISTA_PILOTOS = 'listaPilotos';
+const LS_PERFILES = 'perfilesPilotos';
+const LS_RUTAS = 'rutasPilotos';
+const PERFIL_VACIO = {
+  edad: '', hardware: '', experiencia: '', fortalezas: [], debilidades: [],
+  objetivo: '', metricas: { control:5, consistencia:5, frenada:5, emocional:5, racecraft:5 },
+  fechaIngreso: null, notasProfe: ''
+};
+const RUTA_BASE = [
+  { id:'mx5', coche:'Mazda MX-5', categoria:'Rookie', requisito:'3 sesiones sin incidentes', completado:false },
+  { id:'gt4', coche:'GT4', categoria:'Sport', requisito:'Top 5 en carrera vs IA 90%', completado:false },
+  { id:'gt3', coche:'GT3', categoria:'Pro', requisito:'Fin de semana completo sin incidentes', completado:false },
+  { id:'lmp2', coche:'LMP2', categoria:'Elite', requisito:'Consistencia <0.5s por 10 vueltas', completado:false }
+];
 
 // Capitaliza primera letra de cada palabra ("kevin" → "Kevin")
 function capitalizar(nombre) {
@@ -1353,6 +1345,46 @@ function getListaPilotos() {
     if (Array.isArray(arr) && arr.length) return arr;
   } catch (e) { /* ignorar */ }
   return ['Kevin'];
+}
+function getPerfiles() {
+  try { return JSON.parse(localStorage.getItem(LS_PERFILES)) || {}; }
+  catch (e) { return {}; }
+}
+function setPerfiles(p) { localStorage.setItem(LS_PERFILES, JSON.stringify(p)); }
+function getPerfil(nombre) {
+  const ps = getPerfiles();
+  return ps[nombre] || null;
+}
+function setPerfil(nombre, datos) {
+  const ps = getPerfiles();
+  ps[nombre] = datos;
+  setPerfiles(ps);
+}
+function getRutas() {
+  try { return JSON.parse(localStorage.getItem(LS_RUTAS)) || {}; }
+  catch (e) { return {}; }
+}
+function setRutas(r) { localStorage.setItem(LS_RUTAS, JSON.stringify(r)); }
+function getRutaPiloto(nombre) {
+  const rs = getRutas();
+  return rs[nombre] || null;
+}
+function setRutaPiloto(nombre, arr) {
+  const rs = getRutas();
+  rs[nombre] = arr;
+  setRutas(rs);
+}
+// Migración de Kevin
+function migrarKevin() {
+  const lista = getListaPilotos();
+  if (lista.includes('Kevin') && !getPerfil('Kevin')) {
+    const p = JSON.parse(JSON.stringify(PERFIL_VACIO));
+    p.edad = 26; p.hardware = 'Logitech G29'; p.experiencia = 'Karting real';
+    p.objetivo = 'LMP2';
+    p.metricas = { control:8.5, consistencia:6.2, frenada:5.8, emocional:3.6, racecraft:4.2 };
+    p.fechaIngreso = new Date().toISOString();
+    setPerfil('Kevin', p);
+  }
 }
 
 function setPilotoActual(nombre) {
@@ -1372,6 +1404,7 @@ function agregarPiloto(nombre) {
     localStorage.setItem(LS_LISTA_PILOTOS, JSON.stringify(lista));
   }
   setPilotoActual(limpio);
+  if (!getPerfil(limpio)) setTimeout(() => abrirWizardPerfil(limpio), 200);
 }
 
 // Extrae iniciales (máx. 2 caracteres) para el avatar
@@ -1418,6 +1451,75 @@ function refrescarUIPiloto() {
   if (wrap && sel && sel.value !== '__nuevo__') wrap.hidden = true;
 }
 
+// Renderiza el panel de perfil del piloto activo
+function renderProfileCard() {
+  const body = $('#profileBody');
+  if (!body) return;
+  const nombre = getPilotoActual();
+  const perfil = getPerfil(nombre);
+  if (!perfil) {
+    body.innerHTML = `<p class="profile-sub">Perfil pendiente de completar.</p><button class="btn btn-primary" id="btnCompletarPerfil" type="button">Completar ahora</button>`;
+    const b = $('#btnCompletarPerfil');
+    if (b) b.addEventListener('click', () => abrirWizardPerfil(nombre));
+    return;
+  }
+  const m = perfil.metricas || {};
+  const items = [
+    ['Control del auto', m.control],
+    ['Consistencia de ritmo', m.consistencia],
+    ['Frenada y trazada', m.frenada],
+    ['Gestión emocional', m.emocional],
+    ['Racecraft en duelo', m.racecraft],
+  ];
+  body.innerHTML = `
+    <div class="profile-head"><span class="mono">${escapeHtml(nombre.toUpperCase())} · ${escapeHtml(perfil.edad || '')}</span></div>
+    <p class="profile-sub">${escapeHtml(perfil.experiencia || '')} · ${escapeHtml(perfil.hardware || '')}</p>
+    <div class="profile-tags" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+      <span class="chip hot">${escapeHtml(perfil.hardware || '')}</span>
+      <span class="chip">${escapeHtml(perfil.objetivo || '')}</span>
+    </div>
+    ${items.map(([label,val]) => {
+      const pct = Math.round((val/10)*100);
+      const low = val < 4 ? ' low' : '';
+      return `<div class="stat-bar${low}" style="--w:${pct}%"><div class="sb-head"><span>${escapeHtml(label)}</span><b>${val}</b></div><div class="sb-track"><i></i></div></div>`;
+    }).join('')}
+    <p class="profile-note">Lectura inicial del entrenador · se recalibra cada mes con los datos del diario.</p>
+  `;
+}
+function abrirWizardPerfil(nombre, edit) {
+  // Wizard simplificado: prompt secuencial
+  const p = getPerfil(nombre) || JSON.parse(JSON.stringify(PERFIL_VACIO));
+  const edad = prompt('Edad:', p.edad || '');
+  if (edad === null) return;
+  const hardware = prompt('Hardware/Equipo:', p.hardware || '');
+  if (hardware === null) return;
+  const experiencia = prompt('Experiencia previa (Debutante/Karting real/Simracing amateur/Simracing avanzado):', p.experiencia || '');
+  if (experiencia === null) return;
+  const objetivo = prompt('Objetivo principal (GT4/GT3/LMP2/F1/Resistencia):', p.objetivo || '');
+  if (objetivo === null) return;
+  const control = prompt('Control del auto (1-10):', p.metricas.control);
+  const consistencia = prompt('Consistencia (1-10):', p.metricas.consistencia);
+  const frenada = prompt('Frenada (1-10):', p.metricas.frenada);
+  const emocional = prompt('Gestión emocional (1-10):', p.metricas.emocional);
+  const racecraft = prompt('Racecraft (1-10):', p.metricas.racecraft);
+  const nuevo = {
+    edad: edad.trim(), hardware: hardware.trim(), experiencia: experiencia.trim(),
+    fortalezas: p.fortalezas||[], debilidades: p.debilidades||[],
+    objetivo: objetivo.trim(),
+    metricas: {
+      control: parseFloat(control)||p.metricas.control,
+      consistencia: parseFloat(consistencia)||p.metricas.consistencia,
+      frenada: parseFloat(frenada)||p.metricas.frenada,
+      emocional: parseFloat(emocional)||p.metricas.emocional,
+      racecraft: parseFloat(racecraft)||p.metricas.racecraft,
+    },
+    fechaIngreso: p.fechaIngreso || new Date().toISOString(),
+    notasProfe: p.notasProfe||''
+  };
+  setPerfil(nombre, nuevo);
+  renderProfileCard();
+  flashPilotoConfirmado && flashPilotoConfirmado();
+}
 // Flash verde neón al confirmar cambio de piloto
 function flashPilotoConfirmado() {
   const el = $('#selectorPilotoHeader');
@@ -2614,9 +2716,14 @@ function initRuta() {
 }
 
 /* ── ARRANQUE ───────────────────────────────────────────────────── */
+document.addEventListener('pilotoCambiado', () => { try { renderProfileCard(); } catch(e){} });
 document.addEventListener('DOMContentLoaded', () => {
   const safe = fn => { try { fn(); } catch (err) { console.warn('Init:', err); } };
+  safe(migrarKevin);
   safe(initSelectorPiloto); // Inicializar selector multi-alumno antes que todo
+  safe(renderProfileCard);
+  const eb = document.getElementById('btnEditarPerfil');
+  if (eb) eb.addEventListener('click', () => abrirWizardPerfil(getPilotoActual(), true));
   safe(initHeader);
   safe(initReveal);
   safe(initDemos);
