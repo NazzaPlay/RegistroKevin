@@ -165,6 +165,87 @@ kbd{
   .input-piloto-header{width:80px;font-size:.76rem}
   .avatar-iniciales{width:26px;height:26px;font-size:.62rem}
 }
+.btn-gestion-pilotos{
+  width:32px;height:32px;border-radius:50%;flex:none;
+  display:grid;place-items:center;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);
+  cursor:pointer;color:var(--muted);transition:all .2s;
+}
+.btn-gestion-pilotos:hover{color:var(--acc);border-color:rgba(0,255,163,.4);box-shadow:0 0 12px rgba(0,255,163,.25)}
+.btn-gestion-pilotos svg{width:15px;height:15px}
+/* ── Modal Gestión de Pilotos ───────────────────────────────── */
+.modal-pilotos-overlay{
+  position:fixed;inset:0;z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.55);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  animation:modalOverlayIn .25s ease;
+}
+@keyframes modalOverlayIn{from{opacity:0}to{opacity:1}}
+.modal-pilotos-overlay[hidden]{display:none !important}
+.modal-pilotos{
+  width:min(380px,92vw);max-height:80vh;overflow-y:auto;
+  background:rgba(20,20,20,.75);
+  -webkit-backdrop-filter:blur(16px) saturate(140%);
+  backdrop-filter:blur(16px) saturate(140%);
+  border:1px solid rgba(255,255,255,.08);border-radius:20px;
+  padding:28px 26px 22px;display:flex;flex-direction:column;gap:16px;
+  animation:modalIn .28s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:none}}
+.modal-pilotos h3{
+  font:800 1.1rem var(--font-display);letter-spacing:.1em;text-transform:uppercase;
+  margin-bottom:4px;
+}
+.lista-pilotos{display:flex;flex-direction:column;gap:10px}
+.piloto-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:12px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  transition:border-color .2s, box-shadow .2s;
+}
+.piloto-item:hover{border-color:rgba(255,255,255,.14)}
+.piloto-item .avatar-iniciales{width:36px;height:36px;font-size:.82rem;flex:none}
+.piloto-info{flex:1;min-width:0}
+.piloto-info .nombre{font:700 .92rem var(--font-ui);letter-spacing:.04em}
+.piloto-info .sesiones{font:600 .72rem var(--font-mono);color:var(--faint);margin-top:2px}
+.piloto-activo-tag{
+  font:700 .6rem var(--font-mono);letter-spacing:.12em;text-transform:uppercase;
+  color:#04140d;background:linear-gradient(135deg,var(--acc),var(--acc-2));
+  padding:2px 8px;border-radius:99px;margin-left:6px;
+}
+.btn-borrar-piloto{
+  width:34px;height:34px;border-radius:10px;flex:none;
+  display:grid;place-items:center;
+  background:transparent;border:1px solid transparent;
+  color:var(--faint);cursor:pointer;transition:all .2s;
+}
+.btn-borrar-piloto:hover{
+  border-color:rgba(239,68,68,.5);color:#ef4444;
+  box-shadow:0 0 12px rgba(239,68,68,.25);background:rgba(239,68,68,.08);
+}
+.btn-borrar-piloto svg{width:16px;height:16px}
+.confirm-borrar{
+  padding:16px;border-radius:12px;
+  border:1px solid rgba(239,68,68,.5);
+  background:rgba(239,68,68,.06);
+  box-shadow:0 0 20px rgba(239,68,68,.15);
+}
+.confirm-borrar p{font:600 .88rem var(--font-ui);color:#fca5a5;margin-bottom:14px;line-height:1.55}
+.confirm-borrar .acciones-confirm{display:flex;gap:10px;justify-content:flex-end}
+.btn-peligro{
+  padding:.65rem 1.2rem;border-radius:10px;
+  background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;
+  font:700 .82rem var(--font-ui);letter-spacing:.08em;text-transform:uppercase;
+  border:none;cursor:pointer;
+  box-shadow:0 0 18px rgba(239,68,68,.3);transition:all .2s;
+}
+.btn-peligro:hover{box-shadow:0 0 24px rgba(239,68,68,.5);transform:translateY(-1px)}
+.modal-pilotos .btn-ghost{align-self:center;margin-top:4px}
+@media(prefers-reduced-motion:reduce){
+  .modal-pilotos-overlay{animation:none}
+  .modal-pilotos{animation:none}
+}
 
 /* ── 4 · CABECERA FIJA ───────────────────────────────────────── */
 #topbar{
@@ -655,6 +736,11 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
         <span class="avatar-iniciales" id="avatarPiloto" aria-hidden="true">K</span>
         <input class="input-piloto-header" id="inputPilotoHeader" type="text" list="listaPilotosDatalist" placeholder="Piloto…" autocomplete="off" spellcheck="false" aria-label="Nombre del piloto activo">
         <datalist id="listaPilotosDatalist"></datalist>
+        <button class="btn-gestion-pilotos" id="btnGestionPilotos" aria-label="Gestionar pilotos" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
       </div>
       <button class="btn btn-primary btn-sm" id="btnClase" type="button">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
@@ -1214,6 +1300,16 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
 
 <div class="toast-zone" id="toastZone" aria-live="polite"></div>
 
+<!-- ═══════════════ MODAL GESTIÓN DE PILOTOS ═══════════════ -->
+<div class="modal-pilotos-overlay" id="modalPilotosOverlay" hidden>
+  <div class="modal-pilotos" role="dialog" aria-modal="true" aria-labelledby="tituloGestionPilotos">
+    <h3 id="tituloGestionPilotos">Gestionar pilotos</h3>
+    <div class="lista-pilotos" id="listaPilotosGestion"></div>
+    <div class="confirm-borrar" id="confirmBorrar" hidden></div>
+      <button class="btn btn-ghost btn-sm" id="btnCerrarModalPilotos">Cerrar</button>
+  </div>
+</div>
+
 <script>
 /* ═══════════════════════════════════════════════════════════════════
    PORTAL KEVIN — LÓGICA (Vanilla JS, sin dependencias)
@@ -1332,6 +1428,152 @@ function flashPilotoConfirmado() {
   setTimeout(() => el.classList.remove('piloto-confirmado'), 650);
 }
 
+/* ── GESTIÓN Y BORRADO DE PILOTOS ───────────────────────────── */
+// Contador de sesiones locales por piloto (entradas sin propiedad 'piloto' cuentan como 'Kevin')
+function contarSesionesPorPiloto(piloto) {
+  const lista = getEntries();
+  return lista.filter(e => (e.piloto || 'Kevin').toLowerCase() === piloto.toLowerCase()).length;
+}
+
+let pilotoSeleccionadoBorrar = null; // el piloto cuyo borrado está en modo confirmación
+
+function abrirModalPilotos() {
+  const overlay = $('#modalPilotosOverlay');
+  if (!overlay) return;
+  overlay.hidden = false;
+  pilotoSeleccionadoBorrar = null;
+  $('#confirmBorrar').hidden = true;
+  renderListaGestion();
+}
+
+function cerrarModalPilotos() {
+  const overlay = $('#modalPilotosOverlay');
+  if (overlay) overlay.hidden = true;
+  pilotoSeleccionadoBorrar = null;
+  $('#confirmBorrar').hidden = true;
+}
+
+function renderListaGestion() {
+  const contenedor = $('#listaPilotosGestion');
+  if (!contenedor) return;
+  const lista = getListaPilotos();
+  const activo = getPilotoActual();
+  contenedor.innerHTML = lista.map(p => {
+    const sesiones = contarSesionesPorPiloto(p);
+    const esActivo = p === activo;
+    return `
+      <div class="piloto-item" data-piloto="${escapeHtml(p)}">
+        <span class="avatar-iniciales" aria-hidden="true">${iniciales(p)}</span>
+        <div class="piloto-info">
+          <span class="nombre">${escapeHtml(p)}${esActivo ? '<span class="piloto-activo-tag">ACTIVO</span>' : ''}</span>
+          <div class="sesiones">${sesiones} sesión${sesiones !== 1 ? 'es' : ''} en historial</div>
+        </div>
+        <button class="btn-borrar-piloto" type="button" data-piloto="${escapeHtml(p)}" aria-label="Eliminar a ${escapeHtml(p)}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+          </svg>
+        </button>
+      </div>`;
+  }).join('');
+}
+
+function mostrarConfirmacionBorrado(nombre) {
+  const sesiones = contarSesionesPorPiloto(nombre);
+  const confirmDiv = $('#confirmBorrar');
+  if (!confirmDiv) return;
+  confirmDiv.hidden = false;
+  confirmDiv.innerHTML = `
+    <p>¿Eliminar a <b>${escapeHtml(nombre)}</b>? Se borrarán ${sesiones} sesión${sesiones !== 1 ? 'es' : ''} del historial local y TODOS sus registros de Google Sheets. No se puede deshacer.</p>
+    <div class="acciones-confirm">
+      <button class="btn btn-ghost btn-sm" id="btnCancelarBorrado">Cancelar</button>
+      <button class="btn-peligro" id="btnEliminarDefinitivamente">Eliminar definitivamente</button>
+    </div>`;
+  $('#btnCancelarBorrado').addEventListener('click', () => {
+    pilotoSeleccionadoBorrar = null;
+    confirmDiv.hidden = true;
+  });
+  $('#btnEliminarDefinitivamente').addEventListener('click', () => {
+    if (pilotoSeleccionadoBorrar) eliminarPiloto(pilotoSeleccionadoBorrar);
+  });
+}
+
+function eliminarPiloto(nombre) {
+  // 1. Quitar de la lista
+  const lista = getListaPilotos();
+  const idx = lista.findIndex(p => p.toLowerCase() === nombre.toLowerCase());
+  if (idx === -1) return;
+  lista.splice(idx, 1);
+  localStorage.setItem(LS_LISTA_PILOTOS, JSON.stringify(lista));
+
+  // 2. Si era el activo, reasignar
+  if (getPilotoActual().toLowerCase() === nombre.toLowerCase()) {
+    const nuevo = lista[0] || 'Kevin';
+    localStorage.setItem(LS_PILOTO_ACTUAL, nuevo);
+  }
+
+  // 3. Borrar sesiones locales de ese piloto
+  const entries = getEntries().filter(e => {
+    const ep = (e.piloto || 'Kevin').toLowerCase();
+    return ep !== nombre.toLowerCase();
+  });
+  setEntries(entries);
+
+  // 4. Refrescar UI del Diario
+  renderEntries();
+
+  // 5. Enviar borrado remoto a Google Sheets
+  fetch(GOOGLE_SCRIPT_URL + '?accion=borrarPiloto&Piloto=' + encodeURIComponent(nombre), { mode: 'no-cors' }).catch(() => {});
+
+  // 6. Sincronizar UI (cabecera, datalist, select diario)
+  document.dispatchEvent(new CustomEvent('pilotoCambiado', { detail: { nombre: getPilotoActual() } }));
+
+  // 7. Toast de éxito
+  toast(`Piloto "${nombre}" eliminado del historial local y de Google Sheets.`, 'ok');
+
+  // 8. Cerrar modal
+  cerrarModalPilotos();
+}
+
+function initGestionPilotos() {
+  const btnGestion = $('#btnGestionPilotos');
+  const overlay = $('#modalPilotosOverlay');
+
+  if (btnGestion) {
+    btnGestion.addEventListener('click', abrirModalPilotos);
+  }
+
+  if (overlay) {
+    // Cerrar al hacer clic en el overlay
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) cerrarModalPilotos();
+    });
+    // Delegación de eventos para botones dentro del modal
+    overlay.addEventListener('click', e => {
+      const btn = e.target.closest('.btn-borrar-piloto');
+      if (btn) {
+        const piloto = btn.dataset.piloto;
+        const lista = getListaPilotos();
+        if (lista.length <= 1) {
+          toast('No puedes eliminar al único piloto.', 'err');
+          return;
+        }
+        pilotoSeleccionadoBorrar = piloto;
+        mostrarConfirmacionBorrado(piloto);
+      }
+    });
+  }
+
+  // Tecla Escape cierra el modal
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && overlay && !overlay.hidden) cerrarModalPilotos();
+  });
+
+  if ($('#btnCerrarModalPilotos')) {
+    $('#btnCerrarModalPilotos').addEventListener('click', cerrarModalPilotos);
+  }
+}
+
 function initSelectorPiloto() {
   // Asegurar valores por defecto en localStorage
   if (!localStorage.getItem(LS_PILOTO_ACTUAL)) localStorage.setItem(LS_PILOTO_ACTUAL, 'Kevin');
@@ -1396,6 +1638,9 @@ function initSelectorPiloto() {
 
   // Escuchar cambios globales (sincronía bidireccional)
   document.addEventListener('pilotoCambiado', refrescarUIPiloto);
+
+  // Inicializar gestión de pilotos (botón, modal, Escape)
+  try { initGestionPilotos(); } catch (err) { console.warn('Init gestion pilotos:', err); }
 
   // Pintar estado inicial
   refrescarUIPiloto();
