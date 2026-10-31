@@ -1497,8 +1497,14 @@ function renderProfileCard() {
       const low = val < 4 ? ' low' : '';
       return `<div class="stat-bar${low}" style="--w:${pct}%"><div class="sb-head"><span>${escapeHtml(label)}</span><b>${val}</b></div><div class="sb-track"><i></i></div></div>`;
     }).join('')}
+    <div id="graphEvolucion" style="width:100%; height:180px; margin-top:10px; border:1px solid var(--line); border-radius:var(--radius-sm); position:relative;">
+        <canvas id="canvasEvolucion" width="400" height="180"></canvas>
+    </div>
     <p class="profile-note">Lectura inicial del entrenador · se recalibra cada mes con los datos del diario.</p>
   `;
+  
+  // Render the graph
+  renderGraphEvolucion(nombre);
 }
 function abrirWizardPerfil(nombre, edit) {
   // Wizard simplificado: prompt secuencial
@@ -2837,6 +2843,59 @@ function pro_autoBackup() {
     const snapshot = { timestamp: new Date().toISOString(), data: current };
     history.unshift(snapshot);
     localStorage.setItem(LS_PRO_AUTO_BACKUPS, JSON.stringify(history.slice(0, 5)));
+}
+
+function renderGraphEvolucion(pilotoName) {
+    const canvas = document.getElementById('canvasEvolucion');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const entries = getEntries().filter(e => e.piloto === pilotoName).slice(0, 10).reverse();
+    
+    // Clear
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    if (entries.length === 0) {
+        ctx.fillStyle = '#888';
+        ctx.font = '12px JetBrains Mono';
+        ctx.fillText("Sin sesiones registradas para gráfica", 20, 90);
+        return;
+    }
+    
+    const pad = 20;
+    const w = canvas.width - pad*2;
+    const h = canvas.height - pad*2;
+    const stepX = w / Math.max(1, entries.length - 1);
+    
+    // 3 series: Atacar (cyan), Defender (blue), Lentas (red)
+    const series = [
+        { key: 'ansAtacar', color: '#00E5E0' },
+        { key: 'ansDefender', color: '#3b82f6' },
+        { key: 'ansLentas', color: '#ef4444' }
+    ];
+    
+    // Draw grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 1;
+    for(let i=0; i<=5; i++) {
+        const y = pad + (h/5)*i;
+        ctx.beginPath();
+        ctx.moveTo(pad, y);
+        ctx.lineTo(pad+w, y);
+        ctx.stroke();
+    }
+    
+    series.forEach(s => {
+        ctx.beginPath();
+        ctx.strokeStyle = s.color;
+        ctx.lineWidth = 2;
+        entries.forEach((e, i) => {
+            const x = pad + (i * stepX);
+            const y = pad + h - (Number(e[s.key]) / 5) * h;
+            if(i===0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+    });
 }
 </script>
 </body>
