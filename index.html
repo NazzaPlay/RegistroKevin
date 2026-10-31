@@ -2770,11 +2770,12 @@ function initProFeatures() {
         profePanel.id = 'profePanel';
         profePanel.style.cssText = "background:#1a1a1a; padding:10px; margin:10px 0; border-radius:8px; text-align:center; font-family:JetBrains Mono; display:none"; // hidden by default, we'll show if admin
         profePanel.innerHTML = `
-            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; align-items:center;">
                 <button onclick="pro_exportBackup()" style="background:var(--acc); color:#000; border:none; padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">Descargar Backup</button>
                 <label style="background:transparent; color:#fff; border:1px solid var(--acc); padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">Restaurar
                     <input type="file" accept=".json" style="display:none;" onchange="pro_importBackup(this.files[0])">
                 </label>
+                <button onclick="openProDashboard()" style="background:#3b82f6; color:#fff; border:none; padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">Dashboard Profe</button>
             </div>
         `;
         nav.insertBefore(profePanel, nav.children[1]); // Put it after logo
@@ -2897,6 +2898,88 @@ function renderGraphEvolucion(pilotoName) {
         ctx.stroke();
     });
 }
+
+/* ══════════════════════════════════════════════════════════════
+   PRO EDITION - DASHBOARD DEL PROFE (Fase 3)
+   ══════════════════════════════════════════════════════════════ */
+function initProDashboard() {
+    const dashboard = document.createElement('div');
+    dashboard.id = 'proDashboard';
+    dashboard.style.cssText = "display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#0a0a0c; z-index:9999; overflow-y:auto; padding:20px; font-family:JetBrains Mono;";
+    dashboard.innerHTML = `
+        <div style="max-width:900px; margin:0 auto;">
+            <h2 style="color:var(--acc); font-size:20px; margin-bottom:20px;">DASHBOARD DEL PROFE</h2>
+            <button id="btnCerrarDash" style="float:right; background:transparent; border:1px solid #fff; color:#fff; padding:4px 12px; cursor:pointer;">Cerrar</button>
+            <div id="dashTable" style="border:1px solid var(--line); border-radius:var(--radius-sm); padding:15px;">
+                <!-- Generado dinámicamente -->
+            </div>
+        </div>
+    `;
+    document.body.appendChild(dashboard);
+    
+    document.getElementById('btnCerrarDash').onclick = () => { dashboard.style.display = 'none'; };
+    
+    // Populate the table
+    renderProDashboard(dashboard);
+    
+    return dashboard;
+}
+
+function renderProDashboard(container) {
+    const pilotos = getListaPilotos();
+    const tableWrap = container.querySelector('#dashTable');
+    
+    let html = `<table style="width:100%; border-collapse:collapse; color:#fff;">
+    <thead><tr style="border-bottom:2px solid var(--acc);">
+        <th>Piloto</th><th>Última Sesión</th><th>Promedio Ansiedad</th><th>Tendencia</th><th>Alerta</th>
+    </tr></thead><tbody>`;
+    
+    pilotos.forEach(p => {
+        const entries = getEntries().filter(e => e.piloto === p).sort((a,b) => new Date(b.registrado) - new Date(a.registrado));
+        const last = entries[0];
+        
+        // Average of the last 3
+        let avg = 0;
+        let alertBadge = "";
+        if(entries.length > 0) {
+            const last3 = entries.slice(0, 3);
+            avg = last3.reduce((sum, e) => sum + (Number(e.ansAtacar) + Number(e.ansDefender) + Number(e.ansLentas)) / 3, 0) / last3.length;
+            if (avg > 4) alertBadge = `<span style="background:#ef4444; color:#fff; padding:2px 6px; border-radius:4px; font-size:12px;">REQUIERE ATENCIÓN</span>`;
+        }
+        
+        let trend = "—";
+        if (entries.length >= 2) {
+            const prev = entries[1], curr = entries[0];
+            const dPrev = (Number(prev.ansAtacar)+Number(prev.ansDefender)+Number(prev.ansLentas))/3;
+            const dCurr = (Number(curr.ansAtacar)+Number(curr.ansDefender)+Number(curr.ansLentas))/3;
+            if (dCurr < dPrev - 0.2) trend = "↘ Mejorando";
+            else if (dCurr > dPrev + 0.2) trend = "↗ Empeorando";
+            else trend = "→ Estable";
+        }
+        
+        html += `<tr style="border-bottom:1px solid var(--line);">
+            <td><b>${p}</b></td>
+            <td>${last ? last.fecha : "—"}</td>
+            <td>${entries.length ? avg.toFixed(1) : "—"}</td>
+            <td>${trend}</td>
+            <td>${alertBadge}</td>
+        </tr>`;
+    });
+    
+    html += "</tbody></table>";
+    tableWrap.innerHTML = html;
+}
+
+function openProDashboard() {
+    let dash = document.getElementById('proDashboard');
+    if (!dash) {
+        dash = initProDashboard();
+    } else {
+        dash.style.display = 'block';
+        renderProDashboard(dash);
+    }
+}
+
 </script>
 </body>
 </html>
