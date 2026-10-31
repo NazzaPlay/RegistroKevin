@@ -1357,7 +1357,10 @@ function getPerfiles() {
   try { return JSON.parse(localStorage.getItem(LS_PERFILES)) || {}; }
   catch (e) { return {}; }
 }
-function setPerfiles(p) { localStorage.setItem(LS_PERFILES, JSON.stringify(p)); }
+function setPerfiles(p) { 
+    localStorage.setItem(LS_PERFILES, JSON.stringify(p)); 
+    if (typeof pro_autoBackup === 'function') pro_autoBackup();
+}
 function getPerfil(nombre) {
   const ps = getPerfiles();
   return ps[nombre] || null;
@@ -1371,7 +1374,10 @@ function getRutas() {
   try { return JSON.parse(localStorage.getItem(LS_RUTAS)) || {}; }
   catch (e) { return {}; }
 }
-function setRutas(r) { localStorage.setItem(LS_RUTAS, JSON.stringify(r)); }
+function setRutas(r) { 
+    localStorage.setItem(LS_RUTAS, JSON.stringify(r)); 
+    if (typeof pro_autoBackup === 'function') pro_autoBackup();
+}
 function getRutaPiloto(nombre) {
   const rs = getRutas();
   return rs[nombre] || null;
@@ -2332,7 +2338,8 @@ function getEntries() {
   catch (e) { return []; }
 }
 function setEntries(list) {
-  localStorage.setItem(LS_KEY, JSON.stringify(list));
+    localStorage.setItem(LS_KEY, JSON.stringify(list));
+    if (typeof pro_autoBackup === 'function') pro_autoBackup();
 }
 
 /* CONEXIÓN CON GOOGLE SHEETS — ACTIVA.
@@ -2738,7 +2745,99 @@ document.addEventListener('DOMContentLoaded', () => {
   safe(initDiario);
   safe(initSlideshow);
   safe(initRuta);
+
+  /* ── PRO EDITION HOOKS ─────────────────────────────────────────── */
+  safe(initProFeatures);
 });
+
+/* ══════════════════════════════════════════════════════════════
+   PRO EDITION - DATA MANAGEMENT
+   ══════════════════════════════════════════════════════════════ */
+const PRO_DATA_KEYS = [LS_PILOTO_ACTUAL, LS_LISTA_PILOTOS, LS_PERFILES, LS_RUTAS, LS_KEY, LS_RUTA];
+const LS_PRO_AUTO_BACKUPS = 'LS_PRO_AUTO_BACKUPS';
+
+function initProFeatures() {
+    // Inject Profe UI panel
+    const nav = document.querySelector('nav');
+    if (nav) {
+        const profePanel = document.createElement('div');
+        profePanel.id = 'profePanel';
+        profePanel.style.cssText = "background:#1a1a1a; padding:10px; margin:10px 0; border-radius:8px; text-align:center; font-family:JetBrains Mono; display:none"; // hidden by default, we'll show if admin
+        profePanel.innerHTML = `
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                <button onclick="pro_exportBackup()" style="background:var(--acc); color:#000; border:none; padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">Descargar Backup</button>
+                <label style="background:transparent; color:#fff; border:1px solid var(--acc); padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">Restaurar
+                    <input type="file" accept=".json" style="display:none;" onchange="pro_importBackup(this.files[0])">
+                </label>
+            </div>
+        `;
+        nav.insertBefore(profePanel, nav.children[1]); // Put it after logo
+        
+        // Simple "Profe" password gate (for now just a button that shows the panel)
+        const profeBtn = document.createElement('button');
+        profeBtn.textContent = "MODO PROFE";
+        profeBtn.style.cssText = "background:#333; color:var(--acc); border:1px solid var(--acc); padding:4px 12px; font-family:JetBrains Mono; font-size:12px; cursor:pointer; margin-top:10px";
+        profeBtn.onclick = () => {
+            const pwd = prompt("Contraseña de Profe:");
+            if (pwd === "PATAGONIA_ADMIN_2026") { // Hardcoded for now, Phase 7 will improve
+                profePanel.style.display = "block";
+                profeBtn.style.display = "none";
+            } else {
+                alert("Contraseña incorrecta");
+            }
+        };
+        nav.appendChild(profeBtn);
+    }
+}
+
+function pro_exportBackup() {
+    const backup = {};
+    PRO_DATA_KEYS.forEach(key => {
+        backup[key] = localStorage.getItem(key);
+    });
+    backup['_meta'] = {
+        exportedAt: new Date().toISOString(),
+        version: 1
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `patagonia_backup_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast("Backup exportado exitosamente", "ok");
+}
+
+function pro_importBackup(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (!data || typeof data !== 'object') throw new Error("Formato JSON inválido");
+            const keys = Object.keys(data).filter(k => k !== '_meta');
+            if (keys.length === 0) throw new Error("Backup vacío o corrupto");
+            if (confirm("⚠️ Esta acción sobrescribirá todos los datos actuales. ¿Continuar?")) {
+                keys.forEach(key => {
+                    if (data[key] !== null) localStorage.setItem(key, data[key]);
+                });
+                location.reload();
+            }
+        } catch (err) {
+            alert("Error importando backup: " + err.message);
+        }
+    };
+    reader.readAsText(file);
+}
+
+function pro_autoBackup() {
+    const history = JSON.parse(localStorage.getItem(LS_PRO_AUTO_BACKUPS) || '[]');
+    const current = {};
+    PRO_DATA_KEYS.forEach(key => { current[key] = localStorage.getItem(key); });
+    const snapshot = { timestamp: new Date().toISOString(), data: current };
+    history.unshift(snapshot);
+    localStorage.setItem(LS_PRO_AUTO_BACKUPS, JSON.stringify(history.slice(0, 5)));
+}
 </script>
 </body>
 </html>
