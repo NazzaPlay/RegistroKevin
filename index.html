@@ -865,6 +865,17 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
           <p class="concept-tip"><b>Mentalidad:</b> el rebufo es una herramienta, no un compromiso. Úsalo, no te cases con él.</p>
         </div>
       </article>
+      <div class="quiz-card" id="quiz-concepto-a" style="margin-top:10px">
+        <button class="btn btn-ghost" onclick="toggleQuiz('concepto-a')" style="font-family:JetBrains Mono; font-size:12px;">Verificar conocimiento</button>
+        <div class="quiz-content" style="display:none; margin-top:10px;">
+            <p>¿En qué sector de Le Mans es crítico el aire sucio?</p>
+            <div style="display:grid; gap:5px; margin-top:5px">
+                <button onclick="checkQuiz('concepto-a', 'a')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">A) Mulsanne (recta final)</button>
+                <button onclick="checkQuiz('concepto-a', 'b')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">B) Porsche Curves</button>
+                <button onclick="checkQuiz('concepto-a', 'c')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">C) Hunaudieres</button>
+            </div>
+        </div>
+      </div>
 
       <!-- CONCEPTO B · AIRE SUCIO -->
       <article class="concept-card glass reveal">
@@ -893,6 +904,17 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
           <p class="concept-tip"><b>Clave:</b> en curvas rápidas, acercarse de más no presiona al rival — te sabotea a ti.</p>
         </div>
       </article>
+      <div class="quiz-card" id="quiz-concepto-b" style="margin-top:10px">
+        <button class="btn btn-ghost" onclick="toggleQuiz('concepto-b')" style="font-family:JetBrains Mono; font-size:12px;">Verificar conocimiento</button>
+        <div class="quiz-content" style="display:none; margin-top:10px;">
+            <p>¿Qué sientes en el G29 si estás en el aire sucio del rival?</p>
+            <div style="display:grid; gap:5px; margin-top:5px">
+                <button onclick="checkQuiz('concepto-b', 'a')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">A) Volante más pesado</button>
+                <button onclick="checkQuiz('concepto-b', 'b')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">B) Volante ligero / sin peso</button>
+                <button onclick="checkQuiz('concepto-b', 'c')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">C) Vibraciones en el chasis</button>
+            </div>
+        </div>
+      </div>
 
       <!-- CONCEPTO C · REGLA DEL 50% -->
       <article class="concept-card glass reveal">
@@ -921,6 +943,17 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
           <p class="concept-tip"><b>Para el piloto:</b> cuando la ansiedad de atacar apriete, esta regla es tu ancla — decide con geometría, no con adrenalina.</p>
         </div>
       </article>
+      <div class="quiz-card" id="quiz-concepto-c" style="margin-top:10px">
+        <button class="btn btn-ghost" onclick="toggleQuiz('concepto-c')" style="font-family:JetBrains Mono; font-size:12px;">Verificar conocimiento</button>
+        <div class="quiz-content" style="display:none; margin-top:10px;">
+            <p>¿Cuál es la regla de oro para exigir espacio legal en una curva?</p>
+            <div style="display:grid; gap:5px; margin-top:5px">
+                <button onclick="checkQuiz('concepto-c', 'a')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">A) Tu trompa debe estar al 50% del rival antes de que gire</button>
+                <button onclick="checkQuiz('concepto-c', 'b')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">B) Acelera fuerte y fuerza el espacio</button>
+                <button onclick="checkQuiz('concepto-c', 'c')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">C) El primero que llega siempre gana</button>
+            </div>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -2977,6 +3010,45 @@ function openProDashboard() {
     } else {
         dash.style.display = 'block';
         renderProDashboard(dash);
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PRO EDITION - QUIZZES (Fase 4)
+   ══════════════════════════════════════════════════════════════ */
+const QUIZ_ANSWERS = {
+    'concepto-a': { correct: 'b', explanation: "Mulsanne es la recta donde el aire sucio y el rebufo son más críticos." },
+    'concepto-b': { correct: 'b', explanation: "El aire sucio reduce la carga de la trompa, haciendo el volante ligero." },
+    'concepto-c': { correct: 'a', explanation: "La regla del 50% garantiza que el espacio es legal y el duelo limpio." }
+};
+
+function toggleQuiz(id) {
+    const content = document.querySelector(`#quiz-${id} .quiz-content`);
+    content.style.display = content.style.display === 'none' ? 'block' : 'none';
+}
+
+function checkQuiz(id, answer) {
+    const quiz = QUIZ_ANSWERS[id];
+    const container = document.querySelector(`#quiz-${id} .quiz-content`);
+    const pilot = getPilotoActual();
+    
+    if (answer === quiz.correct) {
+        // Success
+        container.innerHTML = `<div style="background:#00E5E0; color:#000; padding:10px; border-radius:4px; font-weight:bold;">✓ Correcto. ${quiz.explanation}</div>`;
+        
+        // Save to profile
+        if (pilot) {
+            let perfil = getPerfil(pilot) || {};
+            perfil.progreso_quizzes = perfil.progreso_quizzes || {};
+            perfil.progreso_quizzes[id] = true;
+            setPerfil(pilot, perfil);
+        }
+        toast("Quiz aprobado", "ok");
+    } else {
+        // Fail
+        container.innerHTML = `<div style="background:#ef4444; color:#fff; padding:10px; border-radius:4px; font-weight:bold;">✗ Incorrecto. ${quiz.explanation}</div>
+            <button onclick="toggleQuiz('${id}')" style="margin-top:10px; background:#333; color:#fff; border:none; padding:5px 15px; cursor:pointer;">Intentar de nuevo</button>`;
+        toast("Respuesta incorrecta", "err");
     }
 }
 
