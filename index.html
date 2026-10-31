@@ -14,7 +14,7 @@
 <title>Patagonia Esports Racing Academy</title>
 <meta name="description" content="Academia de simracing profesional. Del karting virtual a los prototipos LMP2. Teoría, control emocional y práctica estructurada para pilotos de élite digital.">
 <meta name="theme-color" content="#0a0a0c">
-<link rel="icon" href="logo-patagonia.png" type="image/png">
+<link rel="icon" href="logo-patagonia.png?v=2" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -260,7 +260,7 @@ kbd{
 #topbar.scrolled{box-shadow:0 10px 34px rgba(0,0,0,.5)}
 .topbar-in{display:flex;align-items:center;justify-content:space-between;gap:24px;height:var(--header-h);width:min(1380px,95vw);margin-inline:auto}
 .brand{display:flex;align-items:center;gap:13px;font-family:var(--font-display);font-weight:800;font-size:.92rem;letter-spacing:.16em}
-.brand-mark{width:34px;height:34px;flex:none;filter:drop-shadow(0 0 8px rgba(0,229,224,.45))}
+.brand-mark{width:34px;height:34px;flex:none;filter:drop-shadow(0 0 8px rgba(0,229,224,.45));display:block!important;opacity:1!important;visibility:visible!important;position:relative;z-index:10}
 .brand span{display:flex;flex-direction:column;line-height:1.25}
 .brand small{font:600 .56rem var(--font-ui);letter-spacing:.34em;color:var(--muted)}
 .nav-links{display:flex;gap:30px}
@@ -312,6 +312,7 @@ kbd{
   display:block;width:min(340px,58%);height:auto;margin-bottom:1.4rem;
   border-radius:14px;box-shadow:0 12px 40px rgba(0,229,224,.16);
   filter:drop-shadow(0 0 18px rgba(0,229,224,.22));
+  opacity:1!important;visibility:visible!important;position:relative;z-index:10;
 }
 .hero-title{
   font:900 clamp(2.6rem,5.4vw,4.7rem)/1.05 var(--font-display);
@@ -722,7 +723,7 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
 <header id="topbar">
   <div class="topbar-in">
     <a class="brand" href="#inicio" aria-label="Volver al inicio">
-      <img src="logo-patagonia.png" class="brand-mark" alt="Patagonia Esports Logo" aria-hidden="true">
+      <img src="logo-patagonia.png?v=2" class="brand-mark" alt="Patagonia Esports Logo" aria-hidden="true" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
       <span>PATAGONIA&nbsp;ESPORTS<small>RACING&nbsp;ACADEMY</small></span>
     </a>
     <nav class="nav-links" aria-label="Secciones del portal">
@@ -767,7 +768,7 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
   <canvas id="heroCanvas" aria-hidden="true"></canvas>
   <div class="container hero-main">
     <div class="hero-copy reveal">
-      <img class="hero-logo" src="logo-patagonia-texto.png" alt="Patagonia Esports Racing Team" loading="lazy">
+      <img class="hero-logo" src="logo-patagonia-texto.png?v=2" alt="Patagonia Esports Racing Team" loading="eager" fetchpriority="high" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
       <span class="kicker">Academia de Simracing Profesional</span>
       <h1 class="hero-title">PATAGONIA ESPORTS<br><span class="grad">RACING ACADEMY</span></h1>
       <p class="lead">
@@ -1239,7 +1240,7 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
   <div class="container footer-in">
     <div>
       <div class="footer-brand">
-        <img src="logo-patagonia.png" style="width:32px;height:32px;margin-right:12px" alt="Logo de Patagonia Esports" loading="lazy">
+        <img src="logo-patagonia.png?v=2" style="width:32px;height:32px;margin-right:12px" alt="Logo de Patagonia Esports" loading="lazy" onerror="this.style.display='none';">
         PATAGONIA ESPORTS
       </div>
       <p>Patagonia Esports Racing Academy - Formando pilotos virtuales de élite.</p>
