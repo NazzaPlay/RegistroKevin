@@ -390,46 +390,221 @@ kbd{
 .section-head h2{font:800 clamp(1.9rem,3.8vw,3rem)/1.1 var(--font-display);letter-spacing:.02em;margin:.65rem 0 .85rem;text-transform:uppercase}
 .section-sub{color:var(--muted);font-size:1.04rem;max-width:66ch}
 
-/* ── 7 · PILAR 1 · TARJETAS DE CONCEPTOS AERO ────────────────── */
-.concepts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-.concept-card{display:flex;flex-direction:column;overflow:hidden;transition:transform .3s cubic-bezier(.2,.8,.2,1),border-color .3s}
-.concept-card:hover{transform:translateY(-6px);border-color:rgba(59,130,246,.35)}
+/* ── 7 · PILAR 1 · TARJETAS DE CONCEPTOS — LAYOUT PREMIUM ────── */
+.concepts-grid{display:grid;grid-template-columns:1fr;gap:0px}
+
+/* Tarjeta full-width: diagrama arriba, cuerpo+quiz abajo en 2 col */
+.concept-card{
+  display:grid;
+  grid-template-rows:auto 1fr;
+  overflow:hidden;
+  transition:border-color .35s ease, box-shadow .35s ease;
+  position:relative;
+  margin-bottom:32px;
+}
+.concept-card:last-child{margin-bottom:0}
+.concept-card:hover{
+  border-color:rgba(0,229,224,.28);
+  box-shadow:0 0 0 1px rgba(0,229,224,.1), 0 28px 70px rgba(0,0,0,.55);
+}
+
+/* Número de concepto — línea decorativa izquierda */
+.concept-card::before{
+  content:attr(data-num);
+  position:absolute;top:0;left:0;z-index:3;
+  font:800 .58rem var(--font-mono);letter-spacing:.22em;
+  color:var(--acc);opacity:.55;
+  writing-mode:vertical-rl;text-orientation:mixed;
+  padding:18px 0 0 16px;
+  pointer-events:none;
+}
+
+/* Zona del canvas/diagrama — más alta que antes */
 .concept-canvas-wrap{
-  position:relative;aspect-ratio:16/10.5;border-bottom:1px solid var(--line);
-  background:radial-gradient(420px 240px at 50% 30%, #0d1119, #07090e);
+  position:relative;
+  aspect-ratio:21/8;
+  border-bottom:1px solid var(--line);
+  background:
+    radial-gradient(ellipse 70% 80% at 50% 50%, #0d1222, #060810),
+    radial-gradient(ellipse 40% 60% at 20% 20%, rgba(0,229,224,.04), transparent);
+  overflow:hidden;
 }
-.concept-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+.concept-canvas-wrap::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg, transparent 75%, rgba(6,8,16,.85) 100%);
+  z-index:1;
+}
+.concept-canvas-wrap canvas{
+  position:absolute;inset:0;width:100%;height:100%;display:block;
+}
+
+/* Tag de categoría — arriba derecha */
 .concept-tag{
-  position:absolute;top:13px;left:13px;z-index:2;
-  font:700 .6rem var(--font-mono);letter-spacing:.16em;color:var(--acc-2);
-  background:rgba(5,8,12,.78);border:1px solid var(--line);
-  padding:6px 10px;border-radius:8px;
-  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  position:absolute;top:16px;right:16px;z-index:2;
+  font:700 .58rem var(--font-mono);letter-spacing:.18em;color:var(--acc-2);
+  background:rgba(5,8,12,.82);border:1px solid rgba(59,130,246,.25);
+  padding:7px 12px;border-radius:10px;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  text-transform:uppercase;
 }
-.concept-body{padding:24px 24px 26px;display:flex;flex-direction:column;gap:13px;flex:1}
-.concept-body h3{font:700 1.42rem var(--font-ui);letter-spacing:.05em;text-transform:uppercase}
+
+/* Parte inferior: texto izquierda + quiz derecha */
+.concept-lower{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:0;
+  min-height:260px;
+}
+.concept-body{
+  padding:32px 36px 36px;
+  display:flex;flex-direction:column;gap:16px;
+  border-right:1px solid var(--line);
+}
+.concept-body h3{
+  font:700 1.65rem var(--font-ui);letter-spacing:.04em;text-transform:uppercase;
+  line-height:1.15;
+}
 .concept-body h3 em{font-style:normal;color:var(--acc)}
-.concept-text{color:var(--muted);font-size:.95rem;line-height:1.62}
+.concept-text{color:var(--muted);font-size:.98rem;line-height:1.68}
 .concept-text b{color:var(--text)}
-.concept-list{list-style:none;display:grid;gap:8px;margin-top:auto;padding-top:6px}
-.concept-list li{display:flex;gap:11px;align-items:flex-start;font-size:.9rem;color:#c6cedb;line-height:1.45}
+.concept-list{
+  list-style:none;display:grid;gap:10px;
+  margin-top:auto;padding-top:8px;
+}
+.concept-list li{
+  display:flex;gap:12px;align-items:flex-start;
+  font-size:.92rem;color:#c6cedb;line-height:1.48;
+}
 .concept-list li::before{
-  content:"";flex:none;width:7px;height:7px;margin-top:.48em;
+  content:"";flex:none;width:7px;height:7px;margin-top:.52em;
   background:var(--acc);border-radius:2px;transform:rotate(45deg);
   box-shadow:0 0 8px rgba(0,229,224,.6);
 }
 .concept-list li.warn::before{background:var(--warn);box-shadow:0 0 8px rgba(255,176,32,.6)}
 .concept-list li.danger::before{background:var(--danger);box-shadow:0 0 8px rgba(255,59,92,.6)}
 .concept-tip{
-  margin-top:4px;padding:11px 14px;font-size:.87rem;line-height:1.5;color:#d6f8ea;
-  border-left:3px solid var(--acc);background:var(--acc-dim);border-radius:0 10px 10px 0;
+  padding:13px 16px;font-size:.89rem;line-height:1.55;color:#d6f8ea;
+  border-left:3px solid var(--acc);background:var(--acc-dim);
+  border-radius:0 12px 12px 0;
 }
 .concept-tip b{color:var(--acc)}
 .legend{display:flex;gap:18px;margin-top:2px}
-.legend span{display:inline-flex;align-items:center;gap:7px;font:600 .68rem var(--font-mono);letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.legend span{
+  display:inline-flex;align-items:center;gap:7px;
+  font:600 .68rem var(--font-mono);letter-spacing:.12em;
+  color:var(--muted);text-transform:uppercase;
+}
 .legend i{width:10px;height:10px;border-radius:3px;flex:none}
 .legend .l-you{background:var(--acc);box-shadow:0 0 8px rgba(0,229,224,.7)}
 .legend .l-rival{background:#dfe5ee}
+
+/* ── QUIZ INTEGRADO — columna derecha ─────────────────────────── */
+.concept-quiz{
+  padding:32px 36px 36px;
+  display:flex;flex-direction:column;gap:20px;
+  background:rgba(255,255,255,.018);
+  position:relative;
+}
+.concept-quiz::before{
+  content:"VERIFICAR CONOCIMIENTO";
+  font:700 .55rem var(--font-mono);letter-spacing:.22em;
+  color:var(--faint);display:block;margin-bottom:-8px;
+}
+.concept-quiz .quiz-question{
+  font:600 1.05rem var(--font-ui);color:var(--text);
+  line-height:1.45;
+}
+.concept-quiz .quiz-options{
+  display:grid;gap:10px;
+}
+.concept-quiz .quiz-opt{
+  display:flex;align-items:center;gap:14px;
+  padding:13px 16px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--line);
+  border-radius:12px;
+  cursor:pointer;font:600 .93rem var(--font-ui);
+  color:var(--muted);text-align:left;
+  transition:background .18s,border-color .18s,color .18s,transform .12s;
+  position:relative;overflow:hidden;
+}
+.concept-quiz .quiz-opt::before{
+  content:attr(data-letter);
+  flex:none;width:26px;height:26px;
+  border-radius:8px;border:1px solid var(--line);
+  background:rgba(255,255,255,.05);
+  font:700 .75rem var(--font-mono);letter-spacing:.06em;
+  color:var(--faint);
+  display:flex;align-items:center;justify-content:center;
+  transition:background .18s,border-color .18s,color .18s;
+}
+.concept-quiz .quiz-opt:hover{
+  background:rgba(59,130,246,.08);
+  border-color:rgba(59,130,246,.35);
+  color:var(--text);
+  transform:translateX(3px);
+}
+.concept-quiz .quiz-opt:hover::before{
+  border-color:rgba(59,130,246,.55);
+  color:var(--acc-2);
+}
+.concept-quiz .quiz-opt.correct{
+  background:rgba(74,222,128,.1);
+  border-color:rgba(74,222,128,.55);
+  color:#4ade80;
+}
+.concept-quiz .quiz-opt.correct::before{
+  background:rgba(74,222,128,.2);border-color:#4ade80;color:#4ade80;
+}
+.concept-quiz .quiz-opt.wrong{
+  background:rgba(239,68,68,.08);
+  border-color:rgba(239,68,68,.4);
+  color:#f87171;
+  animation:quiz-shake .32s ease;
+}
+.concept-quiz .quiz-opt.wrong::before{
+  background:rgba(239,68,68,.15);border-color:#ef4444;color:#ef4444;
+}
+.concept-quiz .quiz-opt.disabled{pointer-events:none;opacity:.55}
+.concept-quiz .quiz-opt.disabled.correct{opacity:1}
+@keyframes quiz-shake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-5px)}
+  75%{transform:translateX(5px)}
+}
+.concept-quiz .quiz-feedback{
+  padding:14px 16px;border-radius:12px;
+  font:600 .9rem var(--font-ui);line-height:1.5;
+  display:none;
+}
+.concept-quiz .quiz-feedback.show{display:block}
+.concept-quiz .quiz-feedback.ok{
+  background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);
+  color:#4ade80;
+}
+.concept-quiz .quiz-feedback.err{
+  background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.28);
+  color:#f87171;
+}
+.concept-quiz .quiz-feedback b{color:inherit}
+.concept-quiz .quiz-retry{
+  margin-top:4px;padding:8px 18px;border-radius:8px;
+  background:rgba(255,255,255,.06);border:1px solid var(--line);
+  font:600 .8rem var(--font-mono);letter-spacing:.1em;color:var(--muted);
+  cursor:pointer;transition:background .15s,color .15s;align-self:flex-start;
+}
+.concept-quiz .quiz-retry:hover{background:rgba(255,255,255,.12);color:var(--text)}
+/* Badge "ya aprobado" sobre el quiz */
+.concept-quiz.approved::before{color:#4ade80}
+.concept-quiz.approved .quiz-question{color:var(--muted)}
+
+/* Responsive: en mobile todo apilado */
+@media(max-width:800px){
+  .concept-lower{grid-template-columns:1fr}
+  .concept-body{border-right:none;border-bottom:1px solid var(--line);padding:24px 22px}
+  .concept-quiz{padding:24px 22px}
+  .concept-canvas-wrap{aspect-ratio:16/9}
+}
 
 /* ── 8 · PILAR 2 · DIARIO EMOCIONAL ──────────────────────────── */
 .diario-grid{display:grid;grid-template-columns:1.28fr .72fr;gap:26px;align-items:start}
@@ -676,20 +851,61 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
 /* ── 14 · REVEAL ON SCROLL ───────────────────────────────────── */
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .75s ease, transform .75s cubic-bezier(.2,.8,.2,1)}
 .reveal.visible{opacity:1;transform:none}
-.concepts-grid > .concept-card:nth-child(2){transition-delay:.1s}
-.concepts-grid > .concept-card:nth-child(3){transition-delay:.2s}
-.protocols-grid > .protocol-card:nth-child(2){transition-delay:.08s}
-.protocols-grid > .protocol-card:nth-child(3){transition-delay:.16s}
-.protocols-grid > .protocol-card:nth-child(4){transition-delay:.24s}
+
+/* ── QUIZ PREMIUM — integrado en tarjeta ──────────────────────── */
+.concept-quiz{
+  padding:26px 28px;border-top:1px solid var(--line);
+  background:rgba(255,255,255,.015);
+}
+.quiz-question{
+  font:700 .95rem var(--font-ui);letter-spacing:.03em;margin-bottom:14px;color:var(--text);
+}
+.quiz-options{display:grid;gap:8px}
+.quiz-opt{
+  display:flex;align-items:center;gap:14px;padding:12px 16px;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;
+  font:600 .9rem var(--font-ui);color:var(--muted);cursor:pointer;text-align:left;
+  transition:border-color .2s, background .2s, color .2s;
+}
+.quiz-opt:hover:not(.disabled){border-color:var(--acc);background:rgba(0,229,224,.06);color:var(--text)}
+.quiz-opt .letter{
+  flex:none;width:26px;height:26px;display:grid;place-items:center;
+  border-radius:6px;background:rgba(255,255,255,.08);
+  font:700 .75rem var(--font-mono);color:var(--faint);
+}
+.quiz-opt.correct{
+  border-color:#4ade80;background:rgba(74,222,128,.1);color:#4ade80;
+}
+.quiz-opt.correct .letter{background:#4ade80;color:#0a0e14}
+.quiz-opt.wrong{
+  border-color:var(--danger);background:rgba(239,68,68,.1);color:var(--danger);
+}
+.quiz-opt.disabled{opacity:.55;pointer-events:none}
+.quiz-feedback{
+  margin-top:14px;padding:12px 16px;border-radius:8px;font-size:.88rem;line-height:1.5;
+  display:none;
+}
+.quiz-feedback.show{display:block}
+.quiz-feedback.ok{background:rgba(74,222,128,.1);color:#4ade80;border-left:3px solid #4ade80}
+.quiz-feedback.err{background:rgba(239,68,68,.1);color:#ef4444;border-left:3px solid #ef4444}
+.quiz-retry{
+  margin-left:10px;padding:4px 12px;background:transparent;border:1px solid currentColor;
+  border-radius:6px;font:600 .78rem var(--font-mono);cursor:pointer;color:inherit;
+}
+.concept-quiz.approved{border-color:rgba(74,222,128,.25)}
+.concept-quiz.approved .quiz-question{color:var(--muted)}
 
 /* ── 15 · RESPONSIVE ─────────────────────────────────────────── */
 @media (max-width:1120px){
   .hero-main{grid-template-columns:1fr;gap:40px;min-height:0;padding-top:calc(var(--header-h) + 40px)}
-  .concepts-grid{grid-template-columns:1fr;max-width:660px;margin-inline:auto}
+  .concepts-grid{grid-template-columns:1fr;max-width:860px;margin-inline:auto}
   .diario-grid{grid-template-columns:1fr}
   .side{position:static}
   .clase-card{grid-template-columns:1fr;gap:28px;padding:36px}
   .protocols-grid{grid-template-columns:1fr 1fr}
+  .concept-lower{grid-template-columns:1fr}
+  .concept-body{border-right:none;border-bottom:1px solid var(--line);padding:28px 32px}
+  .concept-quiz{padding:28px 32px}
 }
 @media (max-width:860px){
   .nav-links{display:none}
@@ -836,555 +1052,336 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
       <span class="kicker">Pilar 1 · Biblioteca teórica</span>
       <h2>Le Mans &amp; LMP2: el arte del aire</h2>
       <p class="section-sub">
-        Tres conceptos que separan a un piloto rápido de un piloto completo.
-        Cada animación es una vista cenital de dos autos en pista: estúdiala hasta poder
+        Nueve conceptos que separan a un piloto rápido de un piloto completo.
+        Cada animación es una vista cenital en tiempo real: estúdiala hasta poder
         anticipar lo que va a pasar antes de que ocurra.
       </p>
     </div>
     <div class="concepts-grid">
 
-      <!-- CONCEPTO A · REBUFO -->
-      <article class="concept-card glass reveal">
+      <!-- ── CONCEPTO A · REBUFO ────────────────────────────────── -->
+      <article class="concept-card glass reveal" data-num="01">
         <div class="concept-canvas-wrap">
           <canvas id="cvA" width="820" height="460" aria-label="Animación: dos LMP2 en la recta de Mulsanne, el de atrás gana velocidad punta con el rebufo y debe anticipar la frenada"></canvas>
           <span class="concept-tag">CONCEPTO A · RECTA DE MULSANNE</span>
         </div>
-        <div class="concept-body">
-          <h3>El <em>rebufo</em></h3>
-          <p class="concept-text">
-            Rodando a menos de un segundo del otro LMP2, tu velocidad punta sube entre
-            <b>10 y 15 km/h</b>: el auto de delante parte el aire y tu alerón trabaja menos.
-            Pero ese regalo llega con letra pequeña — llegas a la zona de frenada
-            <b>más rápido y con menos margen</b>. La regla es innegociable: anticipa la
-            frenada entre <b>50 y 100 metros</b> respecto a tu referencia.
-          </p>
-          <div class="legend">
-            <span><i class="l-you"></i>Tú</span>
-            <span><i class="l-rival"></i>Rival</span>
+        <div class="concept-lower">
+          <div class="concept-body">
+            <h3>El <em>rebufo</em></h3>
+            <p class="concept-text">
+              Rodando a menos de un segundo del otro LMP2, tu velocidad punta sube entre
+              <b>10 y 15 km/h</b>: el auto de delante parte el aire y tu alerón trabaja menos.
+              Pero ese regalo llega con letra pequeña — llegás a la zona de frenada
+              <b>más rápido y con menos margen</b>. La regla es innegociable: anticipá la
+              frenada entre <b>50 y 100 metros</b> respecto a tu referencia habitual.
+            </p>
+            <div class="legend">
+              <span><i class="l-you"></i>Tú</span>
+              <span><i class="l-rival"></i>Rival</span>
+            </div>
+            <ul class="concept-list">
+              <li>Ganás velocidad punta, pagás anticipar la frenada.</li>
+              <li class="danger">Llegar tarde al freno en rebufo = bloqueo seguro.</li>
+              <li>Si en 2 intentos no sale, rompé la estela y reseteá.</li>
+            </ul>
+            <p class="concept-tip"><b>Mentalidad:</b> el rebufo es una herramienta, no un compromiso. Usalo, no te cases con él.</p>
           </div>
-          <ul class="concept-list">
-            <li>Ganas velocidad punta, pagas anticipar la frenada.</li>
-            <li class="danger">Llegar tarde al freno en rebufo = bloqueo seguro.</li>
-            <li>Si en 2 intentos no sale, rompe la estela y resetea.</li>
-          </ul>
-          <p class="concept-tip"><b>Mentalidad:</b> el rebufo es una herramienta, no un compromiso. Úsalo, no te cases con él.</p>
+          <div class="concept-quiz" id="quiz-concepto-a">
+            <p class="quiz-question">¿Por qué en rebufo debés anticipar la frenada entre 50 y 100 m antes de tu referencia habitual?</p>
+            <div class="quiz-options">
+              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('concepto-a','a',this)">Porque el motor trabaja menos y hay menos frenado motor</button>
+              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('concepto-a','b',this)">Porque llegás más rápido y con menos margen por la reducción de resistencia aerodinámica</button>
+              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('concepto-a','c',this)">Para no bloquear al rival de adelante</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
         </div>
       </article>
-      <div class="quiz-card" id="quiz-concepto-a" style="margin-top:10px">
-        <button class="btn btn-ghost" onclick="toggleQuiz('concepto-a')" style="font-family:JetBrains Mono; font-size:12px;">Verificar conocimiento</button>
-        <div class="quiz-content" style="display:none; margin-top:10px;">
-            <p>¿En qué sector de Le Mans es crítico el aire sucio?</p>
-            <div style="display:grid; gap:5px; margin-top:5px">
-                <button onclick="checkQuiz('concepto-a', 'a')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">A) Mulsanne (recta final)</button>
-                <button onclick="checkQuiz('concepto-a', 'b')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">B) Porsche Curves</button>
-                <button onclick="checkQuiz('concepto-a', 'c')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">C) Hunaudieres</button>
-            </div>
-        </div>
-      </div>
 
-      <!-- CONCEPTO B · AIRE SUCIO -->
-      <article class="concept-card glass reveal">
+      <!-- ── CONCEPTO B · AIRE SUCIO ─────────────────────────────── -->
+      <article class="concept-card glass reveal" data-num="02">
         <div class="concept-canvas-wrap">
           <canvas id="cvB" width="820" height="460" aria-label="Animación: en las Porsche Curves, seguir muy de cerca quita carga aerodinámica frontal y provoca subviraje"></canvas>
           <span class="concept-tag">CONCEPTO B · PORSCHE CURVES</span>
         </div>
-        <div class="concept-body">
-          <h3>Aire sucio = <em>subviraje</em></h3>
-          <p class="concept-text">
-            En curvas rápidas de alta carga el aire limpio es parte del set-up. Si te metes a
-            menos de un segundo, la trompa <b>pierde carga aerodinámica</b>: el volante queda
-            ligero, el auto no gira y te vas largo hacia el exterior. Eso es subviraje por
-            aire sucio. La solución no es girar más fuerte: es <b>no llegar ahí</b> —
-            sal del rebufo antes del punto de giro y busca tu propia trazada.
-          </p>
-          <div class="legend">
-            <span><i class="l-you"></i>Tú</span>
-            <span><i class="l-rival"></i>Rival</span>
+        <div class="concept-lower">
+          <div class="concept-body">
+            <h3>Aire sucio = <em>subviraje</em></h3>
+            <p class="concept-text">
+              En curvas rápidas de alta carga el aire limpio es parte del set-up. Si te metés a
+              menos de un segundo, la trompa <b>pierde carga aerodinámica</b>: el volante queda
+              ligero, el auto no gira y te vas largo al exterior. Eso es subviraje por
+              aire sucio. La solución no es girar más fuerte: es <b>no llegar ahí</b> —
+              salí del rebufo antes del punto de giro y buscá tu propia trazada.
+            </p>
+            <div class="legend">
+              <span><i class="l-you"></i>Tú</span>
+              <span><i class="l-rival"></i>Rival</span>
+            </div>
+            <ul class="concept-list">
+              <li>Síntoma en el G29: volante sin peso a mitad de curva.</li>
+              <li>Antídoto: distancia y lateralidad antes de girar.</li>
+              <li class="warn">Castigar neumáticos por impaciencia se paga a 3 vueltas.</li>
+            </ul>
+            <p class="concept-tip"><b>Clave:</b> en curvas rápidas, acercarse de más no presiona al rival — te sabotea a vos.</p>
           </div>
-          <ul class="concept-list">
-            <li>Síntoma en el G29: volante sin peso a mitad de curva.</li>
-            <li>Antídoto: distancia y lateralidad antes de girar.</li>
-            <li class="warn">Castigar neumáticos por impaciencia se paga a 3 vueltas.</li>
-          </ul>
-          <p class="concept-tip"><b>Clave:</b> en curvas rápidas, acercarse de más no presiona al rival — te sabotea a ti.</p>
+          <div class="concept-quiz" id="quiz-concepto-b">
+            <p class="quiz-question">¿Qué sentís en el G29 cuando entrás en el aire sucio del rival en una curva rápida?</p>
+            <div class="quiz-options">
+              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('concepto-b','b',this)">El volante se pone más pesado de lo normal</button>
+              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('concepto-b','a',this)">El volante queda ligero, el auto no gira — subviraje</button>
+              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('concepto-b','b',this)">Se activa el ABS automáticamente</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
         </div>
       </article>
-      <div class="quiz-card" id="quiz-concepto-b" style="margin-top:10px">
-        <button class="btn btn-ghost" onclick="toggleQuiz('concepto-b')" style="font-family:JetBrains Mono; font-size:12px;">Verificar conocimiento</button>
-        <div class="quiz-content" style="display:none; margin-top:10px;">
-            <p>¿Qué sientes en el G29 si estás en el aire sucio del rival?</p>
-            <div style="display:grid; gap:5px; margin-top:5px">
-                <button onclick="checkQuiz('concepto-b', 'a')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">A) Volante más pesado</button>
-                <button onclick="checkQuiz('concepto-b', 'b')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">B) Volante ligero / sin peso</button>
-                <button onclick="checkQuiz('concepto-b', 'c')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">C) Vibraciones en el chasis</button>
-            </div>
-        </div>
-      </div>
-
-      <!-- CONCEPTO C · REGLA DEL 50% -->
-      <article class="concept-card glass reveal">
+      <!-- ── CONCEPTO C · REGLA DEL 50% ─────────────────────────── -->
+      <article class="concept-card glass reveal" data-num="03">
         <div class="concept-canvas-wrap">
           <canvas id="cvC" width="820" height="460" aria-label="Animación: la trompa debe estar al menos al 50 por ciento del auto rival antes del punto de giro para tener derecho al espacio"></canvas>
           <span class="concept-tag">CONCEPTO C · REGLAMENTO DE DUELO</span>
         </div>
-        <div class="concept-body">
-          <h3>La regla del <em>50%</em></h3>
-          <p class="concept-text">
-            Para exigir espacio en la curva, tu trompa debe estar al menos al
-            <b>50% del auto rival antes de que él inicie el giro</b>. Llegaste: la curva es
-            de los dos y él debe dejarte un auto de anchura. No llegaste: es curva de él —
-            levanta, pégate a su salida y cobra en la siguiente. Los adelantamientos limpios
-            se construyen <b>dos curvas antes</b>, no en el último metro.
-          </p>
-          <div class="legend">
-            <span><i class="l-you"></i>Tú</span>
-            <span><i class="l-rival"></i>Rival</span>
-          </div>
-          <ul class="concept-list">
-            <li>Más del 50% antes del punto de giro → derecho al espacio.</li>
-            <li class="danger">Menos del 50% → levanta: en el contacto, siempre pierdes.</li>
-            <li>El objetivo no es ganar la curva: es terminar la carrera.</li>
-          </ul>
-          <p class="concept-tip"><b>Para el piloto:</b> cuando la ansiedad de atacar apriete, esta regla es tu ancla — decide con geometría, no con adrenalina.</p>
-        </div>
-      </article>
-      <div class="quiz-card" id="quiz-concepto-c" style="margin-top:10px">
-        <button class="btn btn-ghost" onclick="toggleQuiz('concepto-c')" style="font-family:JetBrains Mono; font-size:12px;">Verificar conocimiento</button>
-        <div class="quiz-content" style="display:none; margin-top:10px;">
-            <p>¿Cuál es la regla de oro para exigir espacio legal en una curva?</p>
-            <div style="display:grid; gap:5px; margin-top:5px">
-                <button onclick="checkQuiz('concepto-c', 'a')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">A) Tu trompa debe estar al 50% del rival antes de que gire</button>
-                <button onclick="checkQuiz('concepto-c', 'b')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">B) Acelera fuerte y fuerza el espacio</button>
-                <button onclick="checkQuiz('concepto-c', 'c')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">C) El primero que llega siempre gana</button>
+        <div class="concept-lower">
+          <div class="concept-body">
+            <h3>La regla del <em>50%</em></h3>
+            <p class="concept-text">
+              Para exigir espacio en la curva, tu trompa debe estar al menos al
+              <b>50% del auto rival antes de que él inicie el giro</b>. Llegaste: la curva es
+              de los dos y él debe dejarte un auto de anchura. No llegaste: es curva de él —
+              levantá, pegáte a su salida y cobrá en la siguiente. Los adelantamientos limpios
+              se construyen <b>dos curvas antes</b>, no en el último metro.
+            </p>
+            <div class="legend">
+              <span><i class="l-you"></i>Tú</span>
+              <span><i class="l-rival"></i>Rival</span>
             </div>
-        </div>
-      </div>
-
-    </div>
-
-      <!-- ── TARJETAS NUEVAS · CLASES RECIENTES ───────────────────── -->
-
-      <!-- TARJETA 1 · RESPIRACIÓN -->
-      <article class="concept-card glass reveal" style="margin-top:32px">
-        <div class="concept-canvas-wrap">
-          <svg viewBox="0 0 820 260" xmlns="http://www.w3.org/2000/svg" aria-label="Diagrama de protocolo de respiración antes de curva" style="width:100%;height:100%;display:block">
-            <rect width="820" height="260" fill="#0d0d14"/>
-            <!-- recta -->
-            <rect x="0" y="100" width="820" height="60" rx="0" fill="#1a1a2e" stroke="#2a2a4a" stroke-width="1"/>
-            <!-- líneas de pista -->
-            <line x1="0" y1="130" x2="820" y2="130" stroke="#ffffff10" stroke-width="1" stroke-dasharray="30,20"/>
-            <!-- auto -->
-            <g transform="translate(180,110)">
-              <rect x="-28" y="-18" width="56" height="36" rx="8" fill="#3b82f6" opacity="0.9"/>
-              <rect x="14" y="-6" width="10" height="12" rx="2" fill="#60a5fa"/>
-              <circle cx="-22" cy="18" r="7" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
-              <circle cx="22" cy="18" r="7" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
-            </g>
-            <!-- zona de respiración -->
-            <rect x="280" y="90" width="120" height="80" rx="6" fill="#4ade8015" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="6,4"/>
-            <text x="340" y="124" text-anchor="middle" fill="#4ade80" font-size="11" font-family="JetBrains Mono,monospace">RESPIRA</text>
-            <text x="340" y="140" text-anchor="middle" fill="#4ade8099" font-size="10" font-family="JetBrains Mono,monospace">4·4·4</text>
-            <!-- curva -->
-            <path d="M 460 130 Q 560 130 580 80" stroke="#00E5E0" stroke-width="3" fill="none" stroke-dasharray="8,4"/>
-            <text x="590" y="75" fill="#00E5E0" font-size="11" font-family="JetBrains Mono,monospace">CURVA</text>
-            <!-- flechas etapas -->
-            <text x="60" y="85" fill="#ffffff60" font-size="10" font-family="JetBrains Mono,monospace">RECTA</text>
-            <text x="60" y="100" fill="#ffffff40" font-size="10" font-family="JetBrains Mono,monospace">tensión acumula</text>
-            <line x1="270" y1="130" x2="290" y2="130" stroke="#4ade80" stroke-width="1.5" marker-end="url(#arr)"/>
-            <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#4ade80"/></marker></defs>
-            <!-- pulso -->
-            <polyline points="640,150 655,150 662,120 670,175 678,120 686,155 700,155" fill="none" stroke="#ef4444" stroke-width="2" opacity="0.7"/>
-            <text x="660" y="195" text-anchor="middle" fill="#ef444480" font-size="10" font-family="JetBrains Mono,monospace">sin respirar</text>
-            <polyline points="640,210 655,210 662,200 670,220 678,200 686,212 700,210" fill="none" stroke="#4ade80" stroke-width="2" opacity="0.8"/>
-            <text x="660" y="238" text-anchor="middle" fill="#4ade8080" font-size="10" font-family="JetBrains Mono,monospace">con respiración</text>
-          </svg>
-          <span class="concept-tag">TARJETA 1 · MENTAL Y CONCENTRACIÓN</span>
-        </div>
-        <div class="concept-body">
-          <h3>Respiración y <em>concentración</em></h3>
-          <p class="concept-text">
-            Antes de cada curva clave, la tensión acumulada en la recta se traduce en manos apretadas
-            y reacciones tardías. El protocolo <b>4·4·4</b> (inhala 4 segundos, sostén 4, exhala 4)
-            baja el cortisol, relaja la musculatura de los hombros y libera el volante.
-            El resultado: el punto de frenada aparece más claro y la trazada sale sola.
-          </p>
-          <ul class="concept-list">
-            <li>Aplícalo en la recta <b>antes</b> de la frenada, nunca durante.</li>
-            <li>Hombros sueltos = volante preciso = menos bloqueos.</li>
-            <li class="warn">Tensión en manos → bloqueo de frenos → error evitable.</li>
-            <li>Anotá en el Diario si aplicaste la respiración y cómo afectó tu ansiedad.</li>
-          </ul>
-          <p class="concept-tip"><b>Clave de pit lane:</b> "Respira antes de la curva, no durante."</p>
+            <ul class="concept-list">
+              <li>Más del 50% antes del punto de giro → derecho al espacio.</li>
+              <li class="danger">Menos del 50% → levantá: en el contacto, siempre perdés.</li>
+              <li>El objetivo no es ganar la curva: es terminar la carrera.</li>
+            </ul>
+            <p class="concept-tip"><b>Para el piloto:</b> cuando la ansiedad de atacar apriete, esta regla es tu ancla — decidí con geometría, no con adrenalina.</p>
+          </div>
+          <div class="concept-quiz" id="quiz-concepto-c">
+            <p class="quiz-question">¿Cuál es la condición para exigir espacio legal en una curva?</p>
+            <div class="quiz-options">
+              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('concepto-c','a',this)">Tu trompa al 50% del rival antes de que inicie el giro</button>
+              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('concepto-c','b',this)">Acelerar fuerte y forzar el espacio</button>
+              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('concepto-c','c',this)">El primero que llega a la curva siempre gana</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
         </div>
       </article>
-      <div class="quiz-card" id="quiz-respiracion" style="margin-top:10px">
-        <button class="btn btn-ghost" onclick="toggleQuiz('respiracion')" style="font-family:JetBrains Mono;font-size:12px">Verificar conocimiento</button>
-        <div class="quiz-content" style="display:none;margin-top:10px">
-          <p>¿Cuándo aplicás el protocolo de respiración 4·4·4?</p>
-          <div style="display:grid;gap:5px;margin-top:5px">
-            <button onclick="checkQuiz('respiracion','b')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">A) Mientras estás girando en la curva</button>
-            <button onclick="checkQuiz('respiracion','a')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">B) En la recta, antes de llegar a la zona de frenada</button>
-            <button onclick="checkQuiz('respiracion','b')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">C) Después de cometer un error</button>
-          </div>
-        </div>
-      </div>
 
-      <!-- TARJETA 2 · TRAZADA -->
-      <article class="concept-card glass reveal" style="margin-top:32px">
+      <!-- ── TARJETA 4 · RESPIRACIÓN ─────────────────────────────── -->
+      <article class="concept-card glass reveal" data-num="04">
         <div class="concept-canvas-wrap">
-          <svg viewBox="0 0 820 280" xmlns="http://www.w3.org/2000/svg" aria-label="Diagrama cenital de trazada interior vs exterior en curva" style="width:100%;height:100%;display:block">
-            <rect width="820" height="280" fill="#0d0d14"/>
-            <!-- borde pista exterior -->
-            <path d="M 80 40 L 400 40 Q 520 40 520 160 L 520 240" stroke="#ffffff20" stroke-width="3" fill="none"/>
-            <!-- borde pista interior -->
-            <path d="M 80 100 L 360 100 Q 440 100 440 160 L 440 240" stroke="#ffffff20" stroke-width="3" fill="none"/>
-            <!-- trazada clásica ext-apex-ext (azul) -->
-            <path d="M 80 65 L 340 65 Q 500 65 490 160 L 490 240" stroke="#3b82f6" stroke-width="2.5" fill="none" stroke-dasharray="0"/>
-            <circle cx="460" cy="148" r="7" fill="#3b82f6" opacity="0.9"/>
-            <text x="475" y="145" fill="#3b82f6" font-size="11" font-family="JetBrains Mono,monospace">apex</text>
-            <!-- trazada interior directa (rojo) -->
-            <path d="M 80 88 L 380 88 Q 445 88 445 160 L 445 240" stroke="#ef4444" stroke-width="2.5" fill="none" stroke-dasharray="7,4"/>
-            <circle cx="440" cy="130" r="7" fill="#ef4444" opacity="0.9"/>
-            <!-- leyenda -->
-            <rect x="560" y="50" width="14" height="4" rx="2" fill="#3b82f6"/>
-            <text x="580" y="57" fill="#3b82f6" font-size="11" font-family="JetBrains Mono,monospace">Exterior → Apex → Exterior</text>
-            <text x="580" y="72" fill="#ffffff50" font-size="10" font-family="JetBrains Mono,monospace">curva sola / max velocidad salida</text>
-            <line x1="560" y1="94" x2="574" y2="94" stroke="#ef4444" stroke-width="2" stroke-dasharray="5,3"/>
-            <text x="580" y="97" fill="#ef4444" font-size="11" font-family="JetBrains Mono,monospace">Interior directa</text>
-            <text x="580" y="112" fill="#ffffff50" font-size="10" font-family="JetBrains Mono,monospace">curvas enlazadas / bloquear rival</text>
-            <!-- dirección -->
-            <text x="80" y="30" fill="#ffffff40" font-size="11" font-family="JetBrains Mono,monospace">→ entrada</text>
-            <text x="500" y="265" fill="#ffffff40" font-size="11" font-family="JetBrains Mono,monospace">↓ salida</text>
-          </svg>
-          <span class="concept-tag">TARJETA 2 · TRAZADA</span>
+          <canvas id="cvD" width="820" height="460" aria-label="Animación: protocolo de respiración y control del pulso antes de una curva"></canvas>
+          <span class="concept-tag">TARJETA 4 · MENTAL Y CONCENTRACIÓN</span>
         </div>
-        <div class="concept-body">
-          <h3>Trazada de <em>interior y exterior</em></h3>
-          <p class="concept-text">
-            No existe una única trazada correcta: depende de lo que viene después.
-            La trazada <b>exterior→apex→exterior</b> maximiza el radio de giro y la velocidad de salida —
-            ideal en curvas aisladas. La trazada <b>interior directa</b> sacrifica velocidad en esa curva
-            para posicionarte mejor en la siguiente o bloquear al rival.
-          </p>
-          <ul class="concept-list">
-            <li><b>Curva sola:</b> exterior → apex tardío → exterior para máxima salida.</li>
-            <li><b>Curvas enlazadas (chicana):</b> sacrificá la primera, ganás la segunda.</li>
-            <li class="warn">Apex temprano = fuerza al exterior en la salida = trazada lenta.</li>
-            <li>En duelo: interior directa bloquea el espacio, pero cuidado con la salida lenta.</li>
-          </ul>
-          <p class="concept-tip"><b>Regla:</b> primero decidí qué viene después, después elegí la trazada.</p>
+        <div class="concept-lower">
+          <div class="concept-body">
+            <h3>Respiración: <em>control bajo presión</em></h3>
+            <p class="concept-text">
+              En recta recta el cuerpo acumula tensión sin que te des cuenta: mandíbula apretada,
+              hombros subidos, respiración cortada. Eso llega a la curva como decisiones tardías y errores de freno.
+              El protocolo <b>4-4-4</b> (4s inhalar, 4s sostener, 4s exhalar) activa el sistema
+              nervioso parasimpático y baja el pulso antes del punto de frenada.
+            </p>
+            <ul class="concept-list">
+              <li>Respiración cortada → pulso alto → frenada tardía → error.</li>
+              <li>Protocolo 4·4·4 en cada recta larga antes del freno.</li>
+              <li class="warn">Mandíbula apretada = señal de alerta: soltá y respirá.</li>
+              <li>Con el G29 el agarre físico puede tensarte sin que lo notes.</li>
+            </ul>
+            <p class="concept-tip"><b>Habito:</b> en recta, verificá tu respiración como revisás los espejos — es parte del procedimiento.</p>
+          </div>
+          <div class="concept-quiz" id="quiz-respiracion">
+            <p class="quiz-question">¿Cuál es el protocolo de respiración recomendado en recta para bajar el pulso antes de frenar?</p>
+            <div class="quiz-options">
+              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('respiracion','b',this)">Respirar rápido y superficial para oxigenar</button>
+              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('respiracion','a',this)">4s inhalar → 4s sostener → 4s exhalar (4·4·4)</button>
+              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('respiracion','b',this)">Aguantar la respiración hasta el apex</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
         </div>
       </article>
-      <div class="quiz-card" id="quiz-trazada" style="margin-top:10px">
-        <button class="btn btn-ghost" onclick="toggleQuiz('trazada')" style="font-family:JetBrains Mono;font-size:12px">Verificar conocimiento</button>
-        <div class="quiz-content" style="display:none;margin-top:10px">
-          <p>En una chicana (dos curvas seguidas), ¿qué trazada usás en la primera?</p>
-          <div style="display:grid;gap:5px;margin-top:5px">
-            <button onclick="checkQuiz('trazada','b')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">A) Exterior→Apex→Exterior para máxima velocidad en esa curva</button>
-            <button onclick="checkQuiz('trazada','a')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">B) Interior directa, sacrificás esa curva para ganar la segunda</button>
-            <button onclick="checkQuiz('trazada','b')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">C) La misma trazada en ambas curvas</button>
-          </div>
-        </div>
-      </div>
 
-      <!-- TARJETA 3 · FRENO MOTOR -->
-      <article class="concept-card glass reveal" style="margin-top:32px">
+      <!-- ── TARJETA 5 · TRAZADA ─────────────────────────────────── -->
+      <article class="concept-card glass reveal" data-num="05">
         <div class="concept-canvas-wrap">
-          <svg viewBox="0 0 820 270" xmlns="http://www.w3.org/2000/svg" aria-label="Diagrama de freno motor y freno regresivo en curva" style="width:100%;height:100%;display:block">
-            <rect width="820" height="270" fill="#0d0d14"/>
-            <!-- eje velocidad -->
-            <line x1="60" y1="220" x2="760" y2="220" stroke="#ffffff20" stroke-width="1"/>
-            <line x1="60" y1="40" x2="60" y2="220" stroke="#ffffff20" stroke-width="1"/>
-            <text x="390" y="245" text-anchor="middle" fill="#ffffff40" font-size="10" font-family="JetBrains Mono,monospace">→ tiempo / distancia recorrida</text>
-            <text x="50" y="136" text-anchor="middle" fill="#ffffff40" font-size="10" font-family="JetBrains Mono,monospace" transform="rotate(-90,50,136)">velocidad</text>
-            <!-- curva freno tradicional (rojo) - caída brusca -->
-            <path d="M 80 60 L 300 60 L 340 200 L 560 200 L 600 130 L 760 130" stroke="#ef4444" stroke-width="2.5" fill="none"/>
-            <text x="310" y="52" fill="#ef4444" font-size="10" font-family="JetBrains Mono,monospace">freno pedal puro</text>
-            <!-- curva freno motor (azul) - caída suave -->
-            <path d="M 80 60 L 260 60 Q 380 60 400 200 L 560 200 L 600 130 L 760 130" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
-            <text x="255" y="52" fill="#3b82f6" font-size="10" font-family="JetBrains Mono,monospace">freno motor</text>
-            <!-- curva freno regresivo (verde) - caída muy suave y controlada -->
-            <path d="M 80 60 L 240 60 Q 420 65 430 200 L 560 200 L 600 130 L 760 130" stroke="#4ade80" stroke-width="2" fill="none" stroke-dasharray="8,4"/>
-            <text x="430" y="195" fill="#4ade80" font-size="10" font-family="JetBrains Mono,monospace">freno regresivo</text>
-            <!-- zona de curva -->
-            <rect x="540" y="40" width="20" height="180" rx="0" fill="#00E5E020"/>
-            <text x="550" y="36" text-anchor="middle" fill="#00E5E080" font-size="10" font-family="JetBrains Mono,monospace">CURVA</text>
-            <!-- leyenda -->
-            <line x1="620" y1="50" x2="640" y2="50" stroke="#ef4444" stroke-width="2"/>
-            <text x="645" y="54" fill="#ef4444" font-size="10" font-family="JetBrains Mono,monospace">Freno pedal</text>
-            <line x1="620" y1="68" x2="640" y2="68" stroke="#3b82f6" stroke-width="2"/>
-            <text x="645" y="72" fill="#3b82f6" font-size="10" font-family="JetBrains Mono,monospace">Freno motor</text>
-            <line x1="620" y1="86" x2="640" y2="86" stroke="#4ade80" stroke-width="2" stroke-dasharray="6,3"/>
-            <text x="645" y="90" fill="#4ade80" font-size="10" font-family="JetBrains Mono,monospace">Freno regresivo</text>
-          </svg>
-          <span class="concept-tag">TARJETA 3 · FRENADA</span>
+          <canvas id="cvE" width="820" height="460" aria-label="Animación cenital de trazada exterior-apex-exterior vs interior directa"></canvas>
+          <span class="concept-tag">TARJETA 5 · TRAZADA</span>
         </div>
-        <div class="concept-body">
-          <h3>Freno motor y <em>freno regresivo</em></h3>
-          <p class="concept-text">
-            Son dos técnicas complementarias. El <b>freno motor</b> usa la resistencia del motor al levantar
-            el acelerador: carga el eje trasero, estabiliza el auto y reduce la velocidad antes de tocar el pedal.
-            El <b>freno regresivo</b> va un paso más allá: levantás el acelerador de forma progresiva al entrar en
-            curva para transferir carga al eje delantero y ayudar a girar — es el puente entre freno y trazada.
-          </p>
-          <ul class="concept-list">
-            <li><b>Freno motor:</b> levantás el acelerador → motor frena las ruedas traseras → estabilidad.</li>
-            <li><b>Freno regresivo:</b> levantás progresivo → carga migra al delantero → el auto gira.</li>
-            <li class="warn">Levantar de golpe en curva = sobreviraje. Siempre progresivo.</li>
-            <li>Combinados: freno motor para desacelerar, regresivo para girar sin pedal de freno.</li>
-          </ul>
-          <p class="concept-tip"><b>Regla:</b> el motor es tu primer freno, el pedal es el segundo.</p>
+        <div class="concept-lower">
+          <div class="concept-body">
+            <h3>Trazada de <em>interior y exterior</em></h3>
+            <p class="concept-text">
+              No existe una única trazada correcta: depende de lo que viene después.
+              La trazada <b>exterior→apex→exterior</b> maximiza el radio de giro y la velocidad de salida —
+              ideal en curvas aisladas. La trazada <b>interior directa</b> sacrifica velocidad en esa curva
+              para posicionarte mejor en la siguiente o bloquear al rival.
+            </p>
+            <ul class="concept-list">
+              <li><b>Curva sola:</b> exterior → apex tardío → exterior para máxima salida.</li>
+              <li><b>Curvas enlazadas (chicana):</b> sacrificá la primera, ganás la segunda.</li>
+              <li class="warn">Apex temprano = fuerza al exterior en la salida = trazada lenta.</li>
+              <li>En duelo: interior directa bloquea el espacio, pero cuidado con la salida lenta.</li>
+            </ul>
+            <p class="concept-tip"><b>Regla:</b> primero decidí qué viene después, después elegí la trazada.</p>
+          </div>
+          <div class="concept-quiz" id="quiz-trazada">
+            <p class="quiz-question">En una chicana (dos curvas seguidas), ¿qué trazada usás en la primera?</p>
+            <div class="quiz-options">
+              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('trazada','b',this)">Exterior→Apex→Exterior para máxima velocidad en esa curva</button>
+              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('trazada','a',this)">Interior directa, sacrificás esa curva para ganar la segunda</button>
+              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('trazada','b',this)">La misma trazada en ambas curvas</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
         </div>
       </article>
-      <div class="quiz-card" id="quiz-freno-motor" style="margin-top:10px">
-        <button class="btn btn-ghost" onclick="toggleQuiz('freno-motor')" style="font-family:JetBrains Mono;font-size:12px">Verificar conocimiento</button>
-        <div class="quiz-content" style="display:none;margin-top:10px">
-          <p>¿Qué diferencia al freno regresivo del freno motor básico?</p>
-          <div style="display:grid;gap:5px;margin-top:5px">
-            <button onclick="checkQuiz('freno-motor','b')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">A) El freno regresivo usa el pedal de freno más fuerte</button>
-            <button onclick="checkQuiz('freno-motor','a')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">B) El freno regresivo levanta el acelerador progresivo para transferir carga al delantero y girar</button>
-            <button onclick="checkQuiz('freno-motor','b')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">C) Son lo mismo, solo cambia el nombre</button>
-          </div>
-        </div>
-      </div>
 
-      <!-- TARJETA 4 · REBASE -->
-      <article class="concept-card glass reveal" style="margin-top:32px">
+      <!-- ── TARJETA 6 · FRENO MOTOR ─────────────────────────────── -->
+      <article class="concept-card glass reveal" data-num="06">
         <div class="concept-canvas-wrap">
-          <svg viewBox="0 0 820 270" xmlns="http://www.w3.org/2000/svg" aria-label="Diagrama de técnicas de rebase: rebufo y tijera" style="width:100%;height:100%;display:block">
-            <rect width="820" height="270" fill="#0d0d14"/>
-            <!-- recta -->
-            <rect x="0" y="90" width="820" height="90" fill="#1a1a2e" stroke="none"/>
-            <line x1="0" y1="135" x2="820" y2="135" stroke="#ffffff08" stroke-width="1" stroke-dasharray="20,15"/>
-            <!-- auto rival -->
-            <g transform="translate(200,115)">
-              <rect x="-30" y="-18" width="60" height="36" rx="8" fill="#ef4444" opacity="0.85"/>
-              <circle cx="-24" cy="18" r="7" fill="#1e293b" stroke="#f87171" stroke-width="2"/>
-              <circle cx="24" cy="18" r="7" fill="#1e293b" stroke="#f87171" stroke-width="2"/>
-              <text x="0" y="6" text-anchor="middle" fill="#fff" font-size="10" font-family="JetBrains Mono,monospace">RIVAL</text>
-            </g>
-            <!-- auto perseguidor rebufo -->
-            <g transform="translate(350,115)">
-              <rect x="-30" y="-18" width="60" height="36" rx="8" fill="#3b82f6" opacity="0.9"/>
-              <circle cx="-24" cy="18" r="7" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
-              <circle cx="24" cy="18" r="7" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
-              <text x="0" y="6" text-anchor="middle" fill="#fff" font-size="10" font-family="JetBrains Mono,monospace">TÚ</text>
-            </g>
-            <!-- estela de rebufo -->
-            <path d="M 230 115 L 320 115" stroke="#3b82f650" stroke-width="18" stroke-linecap="round"/>
-            <text x="270" y="108" text-anchor="middle" fill="#3b82f680" font-size="9" font-family="JetBrains Mono,monospace">REBUFO</text>
-            <!-- flecha tijera -->
-            <path d="M 380 100 Q 500 60 580 135" stroke="#4ade80" stroke-width="2" fill="none" stroke-dasharray="6,4" marker-end="url(#arr2)"/>
-            <text x="500" y="68" fill="#4ade80" font-size="10" font-family="JetBrains Mono,monospace">TIJERA</text>
-            <defs><marker id="arr2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#4ade80"/></marker></defs>
-            <!-- zona de frenada -->
-            <rect x="620" y="85" width="30" height="100" rx="4" fill="#ef444420" stroke="#ef4444" stroke-width="1" stroke-dasharray="4,3"/>
-            <text x="635" y="80" text-anchor="middle" fill="#ef444490" font-size="9" font-family="JetBrains Mono,monospace">FRENO</text>
-            <!-- distancia recomendada -->
-            <line x1="200" y1="195" x2="350" y2="195" stroke="#ffffff30" stroke-width="1"/>
-            <text x="275" y="210" text-anchor="middle" fill="#ffffff50" font-size="9" font-family="JetBrains Mono,monospace">0.5 – 1 segundo</text>
-            <!-- leyenda -->
-            <rect x="10" y="210" width="10" height="10" rx="2" fill="#3b82f6"/>
-            <text x="25" y="220" fill="#3b82f6" font-size="10" font-family="JetBrains Mono,monospace">Rebufo (slipstream)</text>
-            <rect x="200" y="210" width="10" height="10" rx="2" fill="#4ade80"/>
-            <text x="215" y="220" fill="#4ade80" font-size="10" font-family="JetBrains Mono,monospace">Tijera (cambio de línea)</text>
-          </svg>
-          <span class="concept-tag">TARJETA 4 · REBASE Y DUELO</span>
+          <canvas id="cvF" width="820" height="460" aria-label="Animación de curvas de velocidad: freno pedal vs freno motor vs freno regresivo"></canvas>
+          <span class="concept-tag">TARJETA 6 · FRENADA</span>
         </div>
-        <div class="concept-body">
-          <h3>Rebase: <em>rebufo y tijera</em></h3>
-          <p class="concept-text">
-            Adelantar no es solo ser más rápido: es elegir el momento y la herramienta correcta.
-            El <b>rebufo (slipstream)</b> te permite acercarte a 0.5–1 segundo del rival, reducir tu resistencia
-            aerodinámica y descontar en recta. La <b>tijera</b> es cambiar de línea para bloquear el punto de
-            frenada del rival y forzar un error. Ambas se combinan con la <b>regla del 50%</b>:
-            solo exigís espacio si tu trompa está al 50% antes de que él gire.
-          </p>
-          <ul class="concept-list">
-            <li><b>Rebufo:</b> el mejor momento es la recta larga, a 0.5–1s del rival.</li>
-            <li><b>Tijera:</b> cambiás de línea en recta para que el rival no sepa dónde frenás.</li>
-            <li class="warn">Tijera doble (dos movimientos) = penalización. Solo una vez.</li>
-            <li>Sin el 50% de trompa antes del giro → no hay espacio, no hay intento.</li>
-          </ul>
-          <p class="concept-tip"><b>Paciencia:</b> un adelantamiento se prepara 2–3 curvas antes, no en el último metro.</p>
+        <div class="concept-lower">
+          <div class="concept-body">
+            <h3>Freno motor y <em>freno regresivo</em></h3>
+            <p class="concept-text">
+              Son dos técnicas complementarias. El <b>freno motor</b> usa la resistencia del motor al levantar
+              el acelerador: carga el eje trasero, estabiliza el auto y reduce la velocidad antes de tocar el pedal.
+              El <b>freno regresivo</b> va un paso más allá: levantás el acelerador de forma progresiva al entrar en
+              curva para transferir carga al eje delantero y ayudar a girar.
+            </p>
+            <ul class="concept-list">
+              <li><b>Freno motor:</b> levantás el acelerador → motor frena las ruedas traseras → estabilidad.</li>
+              <li><b>Freno regresivo:</b> levantás progresivo → carga migra al delantero → el auto gira.</li>
+              <li class="warn">Levantar de golpe en curva = sobreviraje. Siempre progresivo.</li>
+              <li>Combinados: freno motor para desacelerar, regresivo para girar sin pedal.</li>
+            </ul>
+            <p class="concept-tip"><b>Regla:</b> el motor es tu primer freno, el pedal es el segundo.</p>
+          </div>
+          <div class="concept-quiz" id="quiz-freno-motor">
+            <p class="quiz-question">¿Qué diferencia al freno regresivo del freno motor básico?</p>
+            <div class="quiz-options">
+              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('freno-motor','b',this)">El freno regresivo usa el pedal de freno más fuerte</button>
+              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('freno-motor','a',this)">Levantás el acelerador progresivo para transferir carga al delantero y ayudar a girar</button>
+              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('freno-motor','b',this)">Son lo mismo, solo cambia el nombre</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
         </div>
       </article>
-      <div class="quiz-card" id="quiz-rebase" style="margin-top:10px">
-        <button class="btn btn-ghost" onclick="toggleQuiz('rebase')" style="font-family:JetBrains Mono;font-size:12px">Verificar conocimiento</button>
-        <div class="quiz-content" style="display:none;margin-top:10px">
-          <p>¿Cuántos movimientos de tijera podés hacer en una recta sin penalización?</p>
-          <div style="display:grid;gap:5px;margin-top:5px">
-            <button onclick="checkQuiz('rebase','b')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">A) Dos: uno para cada lado</button>
-            <button onclick="checkQuiz('rebase','a')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">B) Uno solo — la tijera doble es penalizable</button>
-            <button onclick="checkQuiz('rebase','b')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">C) Los que quieras mientras no toques al rival</button>
-          </div>
-        </div>
-      </div>
 
-      <!-- TARJETA 5 · SETUP -->
-      <article class="concept-card glass reveal" style="margin-top:32px">
+      <!-- ── TARJETA 7 · REBASE ──────────────────────────────────── -->
+      <article class="concept-card glass reveal" data-num="07">
         <div class="concept-canvas-wrap">
-          <svg viewBox="0 0 820 280" xmlns="http://www.w3.org/2000/svg" aria-label="Diagrama de setup: vista cenital del coche con zonas de ajuste" style="width:100%;height:100%;display:block">
-            <rect width="820" height="280" fill="#0d0d14"/>
-            <!-- coche cenital -->
-            <g transform="translate(180,140)">
-              <rect x="-35" y="-90" width="70" height="180" rx="12" fill="#1e293b" stroke="#334155" stroke-width="2"/>
-              <!-- alerón delantero -->
-              <rect x="-55" y="-95" width="110" height="16" rx="4" fill="#3b82f650" stroke="#3b82f6" stroke-width="1.5"/>
-              <text x="0" y="-82" text-anchor="middle" fill="#3b82f6" font-size="9" font-family="JetBrains Mono,monospace">ALERÓN DEL.</text>
-              <!-- alerón trasero -->
-              <rect x="-55" y="80" width="110" height="16" rx="4" fill="#ef444450" stroke="#ef4444" stroke-width="1.5"/>
-              <text x="0" y="106" text-anchor="middle" fill="#ef4444" font-size="9" font-family="JetBrains Mono,monospace">ALERÓN TRAS.</text>
-              <!-- ruedas -->
-              <rect x="-58" y="-70" width="18" height="34" rx="4" fill="#334155" stroke="#64748b" stroke-width="1.5"/>
-              <rect x="40" y="-70" width="18" height="34" rx="4" fill="#334155" stroke="#64748b" stroke-width="1.5"/>
-              <rect x="-58" y="36" width="18" height="34" rx="4" fill="#334155" stroke="#64748b" stroke-width="1.5"/>
-              <rect x="40" y="36" width="18" height="34" rx="4" fill="#334155" stroke="#64748b" stroke-width="1.5"/>
-              <!-- cockpit -->
-              <ellipse cx="0" cy="-15" rx="20" ry="28" fill="#0f172a" stroke="#475569" stroke-width="1"/>
-              <text x="0" y="-10" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="JetBrains Mono,monospace">PILOTO</text>
-            </g>
-            <!-- flechas y etiquetas setup -->
-            <line x1="245" y1="58" x2="310" y2="90" stroke="#3b82f660" stroke-width="1" stroke-dasharray="4,3"/>
-            <text x="315" y="88" fill="#3b82f6" font-size="10" font-family="JetBrains Mono,monospace">+ carga → más grip delantero</text>
-            <text x="315" y="102" fill="#ffffff40" font-size="9" font-family="JetBrains Mono,monospace">− carga → más velocidad punta</text>
-            <line x1="245" y1="222" x2="310" y2="200" stroke="#ef444460" stroke-width="1" stroke-dasharray="4,3"/>
-            <text x="315" y="198" fill="#ef4444" font-size="10" font-family="JetBrains Mono,monospace">+ carga → más estabilidad</text>
-            <text x="315" y="212" fill="#ffffff40" font-size="9" font-family="JetBrains Mono,monospace">− carga → oversteer en recta</text>
-            <!-- amortiguadores -->
-            <line x1="122" y1="90" x2="60" y2="100" stroke="#4ade8060" stroke-width="1" stroke-dasharray="4,3"/>
-            <text x="0" y="98" fill="#4ade80" font-size="10" font-family="JetBrains Mono,monospace">Compresión</text>
-            <text x="0" y="112" fill="#ffffff40" font-size="9" font-family="JetBrains Mono,monospace">+ → más rigidez entrada curva</text>
-            <line x1="122" y1="190" x2="60" y2="185" stroke="#00E5E060" stroke-width="1" stroke-dasharray="4,3"/>
-            <text x="0" y="182" fill="#00E5E0" font-size="10" font-family="JetBrains Mono,monospace">Rebote</text>
-            <text x="315" y="230" fill="#ffffff40" font-size="9" font-family="JetBrains Mono,monospace">Presiones: + PSI → + rigidez / − grip</text>
-            <text x="0" y="196" fill="#ffffff40" font-size="9" font-family="JetBrains Mono,monospace">+ → más rigidez salida curva</text>
-            <!-- regla metodológica -->
-            <rect x="300" y="242" width="500" height="28" rx="6" fill="#4ade8010" stroke="#4ade8030" stroke-width="1"/>
-            <text x="550" y="260" text-anchor="middle" fill="#4ade80" font-size="10" font-family="JetBrains Mono,monospace">⚠ Cambiá UN solo ajuste por sesión y anotá la sensación en el Diario</text>
-          </svg>
-          <span class="concept-tag">TARJETA 5 · SETUP</span>
+          <canvas id="cvG" width="820" height="460" aria-label="Animación de técnicas de rebase: rebufo y maniobra de tijera en recta"></canvas>
+          <span class="concept-tag">TARJETA 7 · REBASE Y DUELO</span>
         </div>
-        <div class="concept-body">
-          <h3>Setup: <em>lógica de ajustes</em></h3>
-          <p class="concept-text">
-            El setup traduce tus sensaciones en pista a cambios concretos en el auto.
-            La clave no es saber todos los ajustes — es entender la lógica de causa y efecto
-            y cambiar <b>un solo parámetro por sesión</b> para aislar el resultado.
-          </p>
-          <div style="overflow-x:auto;margin:10px 0">
-            <table style="width:100%;border-collapse:collapse;font-size:12px;font-family:JetBrains Mono,monospace">
-              <thead>
-                <tr style="border-bottom:1px solid #334155">
-                  <th style="text-align:left;padding:6px 8px;color:#94a3b8">Problema</th>
-                  <th style="text-align:left;padding:6px 8px;color:#94a3b8">Causa posible</th>
-                  <th style="text-align:left;padding:6px 8px;color:#94a3b8">Ajuste</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr style="border-bottom:1px solid #1e293b">
-                  <td style="padding:6px 8px;color:#f87171">Subviraje entrada</td>
-                  <td style="padding:6px 8px;color:#94a3b8">Poco grip delantero</td>
-                  <td style="padding:6px 8px;color:#4ade80">+ alerón del. / + compresión del.</td>
-                </tr>
-                <tr style="border-bottom:1px solid #1e293b">
-                  <td style="padding:6px 8px;color:#f87171">Sobreviraje salida</td>
-                  <td style="padding:6px 8px;color:#94a3b8">Poco grip trasero</td>
-                  <td style="padding:6px 8px;color:#4ade80">+ alerón tras. / + presión tras.</td>
-                </tr>
-                <tr style="border-bottom:1px solid #1e293b">
-                  <td style="padding:6px 8px;color:#f87171">Coche nervioso rectas</td>
-                  <td style="padding:6px 8px;color:#94a3b8">Poco balance trasero</td>
-                  <td style="padding:6px 8px;color:#4ade80">+ alerón tras. / + rebote tras.</td>
-                </tr>
-                <tr style="border-bottom:1px solid #1e293b">
-                  <td style="padding:6px 8px;color:#f87171">Lento en velocidad punta</td>
-                  <td style="padding:6px 8px;color:#94a3b8">Exceso de carga</td>
-                  <td style="padding:6px 8px;color:#4ade80">− alerón del. y tras.</td>
-                </tr>
-                <tr>
-                  <td style="padding:6px 8px;color:#f87171">Bloqueo de frenos</td>
-                  <td style="padding:6px 8px;color:#94a3b8">Bias adelante / presión alta</td>
-                  <td style="padding:6px 8px;color:#4ade80">Mover bias atrás / − presión del.</td>
-                </tr>
-              </tbody>
-            </table>
+        <div class="concept-lower">
+          <div class="concept-body">
+            <h3>Rebase: <em>rebufo y tijera</em></h3>
+            <p class="concept-text">
+              Adelantar no es solo ser más rápido: es elegir el momento y la herramienta correcta.
+              El <b>rebufo (slipstream)</b> te permite acercarte a 0.5–1 segundo del rival, reducir tu resistencia
+              aerodinámica y descontar en recta. La <b>tijera</b> es cambiar de línea para bloquear el punto de
+              frenada del rival y forzar un error. Ambas se combinan con la <b>regla del 50%</b>.
+            </p>
+            <ul class="concept-list">
+              <li><b>Rebufo:</b> el mejor momento es la recta larga, a 0.5–1s del rival.</li>
+              <li><b>Tijera:</b> cambiás de línea en recta para que el rival no sepa dónde frenás.</li>
+              <li class="warn">Tijera doble (dos movimientos) = penalización. Solo una vez.</li>
+              <li>Sin el 50% de trompa antes del giro → no hay espacio, no hay intento.</li>
+            </ul>
+            <p class="concept-tip"><b>Paciencia:</b> un adelantamiento se prepara 2–3 curvas antes, no en el último metro.</p>
           </div>
-          <p class="concept-tip"><b>Metodología:</b> un ajuste → una sesión → anotar sensación en el Diario → repetir.</p>
+          <div class="concept-quiz" id="quiz-rebase">
+            <p class="quiz-question">¿Cuántos movimientos de tijera podés hacer en una recta sin penalización?</p>
+            <div class="quiz-options">
+              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('rebase','b',this)">Dos: uno para cada lado</button>
+              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('rebase','a',this)">Uno solo — la tijera doble es penalizable</button>
+              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('rebase','b',this)">Los que quieras mientras no toqués al rival</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
         </div>
       </article>
-      <div class="quiz-card" id="quiz-setup" style="margin-top:10px">
-        <button class="btn btn-ghost" onclick="toggleQuiz('setup')" style="font-family:JetBrains Mono;font-size:12px">Verificar conocimiento</button>
-        <div class="quiz-content" style="display:none;margin-top:10px">
-          <p>Si el coche tiene sobreviraje en la salida de curva, ¿qué ajustás primero?</p>
-          <div style="display:grid;gap:5px;margin-top:5px">
-            <button onclick="checkQuiz('setup','b')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">A) Reducir el alerón delantero</button>
-            <button onclick="checkQuiz('setup','a')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">B) Aumentar el alerón trasero o la presión trasera</button>
-            <button onclick="checkQuiz('setup','b')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">C) Cambiar varios ajustes a la vez para solucionar rápido</button>
-          </div>
-        </div>
-      </div>
 
-      <!-- TARJETA 6 · MOTORES -->
-      <article class="concept-card glass reveal" style="margin-top:32px">
+      <!-- ── TARJETA 8 · SETUP ───────────────────────────────────── -->
+      <article class="concept-card glass reveal" data-num="08">
         <div class="concept-canvas-wrap">
-          <svg viewBox="0 0 820 270" xmlns="http://www.w3.org/2000/svg" aria-label="Gráfico comparativo de curvas de torque: aspirado vs turbo vs supercargado" style="width:100%;height:100%;display:block">
-            <rect width="820" height="270" fill="#0d0d14"/>
-            <!-- ejes -->
-            <line x1="80" y1="220" x2="740" y2="220" stroke="#ffffff20" stroke-width="1"/>
-            <line x1="80" y1="40" x2="80" y2="220" stroke="#ffffff20" stroke-width="1"/>
-            <text x="410" y="248" text-anchor="middle" fill="#ffffff40" font-size="10" font-family="JetBrains Mono,monospace">→ RPM / aceleración</text>
-            <text x="68" y="136" text-anchor="middle" fill="#ffffff40" font-size="10" font-family="JetBrains Mono,monospace" transform="rotate(-90,68,136)">potencia</text>
-            <!-- aspirado: lineal suave -->
-            <path d="M 100 200 Q 300 190 420 80 L 700 80" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
-            <text x="710" y="84" fill="#3b82f6" font-size="10" font-family="JetBrains Mono,monospace">Aspirado</text>
-            <!-- turbo: lag + pico brusco -->
-            <path d="M 100 210 L 280 205 Q 360 200 380 70 L 700 65" stroke="#ef4444" stroke-width="2.5" fill="none"/>
-            <rect x="100" y="195" width="185" height="6" rx="3" fill="#ef444430"/>
-            <text x="185" y="215" text-anchor="middle" fill="#ef444490" font-size="9" font-family="JetBrains Mono,monospace">turbo-lag</text>
-            <text x="710" y="68" fill="#ef4444" font-size="10" font-family="JetBrains Mono,monospace">Turbo</text>
-            <!-- supercargado: inmediato como aspirado pero mayor potencia -->
-            <path d="M 100 185 Q 200 130 350 75 L 700 72" stroke="#4ade80" stroke-width="2.5" fill="none" stroke-dasharray="8,4"/>
-            <text x="710" y="75" fill="#4ade80" font-size="10" font-family="JetBrains Mono,monospace">Superc.</text>
-            <!-- zona de curva aplicación -->
-            <rect x="95" y="36" width="200" height="190" rx="0" fill="#00E5E005" stroke="#00E5E020" stroke-width="1" stroke-dasharray="4,4"/>
-            <text x="195" y="32" text-anchor="middle" fill="#00E5E050" font-size="9" font-family="JetBrains Mono,monospace">zona de salida de curva</text>
-            <!-- leyenda -->
-            <line x1="80" y1="250" x2="100" y2="250" stroke="#3b82f6" stroke-width="2"/>
-            <text x="106" y="254" fill="#3b82f6" font-size="9" font-family="JetBrains Mono,monospace">Aspirado: lineal, sin lag, pisá a fondo antes</text>
-            <line x1="340" y1="250" x2="360" y2="250" stroke="#ef4444" stroke-width="2"/>
-            <text x="366" y="254" fill="#ef4444" font-size="9" font-family="JetBrains Mono,monospace">Turbo: esperá el boost, luego pisá</text>
-            <line x1="560" y1="250" x2="580" y2="250" stroke="#4ade80" stroke-width="2" stroke-dasharray="5,3"/>
-            <text x="586" y="254" fill="#4ade80" font-size="9" font-family="JetBrains Mono,monospace">Superc.: inmediato, cuidar tracción</text>
-          </svg>
-          <span class="concept-tag">TARJETA 6 · MECÁNICA</span>
+          <canvas id="cvH" width="820" height="460" aria-label="Animación de vista cenital del coche con zonas de ajuste de setup destacadas"></canvas>
+          <span class="concept-tag">TARJETA 8 · SETUP</span>
         </div>
-        <div class="concept-body">
-          <h3>Motores: <em>Turbo vs Aspirado vs Supercargado</em></h3>
-          <p class="concept-text">
-            El tipo de motor cambia radicalmente <b>dónde y cómo pisás a fondo</b> al salir de una curva.
-            No es solo potencia — es el comportamiento de esa potencia en el tiempo.
-          </p>
-          <ul class="concept-list">
-            <li><b>Aspirado:</b> respuesta lineal, sin lag. Podés pisar a fondo más temprano en la salida. Ejemplos: Fórmula Ford, TC2000.</li>
-            <li><b>Turbo:</b> existe un turbo-lag inicial. Hay que planificar la salida de curva para tener boost disponible en recta. Levantar demasiado el pie lo "apaga". Ejemplos: Formula RSS 3 2026 V6, LMP2.</li>
-            <li class="warn">Turbo-lag: si pisás tarde, el boost llega en mal momento → sobreviraje brusco.</li>
-            <li><b>Supercargado/Procharger:</b> potencia casi inmediata como aspirado pero mayor. Gestionar la tracción en la salida es clave para no girar ruedas.</li>
-          </ul>
-          <p class="concept-tip"><b>Regla:</b> con turbo, anticipá la aceleración. Con superc., controlá la tracción en salida.</p>
+        <div class="concept-lower">
+          <div class="concept-body">
+            <h3>Setup: <em>lógica de ajustes</em></h3>
+            <p class="concept-text">
+              El setup traduce tus sensaciones en pista a cambios concretos en el auto.
+              La clave no es saber todos los ajustes — es entender la lógica de causa y efecto
+              y cambiar <b>un solo parámetro por sesión</b> para aislar el resultado.
+            </p>
+            <ul class="concept-list">
+              <li><b>Subviraje entrada:</b> + alerón del. / + compresión del.</li>
+              <li><b>Sobreviraje salida:</b> + alerón tras. / + presión tras.</li>
+              <li class="warn">Coche nervioso en recta: + alerón tras. / + rebote tras.</li>
+              <li><b>Lento en punta:</b> − alerón del. y tras.</li>
+              <li class="danger">Bloqueo de frenos: mover bias atrás / − presión del.</li>
+            </ul>
+            <p class="concept-tip"><b>Metodología:</b> un ajuste → una sesión → anotar sensación en el Diario → repetir.</p>
+          </div>
+          <div class="concept-quiz" id="quiz-setup">
+            <p class="quiz-question">Si el coche tiene sobreviraje en la salida de curva, ¿qué ajustás primero?</p>
+            <div class="quiz-options">
+              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('setup','b',this)">Reducir el alerón delantero</button>
+              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('setup','a',this)">Aumentar el alerón trasero o la presión trasera</button>
+              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('setup','b',this)">Cambiar varios ajustes a la vez para solucionar rápido</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
         </div>
       </article>
-      <div class="quiz-card" id="quiz-motores" style="margin-top:10px">
-        <button class="btn btn-ghost" onclick="toggleQuiz('motores')" style="font-family:JetBrains Mono;font-size:12px">Verificar conocimiento</button>
-        <div class="quiz-content" style="display:none;margin-top:10px">
-          <p>¿Por qué con un motor turbo hay que anticipar la aceleración al salir de curva?</p>
-          <div style="display:grid;gap:5px;margin-top:5px">
-            <button onclick="checkQuiz('motores','b')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">A) Porque tiene más caballos que un aspirado</button>
-            <button onclick="checkQuiz('motores','a')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">B) Para tener el boost disponible cuando llegás a la recta y evitar el turbo-lag</button>
-            <button onclick="checkQuiz('motores','b')" style="text-align:left;background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;cursor:pointer">C) Para no perder tracción en la curva</button>
+
+      <!-- ── TARJETA 9 · MOTORES ─────────────────────────────────── -->
+      <article class="concept-card glass reveal" data-num="09">
+        <div class="concept-canvas-wrap">
+          <canvas id="cvI" width="820" height="460" aria-label="Animación comparativa de curvas de potencia: aspirado vs turbo vs supercargado"></canvas>
+          <span class="concept-tag">TARJETA 9 · MECÁNICA</span>
+        </div>
+        <div class="concept-lower">
+          <div class="concept-body">
+            <h3>Motores: <em>Turbo vs Aspirado vs Superc.</em></h3>
+            <p class="concept-text">
+              El tipo de motor cambia radicalmente <b>dónde y cómo pisás a fondo</b> al salir de una curva.
+              No es solo potencia — es el comportamiento de esa potencia en el tiempo.
+            </p>
+            <ul class="concept-list">
+              <li><b>Aspirado:</b> respuesta lineal, sin lag. Pisás a fondo más temprano. Ej.: Formula Ford, TC2000.</li>
+              <li><b>Turbo:</b> turbo-lag inicial. Planificá la salida para tener boost en recta. Ej.: LMP2, Formula RSS 3.</li>
+              <li class="warn">Turbo-lag: si pisás tarde, el boost llega en mal momento → sobreviraje brusco.</li>
+              <li><b>Supercargado:</b> potencia casi inmediata pero mayor. Gestioná tracción en salida.</li>
+            </ul>
+            <p class="concept-tip"><b>Regla:</b> con turbo, anticipá la aceleración. Con superc., controlá la tracción en salida.</p>
+          </div>
+          <div class="concept-quiz" id="quiz-motores">
+            <p class="quiz-question">¿Por qué con un motor turbo hay que anticipar la aceleración al salir de curva?</p>
+            <div class="quiz-options">
+              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('motores','b',this)">Porque tiene más caballos que un aspirado</button>
+              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('motores','a',this)">Para tener el boost disponible en recta y evitar el turbo-lag</button>
+              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('motores','b',this)">Para no perder tracción en la curva</button>
+            </div>
+            <div class="quiz-feedback"></div>
           </div>
         </div>
-      </div>
+      </article>
 
     </div><!-- /concepts-grid -->
   </div><!-- /container -->
@@ -4077,9 +4074,15 @@ function initSlideshowAnnotations() {
    PRO EDITION - QUIZZES (Fase 4)
    ══════════════════════════════════════════════════════════════ */
 const QUIZ_ANSWERS = {
-    'concepto-a': { correct: 'b', explanation: "Mulsanne es la recta donde el aire sucio y el rebufo son más críticos." },
-    'concepto-b': { correct: 'b', explanation: "El aire sucio reduce la carga de la trompa, haciendo el volante ligero." },
-    'concepto-c': { correct: 'a', explanation: "La regla del 50% garantiza que el espacio es legal y el duelo limpio." }
+    'concepto-a': { correct: 'b', explanation: "Con el rebufo llegás más rápido al freno porque la resistencia aerodinámica baja — por eso hay que anticipar." },
+    'concepto-b': { correct: 'a', explanation: "El aire sucio reduce la carga aerodinámica delantera: volante ligero, subviraje." },
+    'concepto-c': { correct: 'a', explanation: "La regla del 50% garantiza que el espacio es legal y el duelo limpio." },
+    'respiracion': { correct: 'a', explanation: "El protocolo 4·4·4 activa el sistema parasimpático y baja el pulso antes del punto de frenada." },
+    'trazada':     { correct: 'a', explanation: "Interior directa en la primera curva te posiciona para máxima velocidad de salida en la segunda." },
+    'freno-motor': { correct: 'a', explanation: "El freno regresivo usa el levantamiento progresivo del acelerador para transferir carga al eje delantero." },
+    'rebase':      { correct: 'a', explanation: "Una sola tijera es legal. La tijera doble (dos movimientos) es penalizable en todas las categorías." },
+    'setup':       { correct: 'a', explanation: "Sobreviraje en salida = poco grip trasero. Más alerón trasero o más presión de neumáticos traseros." },
+    'motores':     { correct: 'a', explanation: "El turbo-lag significa que el boost no llega inmediato — anticipar la aceleración asegura tener potencia disponible al entrar en recta." },
 };
 
 /* ══════════════════════════════════════════════════════════════
@@ -4239,7 +4242,97 @@ function checkQuiz(id, answer) {
     }
 }
 
-/* ── PWA SERVICE WORKER (Fase 8) ──────────────────────────────── */
+/* ── QUIZ NUEVO — integrado en tarjeta, sin toggle ─────────────── */
+function checkQuizNew(id, answer, btn) {
+    const quiz = QUIZ_ANSWERS[id];
+    const container = btn.closest('.concept-quiz');
+    const feedback = container.querySelector('.quiz-feedback');
+    const opts = container.querySelectorAll('.quiz-opt');
+    const pilot = getPilotoActual();
+
+    // Deshabilitar todos los botones
+    opts.forEach(o => o.classList.add('disabled'));
+
+    if (answer === quiz.correct) {
+        btn.classList.remove('disabled');
+        btn.classList.add('correct');
+        feedback.textContent = '✓ Correcto. ' + quiz.explanation;
+        feedback.className = 'quiz-feedback show ok';
+        if (pilot) {
+            let perfil = getPerfil(pilot) || {};
+            perfil.progreso_quizzes = perfil.progreso_quizzes || {};
+            perfil.progreso_quizzes[id] = true;
+            setPerfil(pilot, perfil);
+        }
+        container.classList.add('approved');
+        toast('Quiz aprobado', 'ok');
+    } else {
+        btn.classList.remove('disabled');
+        btn.classList.add('wrong');
+        feedback.innerHTML = '✗ Incorrecto. ' + quiz.explanation +
+            ' <button class="quiz-retry" onclick="resetQuizNew(\'' + id + '\')">Intentar de nuevo</button>';
+        feedback.className = 'quiz-feedback show err';
+        // Resaltar la correcta
+        opts.forEach(o => {
+            const call = o.getAttribute('onclick') || '';
+            const m = call.match(/'[^']+','([^']+)'/);
+            if (m && m[1] === quiz.correct) o.classList.add('correct');
+        });
+        toast('Respuesta incorrecta', 'err');
+    }
+}
+
+function resetQuizNew(id) {
+    const container = document.querySelector('#quiz-' + id + '.concept-quiz') ||
+                      document.querySelector('[id="quiz-' + id + '"].concept-quiz');
+    if (!container) return;
+    const opts = container.querySelectorAll('.quiz-opt');
+    const feedback = container.querySelector('.quiz-feedback');
+    opts.forEach(o => o.classList.remove('disabled','correct','wrong'));
+    feedback.className = 'quiz-feedback';
+    feedback.textContent = '';
+    container.classList.remove('approved');
+}
+
+/* Actualiza initQuizProgress para el nuevo formato */
+function markApprovedQuizNew() {
+    const pilot = getPilotoActual();
+    if (!pilot) return;
+    const perfil = getPerfil(pilot);
+    const aprobados = (perfil && perfil.progreso_quizzes) || {};
+    Object.keys(aprobados).forEach(id => {
+        if (!aprobados[id]) return;
+        const container = document.querySelector('#quiz-' + id + '.concept-quiz');
+        if (!container) return;
+        const quiz = QUIZ_ANSWERS[id];
+        if (!quiz) return;
+        const opts = container.querySelectorAll('.quiz-opt');
+        opts.forEach(o => {
+            const call = o.getAttribute('onclick') || '';
+            const m = call.match(/'[^']+','([^']+)'/);
+            if (m && m[1] === quiz.correct) {
+                o.classList.add('correct');
+            } else {
+                o.classList.add('disabled');
+            }
+        });
+        const feedback = container.querySelector('.quiz-feedback');
+        feedback.textContent = '✓ Ya aprobaste este concepto. ' + (quiz.explanation || '');
+        feedback.className = 'quiz-feedback show ok';
+        container.classList.add('approved');
+    });
+}
+
+/* Inicialización al cargar */
+window.addEventListener('DOMContentLoaded', () => {
+  safe(initQuizProgress);
+  safe(markApprovedQuizNew);
+  safe(() => {
+    const pilot = getPilotoActual();
+    if (pilot) initFormDiario();
+  });
+});
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/RegistroKevin/sw.js')
