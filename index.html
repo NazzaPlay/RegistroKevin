@@ -1100,16 +1100,6 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
             </button>
           </div>
         </div>
-        <details class="glass webhook-help">
-          <summary>Google Sheets — estado de la conexión</summary>
-          <ol>
-            <li><b>Conectado:</b> cada «Guardar sesión» envía los datos por POST a tu Web App de Apps Script (<code>/exec</code>), además del respaldo en <b>localStorage</b>.</li>
-            <li>Para verificar: abrí tu hoja → debería aparecer una fila nueva con fecha, coche, circuito, vueltas y las escalas de ansiedad.</li>
-            <li>Si una fila no aparece: revisá que el despliegue siga activo (<code>Implementar → Gestionar implementaciones</code>) y que tu <code>doPost(e)</code> guarde <code>e.parameter</code> con <code>appendRow</code>.</li>
-            <li>Para apuntar a otra hoja: reemplazá la URL en la constante <code>GOOGLE_SHEETS_WEBHOOK_URL</code> (bloque §0 del script, abajo del todo).</li>
-          </ol>
-          <p class="help-note">El envío usa <code>mode: no-cors</code>: el navegador no puede leer la respuesta de Google, por eso se confirma mirando la fila nueva en la hoja. «Exportar CSV» sigue disponible como respaldo.</p>
-        </details>
       </aside>
 
     </div>
