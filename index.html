@@ -2868,105 +2868,152 @@ function drawHero(dt) {
   }
 }
 
-/* ── DEMO A · REBUFO EN RECTA (rediseño v3) ─────────────────────────
-   Vista cenital de una recta limpia. Rival adelante, tú detrás.
-   Cono de rebufo entre ambos + contadores de metros al freno.     */
+/* ── DEMO A · REBUFO + CURVA (rediseño v4) ─────────────────────────
+   Vista cenital: recta larga → curva a la derecha.
+   Rival por el interior (frena tarde), tú por el exterior
+   (frenada anticipada). Velocímetros individuales sobre cada auto. */
+function aPos(s, lane) {
+  // 1 px = 1 m. Recta: x 0→540 a y=220. Curva: centro (540,0), R=240,
+  // barrido de θ=90° a 0° (entra por arriba, sale por la derecha).
+  const CX = 540, CY = 0, R = 240;
+  const offset = lane === 'in' ? -38 : 38; // in=interior, out=exterior
+  if (s <= 540) {
+    // En recta: líneas de carrera separadas para que los autos
+    // nunca se solapen (rival arriba, tú abajo)
+    return lane === 'in' ? [s, 195, 0] : [s, 245, 0];
+  }
+  const theta = Math.PI / 2 - (s - 540) / R;
+  const px = CX + (R + offset) * Math.cos(theta);
+  const py = CY + (R + offset) * Math.sin(theta);
+  return [px, py, Math.PI / 2 - theta];
+}
 function demoA(ctx, u, S, dt) {
   S.t += dt;
   const t = S.t;
-  const CYCLE = 14;
-  const p = (t % CYCLE) / CYCLE;
+  const p = (t % 12) / 12; // ciclo 12s
 
-  // Geometría
-  const ROAD_Y = 230, ROAD_W = 100;
-  const BRAKE_ZONE = 560, FENCE = 780;
-
-  // Pista: recta simple, bordes limpios
+  // ── Pista: recta + curva (dibujada a mano, sin drawRoad) ──
   ctx.save();
+  // Asfalto: recta
   ctx.fillStyle = '#0a0d16';
-  ctx.fillRect(0, ROAD_Y - ROAD_W/2, 820, ROAD_W);
-  ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 2;
-  ctx.setLineDash([24, 18]); ctx.lineDashOffset = -t * 140;
-  ctx.beginPath(); ctx.moveTo(0, ROAD_Y); ctx.lineTo(820, ROAD_Y); ctx.stroke();
+  ctx.fillRect(0, 170, 540, 100);
+  // Asfalto: curva (región entre radio 196 y 284 centrada en (540,0))
+  ctx.beginPath();
+  ctx.arc(540, 0, 284, 0, Math.PI / 2, false);
+  ctx.arc(540, 0, 196, Math.PI / 2, 0, true);
+  ctx.closePath();
+  ctx.fill();
+  // Bordes exteriores/interiores
+  ctx.strokeStyle = 'rgba(255,255,255,.2)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, 170); ctx.lineTo(540, 170); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, 270); ctx.lineTo(540, 270); ctx.stroke();
+  ctx.beginPath(); ctx.arc(540, 0, 284, 0, Math.PI / 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(540, 0, 196, 0, Math.PI / 2); ctx.stroke();
+  // Línea central (recta + radio 240)
+  ctx.setLineDash([22, 16]); ctx.lineDashOffset = -t * 160;
+  ctx.strokeStyle = 'rgba(255,255,255,.1)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, 220); ctx.lineTo(540, 220); ctx.stroke();
+  ctx.beginPath(); ctx.arc(540, 0, 240, 0, Math.PI / 2); ctx.stroke();
   ctx.setLineDash([]);
-  ctx.strokeStyle = 'rgba(255,255,255,.25)'; ctx.lineWidth = 3;
-  ctx.beginPath(); ctx.moveTo(0, ROAD_Y - ROAD_W/2); ctx.lineTo(820, ROAD_Y - ROAD_W/2); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(0, ROAD_Y + ROAD_W/2); ctx.lineTo(820, ROAD_Y + ROAD_W/2); ctx.stroke();
   ctx.restore();
 
-  // Zona de frenada
+  // Zona de frenada (banda roja en la recta, x 380–540)
   ctx.save();
   ctx.fillStyle = 'rgba(239,68,68,.08)';
-  ctx.fillRect(BRAKE_ZONE, ROAD_Y - ROAD_W/2, FENCE - BRAKE_ZONE, ROAD_W);
-  ctx.strokeStyle = DANGER; ctx.lineWidth = 2; ctx.setLineDash([8, 6]);
-  ctx.beginPath(); ctx.moveTo(BRAKE_ZONE, ROAD_Y - ROAD_W/2); ctx.lineTo(BRAKE_ZONE, ROAD_Y + ROAD_W/2); ctx.stroke();
+  ctx.fillRect(380, 170, 160, 100);
+  ctx.strokeStyle = DANGER; ctx.lineWidth = 1.5; ctx.setLineDash([8, 6]);
+  ctx.beginPath(); ctx.moveTo(380, 170); ctx.lineTo(380, 270); ctx.stroke();
   ctx.setLineDash([]);
-  ctx.font = '700 11px "JetBrains Mono", monospace';
+  ctx.font = '700 10px "JetBrains Mono", monospace';
   ctx.fillStyle = DANGER; ctx.textAlign = 'center';
-  ctx.fillText('ZONA DE FRENADA', (BRAKE_ZONE + FENCE) / 2, ROAD_Y - ROAD_W/2 - 10);
+  ctx.fillText('ZONA DE FRENADA', 460, 162);
+  // Marcas de frenada: verde = la tuya (anticipada), roja = la del rival
+  ctx.setLineDash([5, 5]); ctx.lineWidth = 2.5;
+  ctx.strokeStyle = ACC; ctx.beginPath(); ctx.moveTo(350, 170); ctx.lineTo(350, 270); ctx.stroke();
+  ctx.strokeStyle = DANGER; ctx.beginPath(); ctx.moveTo(410, 170); ctx.lineTo(410, 270); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font = '700 10px "JetBrains Mono", monospace'; ctx.textAlign = 'center';
+  ctx.fillStyle = ACC; ctx.fillText('TÚ', 350, 286); ctx.fillText('ANTES', 350, 299);
+  ctx.fillStyle = DANGER; ctx.fillText('RIVAL', 410, 286); ctx.fillText('TARDE', 410, 299);
   ctx.restore();
 
-  // Físicas
-  const rivalProg = p < 0.45 ? p * 0.55 : 0.45 + (p - 0.45) * (0.25 / 0.55);
-  const myProg = p < 0.5 ? p * 0.5 : 0.5 + (p - 0.5) * (0.25 / 0.5);
-  const rivalX = 30 + rivalProg * 740;
-  const myX = 30 + myProg * 740;
-  const rivalDist = Math.max(0, BRAKE_ZONE - rivalX);
-  const myDist = Math.max(0, BRAKE_ZONE - myX);
+  // ── Física por distancias reales (elimina el salto del v3) ──
+  if (!S.rS) { S.rS = 80; S.mS = 20; S.rV = 240; S.mV = 255; S.fade = 0; }
+  S.rS += S.rV * dt; S.mS += S.mV * dt;
+  // Tú frenas a los 350m (antes), el rival a los 410m (después)
+  if (S.mS >= 350) S.mV = Math.max(80, S.mV - 240 * dt);
+  if (S.rS >= 410) S.rV = Math.max(70, S.rV - 170 * dt);
+  // Aceleración de salida en la curva (tras el vértice, s>640)
+  if (S.mS > 640) S.mV = Math.min(215, S.mV + 150 * dt);
+  if (S.rS > 640) S.rV = Math.min(200, S.rV + 130 * dt);
+  // Reinicio suave: fade out 0.6s, luego fade in — sin corte
+  if (S.mS > 830 || S.rS > 830) {
+    S.fade += dt / 0.6;
+    if (S.fade >= 1.8) { S.rS = 80; S.mS = 20; S.rV = 240; S.mV = 255; S.fade = 0; }
+  } else {
+    S.fade = Math.max(0, S.fade - dt / 0.6);
+  }
+  const alpha = S.fade >= 1 ? 1 - (S.fade - 1) : (S.fade > 0 ? S.fade : 1);
 
-  // Cono de rebufo
-  if (myX - rivalX < 220 && rivalX > 100) {
+  // ── Cono de rebufo (estela cian entre el rival y vos) ──
+  const rP = aPos(S.rS, 'in'), mP = aPos(S.mS, 'out');
+  const gap = S.rS - S.mS;
+  if (gap > 0 && gap < 220) {
     ctx.save();
-    const grad = ctx.createLinearGradient(rivalX, 0, myX, 0);
-    grad.addColorStop(0, 'rgba(0,229,224,0)');
-    grad.addColorStop(1, 'rgba(0,229,224,.22)');
-    ctx.fillStyle = grad;
+    ctx.globalAlpha = alpha;
+    const g = ctx.createLinearGradient(rP[0], 0, mP[0], 0);
+    g.addColorStop(0, 'rgba(0,229,224,0)');
+    g.addColorStop(1, 'rgba(0,229,224,.2)');
+    ctx.fillStyle = g;
     ctx.beginPath();
-    ctx.moveTo(rivalX + 28, ROAD_Y - 10);
-    ctx.lineTo(myX - 28, ROAD_Y - 26);
-    ctx.lineTo(myX - 28, ROAD_Y + 26);
-    ctx.lineTo(rivalX + 28, ROAD_Y + 10);
+    ctx.moveTo(rP[0] + 28, rP[1] - 10);
+    ctx.lineTo(mP[0] - 28, mP[1] - 26);
+    ctx.lineTo(mP[0] - 28, mP[1] + 26);
+    ctx.lineTo(rP[0] + 28, rP[1] + 10);
     ctx.closePath();
     ctx.fill();
     ctx.restore();
   }
 
-  // Autos (centrados en la recta)
-  drawCar(ctx, rivalX, ROAD_Y, 0, 1.2, '#dfe5ee');
-  drawCar(ctx, myX, ROAD_Y, 0, 1.2, ACC);
-
-  // Etiquetas fijas
-  ctx.font = '700 11px "JetBrains Mono", monospace';
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#dfe5ee';
-  ctx.fillText('RIVAL', rivalX, ROAD_Y - 44);
-  ctx.fillStyle = ACC;
-  ctx.fillText('TÚ', myX, ROAD_Y + 54);
-
-  // Contadores de metros al freno (arriba de cada auto, centrados)
+  // ── Autos: líneas de carrera separadas (jamás se solapan) ──
   ctx.save();
-  const counter = (cx, dist, color, label) => {
-    const pct = Math.min(1, dist / 400);
-    ctx.font = '700 32px "JetBrains Mono", monospace';
-    ctx.fillStyle = color; ctx.textAlign = 'center';
-    ctx.fillText(Math.round(dist) + ' m', cx, 90);
-    ctx.font = '600 10px "JetBrains Mono", monospace';
-    ctx.fillStyle = 'rgba(154,166,182,.8)';
-    ctx.fillText(label, cx, 112);
-    ctx.fillStyle = 'rgba(255,255,255,.08)';
-    ctx.fillRect(cx - 60, 120, 120, 4);
-    ctx.fillStyle = color;
-    ctx.fillRect(cx - 60, 120, 120 * (1 - pct), 4);
-  };
-  counter(rivalX, rivalDist, '#dfe5ee', 'RIVAL AL FRENO');
-  counter(myX, myDist, ACC, 'TÚ AL FRENO');
+  ctx.globalAlpha = alpha;
+  drawCar(ctx, rP[0], rP[1], rP[2], 1.15, '#dfe5ee');
+  drawCar(ctx, mP[0], mP[1], mP[2], 1.15, ACC);
   ctx.restore();
 
-  // Etiqueta superior
-  const phase = myDist < 100 ? 'TÚ FRENAS ANTES' : myDist < 300 ? 'EN REBUFO · +15 KM/H' : 'MISMA VELOCIDAD';
-  const phaseColor = myDist < 100 ? DANGER : ACC;
-  tag(ctx, 410, 30, phase, phaseColor, 15);
-  tag(ctx, 410, 440, 'EL REBUFO TE HACE LLEGAR +15 KM/H · FRENA 50–100 m ANTES', ACC, 13);
+  // Velocímetros individuales (14px, legibles a mitad de tarjeta)
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.textAlign = 'center';
+  ctx.font = '700 10px "JetBrains Mono", monospace';
+  ctx.fillStyle = 'rgba(223,229,238,.7)';
+  ctx.fillText('RIVAL', rP[0], rP[1] - 58);
+  ctx.font = '800 17px "JetBrains Mono", monospace';
+  ctx.fillStyle = '#dfe5ee';
+  ctx.fillText(Math.round(S.rV), rP[0], rP[1] - 38);
+  ctx.font = '600 8px "JetBrains Mono", monospace';
+  ctx.fillStyle = 'rgba(154,166,182,.6)';
+  ctx.fillText('KM/H', rP[0], rP[1] - 28);
+  ctx.font = '700 10px "JetBrains Mono", monospace';
+  ctx.fillStyle = 'rgba(0,229,224,.7)';
+  ctx.fillText('TÚ', mP[0], mP[1] + 50);
+  ctx.font = '800 17px "JetBrains Mono", monospace';
+  ctx.fillStyle = ACC;
+  ctx.fillText(Math.round(S.mV), mP[0], mP[1] + 70);
+  ctx.font = '600 8px "JetBrains Mono", monospace';
+  ctx.fillStyle = 'rgba(0,229,224,.5)';
+  ctx.fillText('KM/H', mP[0], mP[1] + 80);
+  ctx.restore();
+
+  // ── Etiquetas de fase (4 fases en 12s) ──
+  const inCorner = S.mS > 540 || S.rS > 540;
+  const ph = S.mS < 300 ? 'RECTA · +15 KM/H EN REBUFO' :
+             !inCorner ? 'ZONA DE FRENO · TÚ ANTES' :
+             S.mS < 640 ? 'ENTRADA · VÉRTICE' : 'SALIDA · ACELERÁ ANTES QUE ÉL';
+  const pc = S.mS < 300 ? ACC : !inCorner ? WARN : ACC2;
+  tag(ctx, 410, 42, ph, pc, 16);
+  tag(ctx, 410, 440, 'REBUFO +15 KM/H → FRENA 60 m ANTES → CURVA LIMPIA', ACC, 13);
 }
 
 /* ── DEMO B · AIRE SUCIO (rediseño v3) ──────────────────────────────
@@ -3259,72 +3306,85 @@ function demoD(ctx, u, S, dt) {
   tag(ctx, 410, 445, '4s INHALA · 4s SOSTÉN · 4s EXHALA — REPITE EN CADA RECTA', ACC, 13);
 }
 
-/* ── DEMO E · TRAZADA (rediseño v2) ─────────────────────────────────
-   Chicana cenital. Un auto recorre la trazada A (ext-apex-ext) y luego
-   la B (interior directa). Un rival fijo muestra el bloqueo.        */
+/* ── DEMO E · TRAZADA (rediseño v3) ────────────────────────────────
+   Chicana cenital. Dos trazadas superpuestas: A (ext-apex-ext) en cian,
+   B (interior directa) en ámbar. El auto recorre la trazada activa.  */
 function demoE(ctx, u, S, dt) {
   S.t += dt;
   const t = S.t;
   const CYCLE = 14;
   const p = (t % CYCLE) / CYCLE;
 
-  // Pista: chicana (2 curvas enlazadas)
-  const chic = [
-    [40, 150], [260, 150],
-    [330, 185], [330, 275], [330, 365],
-    [260, 395], [40, 395],
-  ];
-  drawRoad(ctx, chic, 80);
+  // Pista: chicana dibujada a mano
+  // Dos curvas enlazadas: entrada → primera curva → salida → segunda curva
+  const chic = [[30, 140], [250, 140], [310, 185], [310, 275], [310, 365], [250, 400], [30, 400]];
+  // Asfalto
+  ctx.save();
+  ctx.strokeStyle = '#0a0d16'; ctx.lineWidth = 80; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(chic[0][0], chic[0][1]);
+  for (let i = 1; i < chic.length; i++) ctx.lineTo(chic[i][0], chic[i][1]);
+  ctx.stroke();
+  // Bordes
+  ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 2; ctx.setLineDash([]);
+  ctx.beginPath();
+  ctx.moveTo(chic[0][0] - 40, chic[0][1]); ctx.lineTo(chic[1][0] - 40, chic[1][1]);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(chic[0][0] - 40, chic[6][1]); ctx.lineTo(chic[1][0] - 40, chic[6][1]);
+  ctx.stroke();
+  ctx.restore();
+
   // Frenos de entrada
   ctx.save();
   ctx.setLineDash([6, 6]); ctx.lineWidth = 2; ctx.strokeStyle = WARN; ctx.globalAlpha = .5;
-  ctx.beginPath(); ctx.moveTo(260, 120); ctx.lineTo(260, 430); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(250, 110); ctx.lineTo(250, 430); ctx.stroke();
   ctx.restore();
-  miniLabel(ctx, 260, 440, 'APROX', 'rgba(154,166,182,.8)', 10);
-  miniLabel(ctx, 480, 440, 'SALIDA', 'rgba(154,166,182,.8)', 10);
+  miniLabel(ctx, 250, 440, 'APROX', 'rgba(154,166,182,.8)', 10);
 
-  // Trazada A: exterior-apex-exterior (radio amplio, pasa por [50,200]→[470,272]→[50,344])
-  const lineA = [[60, 190], [220, 200], [380, 240], [460, 272], [380, 304], [220, 344], [60, 354]];
-  // Trazada B: interior directa (corta, pasa por [50,272]→[470,272]→[50,272])
-  const lineB = [[60, 260], [250, 268], [420, 272], [440, 272], [420, 278], [250, 276], [60, 284]];
+  // Trazada A: exterior-apex-exterior (radio amplio, pasa por [50,190]→[340,272]→[50,354])
+  const lineA = [[40, 190], [200, 195], [340, 240], [380, 272], [340, 304], [200, 349], [40, 354]];
+  // Trazada B: interior directa (corta, pasa por [50,272]→[340,272])
+  const lineB = [[40, 265], [220, 270], [340, 272], [360, 272], [340, 274], [220, 276], [40, 280]];
 
-  const useA = p < 0.45 || (p >= 0.55 && p < 1); // trazada A la mayor parte
+  // Alterna cada 7s
+  const useA = p < 0.45 || (p >= 0.55 && p < 1);
   const showA = useA;
   const showB = !useA;
 
   // Dibuja la trazada activa (más gruesa y luminosa)
-  const drawLine = (pts, active) => {
+  const drawLine = (pts, active, color) => {
     ctx.save();
     ctx.beginPath();
     ctx.moveTo(pts[0][0], pts[0][1]);
     for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
-    ctx.strokeStyle = active ? ACC : 'rgba(255,255,255,.25)';
+    ctx.strokeStyle = active ? color : 'rgba(255,255,255,.2)';
     ctx.lineWidth = active ? 3 : 1.5;
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    if (active) { ctx.shadowColor = ACC; ctx.shadowBlur = 12; }
+    if (active) { ctx.shadowColor = color; ctx.shadowBlur = 12; }
     ctx.stroke();
     ctx.shadowBlur = 0;
     ctx.restore();
   };
-  drawLine(lineA, showA);
-  drawLine(lineB, showB);
+  drawLine(lineA, showA, ACC);
+  drawLine(lineB, showB, WARN);
 
   // Auto que recorre la trazada activa
   const activeLine = showA ? lineA : lineB;
   const N = activeLine.length - 1;
-  const prog = (p * 3) % 1; // recorre 3 veces el circuito por ciclo
+  const prog = (p * 3) % 1;
   const seg = prog * N;
   const i0 = Math.floor(seg), frac = seg - i0;
   const p0 = activeLine[i0], p1 = activeLine[Math.min(i0 + 1, N)];
   const ax = p0[0] + (p1[0] - p0[0]) * frac;
   const ay = p0[1] + (p1[1] - p0[1]) * frac;
   const ang = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]);
-  drawCar(ctx, ax, ay, ang, 1.1, ACC);
-  miniLabel(ctx, ax, ay - 28, 'TÚ', ACC, 11);
+  drawCar(ctx, ax, ay, ang, 1.1, showA ? ACC : WARN);
+  miniLabel(ctx, ax, ay - 32, 'TÚ', showA ? ACC : WARN, 11);
 
   // Rival fijo en la primera curva
   drawCar(ctx, 280, 180, 0.3, 0.95, '#dfe5ee', 0.7);
-  miniLabel(ctx, 280, 152, 'RIVAL', 'rgba(223,229,238,.7)', 10);
+  miniLabel(ctx, 280, 148, 'RIVAL', 'rgba(223,229,238,.7)', 10);
 
   // Etiquetas
   const label = showA ? 'EXT-APEX-EXT: RADIO AMPLIO · SALIDA RÁPIDA' : 'INTERIOR DIRECTA: BLOQUEAS AL RIVAL · SALIDA LENTA';
