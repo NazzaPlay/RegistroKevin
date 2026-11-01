@@ -447,6 +447,10 @@ kbd{
 .concept-canvas-wrap canvas{
   position:absolute;inset:0;width:100%;height:100%;display:block;
 }
+/* SVGs estáticos en tarjetas de infografía (1A/1B) */
+.concept-canvas-wrap svg{
+  position:absolute;inset:0;width:100%;height:100%;display:block;
+}
 
 /* Tag de categoría — abajo derecha del canvas */
 .concept-tag{
@@ -1068,17 +1072,117 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
 <article class="concept-card glass reveal" data-num="1A">
   <div class="concept-top">
     <div class="concept-canvas-wrap">
-      <canvas id="cv1A" width="820" height="460" aria-label="Animación: vista cenital, dos LMP2 en la recta; el de atrás (tú) va más rápido por el rebufo y debe frenar 60 metros antes que el rival"></canvas>
-      <span class="concept-tag">CONCEPTO 1A · RECTA + CURVA</span>
+      <svg viewBox="0 0 820 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Infografía estática: vista cenital de una recta con zona de frenada, marcas de frenada para tú (antes) y rival (tarde), cono de rebufo y puntos de referencia numerados 1 a 5">
+        <defs>
+          <pattern id="g1a" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.035)" stroke-width="1"/>
+          </pattern>
+          <filter id="glowA"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <linearGradient id="wakeA" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#00E5E0" stop-opacity="0"/>
+            <stop offset="1" stop-color="#00E5E0" stop-opacity=".25"/>
+          </linearGradient>
+        </defs>
+        <rect width="820" height="460" fill="#060810"/>
+        <rect width="820" height="460" fill="url(#g1a)"/>
+
+        <!-- PISTA: recta + curva a la derecha -->
+        <path d="M 40 220 L 440 220 A 150 150 0 0 1 590 370 L 640 370"
+              fill="none" stroke="#2a2f3a" stroke-width="84" stroke-linecap="round"/>
+        <path d="M 40 220 L 440 220 A 150 150 0 0 1 590 370 L 640 370"
+              fill="none" stroke="rgba(255,255,255,.28)" stroke-width="2"/>
+        <path d="M 40 220 L 440 220 A 150 150 0 0 1 590 370 L 640 370"
+              fill="none" stroke="rgba(255,255,255,.10)" stroke-width="1.5" stroke-dasharray="18 14"/>
+
+        <!-- ZONA DE FRENADA -->
+        <rect x="350" y="180" width="120" height="80" fill="rgba(239,68,68,.09)" stroke="rgba(239,68,68,.35)" stroke-width="1"/>
+        <text x="410" y="170" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="13" fill="#ef4444" letter-spacing="2">ZONA DE FRENADA</text>
+
+        <!-- MARCAS DE FRENADA -->
+        <line x1="280" y1="180" x2="280" y2="260" stroke="#00E5E0" stroke-width="3" stroke-dasharray="8 6"/>
+        <text x="280" y="280" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="11" fill="#00E5E0">TÚ: FRENA AQUÍ</text>
+        <line x1="400" y1="180" x2="400" y2="260" stroke="#ef4444" stroke-width="3" stroke-dasharray="8 6"/>
+        <text x="400" y="280" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="11" fill="#ef4444">RIVAL: TARDE (ERROR)</text>
+
+        <!-- CONO DE REBUFO -->
+        <path d="M 380 205 L 300 192 L 300 248 L 380 235 Z" fill="url(#wakeA)"/>
+        <text x="330" y="196" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="11" fill="#00E5E0">+15 KM/H</text>
+        <text x="330" y="256" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="rgba(0,229,224,.7)">REBUFO</text>
+
+        <!-- AUTOS -->
+        <!-- Rival: interior, antes de su marca de freno -->
+        <g transform="translate(350, 198) rotate(0)" filter="url(#glowA)">
+          <rect x="-24" y="-11" width="48" height="22" rx="5" fill="#dfe5ee"/>
+          <rect x="-18" y="-8" width="36" height="16" rx="3" fill="#2a2f3a"/>
+          <polygon points="24,0 32,-4 32,4" fill="#dfe5ee"/>
+        </g>
+        <text x="350" y="170" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="11" fill="#dfe5ee">RIVAL</text>
+        <!-- Tú: exterior, antes de tu marca de freno -->
+        <g transform="translate(250, 242) rotate(0)" filter="url(#glowA)">
+          <rect x="-24" y="-11" width="48" height="22" rx="5" fill="#00E5E0"/>
+          <rect x="-18" y="-8" width="36" height="16" rx="3" fill="#0a0d16"/>
+          <polygon points="24,0 32,-4 32,4" fill="#00E5E0"/>
+        </g>
+        <text x="250" y="276" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="11" fill="#00E5E0">TÚ</text>
+
+        <!-- Flechas de dirección de carrera -->
+        <g stroke="#9aa6b6" stroke-width="2" fill="none">
+          <path d="M 80 210 L 160 210 M 155 205 L 160 210 L 155 215"/>
+          <path d="M 540 330 L 540 350 M 535 345 L 540 350 L 545 345"/>
+        </g>
+
+        <!-- PUNTOS NUMERADOS -->
+        <!-- P1: inicio de recta -->
+        <circle cx="100" cy="220" r="17" fill="#00E5E0" filter="url(#glowA)"/>
+        <text x="100" y="225" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="15" fill="#0a0d16">1</text>
+        <text x="100" y="290" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="14" fill="#fff">ENTRÁS EN REBUFO</text>
+        <text x="100" y="306" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="12" fill="#9aa6b6">(a menos de 1 segundo)</text>
+        <text x="100" y="320" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="600" font-size="10" fill="#9aa6b6">+10-15 KM/H DE PUNTA</text>
+
+        <!-- P2: marca verde -->
+        <circle cx="280" cy="140" r="17" fill="#00E5E0" filter="url(#glowA)"/>
+        <text x="280" y="145" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="15" fill="#0a0d16">2</text>
+        <line x1="280" y1="157" x2="280" y2="176" stroke="#00E5E0" stroke-width="1.5"/>
+        <text x="280" y="124" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="14" fill="#fff">ANTICIPÁ LA FRENADA</text>
+        <text x="280" y="106" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="12" fill="#9aa6b6">50-100 m antes que de costumbre</text>
+
+        <!-- P3: entrada de curva -->
+        <circle cx="470" cy="270" r="17" fill="#ffb020" filter="url(#glowA)"/>
+        <text x="470" y="275" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="15" fill="#0a0d16">3</text>
+        <text x="470" y="304" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="14" fill="#fff">SOLTÁ EL REBUFO</text>
+        <text x="470" y="318" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="12" fill="#9aa6b6">antes del punto de giro</text>
+
+        <!-- P4: apex tardío -->
+        <circle cx="555" cy="330" r="17" fill="#00E5E0" filter="url(#glowA)"/>
+        <text x="555" y="335" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="15" fill="#0a0d16">4</text>
+        <text x="555" y="405" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="14" fill="#fff">APEX TARDÍO</text>
+
+        <!-- P5: salida -->
+        <circle cx="630" cy="352" r="17" fill="#00E5E0" filter="url(#glowA)"/>
+        <text x="630" y="357" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="15" fill="#0a0d16">5</text>
+        <text x="630" y="425" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="14" fill="#fff">ACELERÁ ANTES</text>
+        <text x="630" y="439" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="12" fill="#9aa6b6">ventaja en salida = adelantamiento</text>
+
+        <!-- LEYENDA -->
+        <g transform="translate(40, 400)" font-family="Rajdhani, sans-serif" font-weight="600" font-size="12">
+          <line x1="0" y1="0" x2="34" y2="0" stroke="#00E5E0" stroke-width="4"/>
+          <text x="44" y="4" fill="#fff">TU TRAZADA</text>
+          <line x1="170" y1="0" x2="204" y2="0" stroke="#ef4444" stroke-width="4"/>
+          <text x="214" y="4" fill="#fff">ERROR COMÚN</text>
+          <path d="M 340 0 L 372 0 M 366 -5 L 372 0 L 366 5" stroke="#9aa6b6" stroke-width="2" fill="none"/>
+          <text x="382" y="4" fill="#9aa6b6">DIRECCIÓN DE CARRERA</text>
+          <rect x="560" y="-8" width="16" height="16" rx="3" fill="#ffb020"/>
+          <text x="584" y="4" fill="#9aa6b6">PUNTO CRÍTICO</text>
+        </g>
+      </svg>
+      <span class="concept-tag">CONCEPTO 1A · INFOGRAFÍA</span>
     </div>
     <div class="concept-body">
       <h3>El rebufo: <em>velocidad con letra chica</em></h3>
       <p class="concept-text">
-        Rodando a menos de un segundo del otro LMP2, tu velocidad punta sube entre
-        <b>10 y 15 km/h</b>: el auto de delante parte el aire y tu alerón trabaja menos.
-        Pero ese regalo llega con letra pequeña — llegás a la zona de frenada
-        <b>más rápido y con menos margen</b>. La regla es innegociable: anticipá la
-        frenada entre <b>50 y 100 metros</b> respecto a tu referencia habitual.
+        Estudiá la infografía: el rebufo te da <b>+10-15 km/h</b> en recta,
+        pero te obliga a frenar <b>50-100 metros antes</b>. La clave está en
+        anticipar la frenada y soltar la estela antes del punto de giro.
       </p>
       <div class="legend">
         <span><i class="l-you"></i>Tú</span>
@@ -1111,24 +1215,134 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
 <article class="concept-card glass reveal" data-num="1B">
   <div class="concept-top">
     <div class="concept-canvas-wrap">
-      <canvas id="cv1B" width="820" height="460" aria-label="Animación: dos curvas a la vez — una ancha y larga, y otra angosta y cerrada. Muestra las trazadas correctas para adelantar en cada geometría según la regla del 50%"></canvas>
-      <span class="concept-tag">CONCEPTO 1B · DOS CURVAS</span>
+      <svg viewBox="0 0 820 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Infografía estática: dos escenarios de adelantamiento. Izquierda: curva ancha y larga con trazada exterior-apex tardío-exterior. Derecha: curva angosta y cerrada con interior directo. Abajo: diagrama de la regla del 50% para el derecho al espacio">
+        <defs>
+          <pattern id="g1b" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.035)" stroke-width="1"/>
+          </pattern>
+          <filter id="glowB"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <rect width="820" height="460" fill="#060810"/>
+        <rect width="820" height="460" fill="url(#g1b)"/>
+
+        <!-- ═══════ ESCENARIO A · CURVA ANCHA Y LARGA (izquierda) ═══════ -->
+        <text x="210" y="34" text-anchor="middle" font-family="Orbitron, sans-serif" font-weight="900" font-size="15" fill="#00E5E0" letter-spacing="1">CURVA ANCHA Y LARGA</text>
+
+        <!-- Pista A: 90° de radio amplio -->
+        <path d="M 60 230 L 210 230 A 140 140 0 0 1 350 90 L 380 90"
+              fill="none" stroke="#2a2f3a" stroke-width="96" stroke-linecap="round"/>
+        <path d="M 60 230 L 210 230 A 140 140 0 0 1 350 90 L 380 90"
+              fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/>
+
+        <!-- Trazada EXTERIOR → APEX TARDÍO → EXTERIOR (cian) -->
+        <path d="M 60 270 L 210 270 A 180 180 0 0 1 390 90 L 380 90"
+              fill="none" stroke="#00E5E0" stroke-width="4" stroke-linecap="round" filter="url(#glowB)"/>
+        <!-- flechas de dirección -->
+        <g fill="#00E5E0" stroke="none">
+          <polygon points="150,270 138,264 138,276"/>
+          <polygon points="330,150 322,138 340,142"/>
+        </g>
+
+        <!-- Autos A: rival interior defensivo, tú exterior -->
+        <g transform="translate(200, 196) rotate(0)">
+          <rect x="-22" y="-10" width="44" height="20" rx="5" fill="#dfe5ee"/>
+          <rect x="-16" y="-7" width="32" height="14" rx="3" fill="#2a2f3a"/>
+        </g>
+        <text x="200" y="178" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="10" fill="#dfe5ee">RIVAL (DEFENSIVO)</text>
+        <g transform="translate(180, 270)">
+          <rect x="-22" y="-10" width="44" height="20" rx="5" fill="#00E5E0" filter="url(#glowB)"/>
+          <rect x="-16" y="-7" width="32" height="14" rx="3" fill="#0a0d16"/>
+        </g>
+        <text x="180" y="296" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="10" fill="#00E5E0">TÚ (EXTERIOR)</text>
+
+        <!-- Puntos A -->
+        <circle cx="80" cy="270" r="15" fill="#00E5E0" filter="url(#glowB)"/>
+        <text x="80" y="274" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="13" fill="#0a0d16">A1</text>
+        <text x="80" y="330" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="13" fill="#fff">ATACÁ POR EXTERIOR</text>
+        <text x="80" y="344" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#9aa6b6">radio máximo = velocidad máxima</text>
+
+        <circle cx="330" cy="120" r="15" fill="#ffb020" filter="url(#glowB)"/>
+        <text x="330" y="124" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="13" fill="#0a0d16">A2</text>
+        <text x="330" y="52" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="13" fill="#fff">APEX TARDÍO</text>
+        <text x="330" y="66" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#9aa6b6">cerca de la salida</text>
+
+        <circle cx="378" cy="98" r="15" fill="#00E5E0" filter="url(#glowB)"/>
+        <text x="378" y="102" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="13" fill="#0a0d16">A3</text>
+        <text x="390" y="150" text-anchor="start" font-family="Rajdhani, sans-serif" font-weight="700" font-size="13" fill="#fff">SALÍ POR EXTERIOR</text>
+        <text x="390" y="164" text-anchor="start" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#9aa6b6">acelerás antes = adelantás</text>
+
+        <!-- Nota técnica A -->
+        <rect x="60" y="386" width="300" height="58" rx="8" fill="rgba(0,229,224,.06)" stroke="rgba(0,229,224,.35)" stroke-width="1"/>
+        <text x="74" y="406" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#00E5E0">CURVA ANCHA/LARGA</text>
+        <text x="74" y="422" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#fff">✓ Radio amplio permite velocidad</text>
+        <text x="74" y="436" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#fff">✓ Ideal: Mulsanne, curvas rápidas</text>
+
+        <!-- ═══════ ESCENARIO B · CURVA ANGOSTA Y CERRADA (derecha) ═══════ -->
+        <text x="610" y="34" text-anchor="middle" font-family="Orbitron, sans-serif" font-weight="900" font-size="15" fill="#ffb020" letter-spacing="1">CURVA ANGOSTA Y CERRADA</text>
+
+        <!-- Pista B: 90° de radio corto, angosta -->
+        <path d="M 470 200 L 560 200 A 90 90 0 0 1 650 90 L 680 90"
+              fill="none" stroke="#2a2f3a" stroke-width="56" stroke-linecap="round"/>
+        <path d="M 470 200 L 560 200 A 90 90 0 0 1 650 90 L 680 90"
+              fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/>
+
+        <!-- Trazada INTERIOR DIRECTA (ámbar) -->
+        <path d="M 470 180 L 552 180 A 62 62 0 0 1 614 118 L 680 118"
+              fill="none" stroke="#ffb020" stroke-width="4" stroke-linecap="round" filter="url(#glowB)"/>
+        <g fill="#ffb020" stroke="none">
+          <polygon points="540,180 528,174 528,186"/>
+          <polygon points="640,118 628,112 628,124"/>
+        </g>
+
+        <!-- Autos B: rival exterior bloqueado, tú interior -->
+        <g transform="translate(540, 224)">
+          <rect x="-22" y="-10" width="44" height="20" rx="5" fill="#dfe5ee"/>
+          <rect x="-16" y="-7" width="32" height="14" rx="3" fill="#2a2f3a"/>
+        </g>
+        <text x="540" y="248" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="10" fill="#dfe5ee">RIVAL (BLOQUEADO)</text>
+        <g transform="translate(508, 180)">
+          <rect x="-22" y="-10" width="44" height="20" rx="5" fill="#ffb020" filter="url(#glowB)"/>
+          <rect x="-16" y="-7" width="32" height="14" rx="3" fill="#0a0d16"/>
+        </g>
+        <text x="470" y="166" text-anchor="end" font-family="JetBrains Mono, monospace" font-weight="700" font-size="10" fill="#ffb020">TÚ (INTERIOR)</text>
+
+        <!-- Puntos B -->
+        <circle cx="490" cy="180" r="15" fill="#ffb020" filter="url(#glowB)"/>
+        <text x="490" y="184" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="13" fill="#0a0d16">B1</text>
+        <text x="490" y="262" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="13" fill="#fff">ATACÁ POR INTERIOR</text>
+        <text x="490" y="276" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#9aa6b6">bloqueás al rival desde entrada</text>
+
+        <circle cx="590" cy="140" r="15" fill="#ffb020" filter="url(#glowB)"/>
+        <text x="590" y="144" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="13" fill="#0a0d16">B2</text>
+        <text x="590" y="66" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="13" fill="#fff">APEX TEMPRANO</text>
+        <text x="590" y="80" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#9aa6b6">sacrificás velocidad por posición</text>
+
+        <circle cx="666" cy="118" r="15" fill="#ffb020" filter="url(#glowB)"/>
+        <text x="666" y="122" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="13" fill="#0a0d16">B3</text>
+        <text x="666" y="156" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="13" fill="#fff">SALÍ DEFENDIENDO</text>
+        <text x="666" y="170" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#9aa6b6">mantén la posición ganada</text>
+
+        <!-- Nota técnica B -->
+        <rect x="470" y="386" width="300" height="58" rx="8" fill="rgba(255,176,32,.06)" stroke="rgba(255,176,32,.35)" stroke-width="1"/>
+        <text x="484" y="406" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#ffb020">CURVA ANGOSTA/CERRADA</text>
+        <text x="484" y="422" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#fff">✓ Interior directo bloquea rival</text>
+        <text x="484" y="436" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#fff">✓ Ideal: chicanas, curvas lentas</text>
+
+        <!-- Separador vertical entre escenarios -->
+        <line x1="410" y1="50" x2="410" y2="370" stroke="rgba(255,255,255,.1)" stroke-width="1" stroke-dasharray="4 6"/>
+      </svg>
+      <span class="concept-tag">CONCEPTO 1B · INFOGRAFÍA</span>
     </div>
     <div class="concept-body">
       <h3>Adelantar en curva: <em>dos trazadas, dos curvas</em></h3>
       <p class="concept-text">
-        Venías en rebufo, llegás más rápido… y ahora hay una curva. Tu exceso de
-        velocidad es real, pero la geometría de la curva decide tu trazada.
-        En curvas <b>ANCHAS Y LARGAS</b> (radio amplio): atacá por <b>EXTERIOR</b>,
-        buscá un apex tardío y salí por exterior para máxima velocidad de salida.
-        En curvas <b>ANGOSTAS Y CERRADAS</b> (radio corto): atacá por
-        <b>INTERIOR directo</b>, sacrificá velocidad en entrada para bloquear al
-        rival y salir limpio.
-        La regla del 50% aplica siempre: tu trompa al 50% del rival antes de que
-        inicie el giro = derecho al espacio.
+        La geometría de la curva decide tu trazada. En curvas
+        <b>anchas y largas</b>: atacá por exterior con apex tardío.
+        En curvas <b>angostas y cerradas</b>: interior directo para bloquear.
+        La regla del 50% aplica siempre.
       </p>
       <div class="legend">
-        <span><i class="l-you"></i>Tú (traçada ganadora)</span>
+        <span><i class="l-you"></i>Tú (trazada ganadora)</span>
         <span><i class="l-rival"></i>Rival (posición defensiva)</span>
       </div>
       <ul class="concept-list">
@@ -3064,289 +3278,6 @@ function demoA(ctx, u, S, dt) {
   tag(ctx, 410, 440, 'REBUFO +15 KM/H → FRENA 60 m ANTES → CURVA LIMPIA', ACC, 13);
 }
 
-/* ── DEMO 1A · REBUFO + CURVA — "La trampa del rebufo" ────────────────
-    Misma geometría que demoA (recta → curva derecha), pero con las
-    etiquetas de fase del rediseño: 4 fases en 12 s, velocímetros,
-    cono de rebufo, marcas de frenada. */
-function pos1A(s, lane) {
-  const CX = 540, CY = 0, R = 240;
-  const offset = lane === 'in' ? -38 : 38;
-  if (s <= 540) {
-    return lane === 'in' ? [s, 195, 0] : [s, 245, 0];
-  }
-  const theta = Math.PI / 2 - (s - 540) / R;
-  const px = CX + (R + offset) * Math.cos(theta);
-  const py = CY + (R + offset) * Math.sin(theta);
-  return [px, py, Math.PI / 2 - theta];
-}
-function demo1A(ctx, u, S, dt) {
-  S.t += dt;
-  const t = S.t;
-  const p = (t % 12) / 12;
-
-  // ── Pista: recta + curva (igual que demoA) ──
-  ctx.save();
-  ctx.fillStyle = '#0a0d16';
-  ctx.fillRect(0, 170, 540, 100);
-  ctx.beginPath();
-  ctx.arc(540, 0, 284, 0, Math.PI / 2, false);
-  ctx.arc(540, 0, 196, Math.PI / 2, 0, true);
-  ctx.closePath();
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,.2)'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(0, 170); ctx.lineTo(540, 170); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(0, 270); ctx.lineTo(540, 270); ctx.stroke();
-  ctx.beginPath(); ctx.arc(540, 0, 284, 0, Math.PI / 2); ctx.stroke();
-  ctx.beginPath(); ctx.arc(540, 0, 196, 0, Math.PI / 2); ctx.stroke();
-  ctx.setLineDash([22, 16]); ctx.lineDashOffset = -t * 160;
-  ctx.strokeStyle = 'rgba(255,255,255,.1)'; ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.moveTo(0, 220); ctx.lineTo(540, 220); ctx.stroke();
-  ctx.beginPath(); ctx.arc(540, 0, 240, 0, Math.PI / 2); ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.restore();
-
-  // Zona de frenada (banda roja x 380–540)
-  ctx.save();
-  ctx.fillStyle = 'rgba(239,68,68,.08)';
-  ctx.fillRect(380, 170, 160, 100);
-  ctx.strokeStyle = DANGER; ctx.lineWidth = 1.5; ctx.setLineDash([8, 6]);
-  ctx.beginPath(); ctx.moveTo(380, 170); ctx.lineTo(380, 270); ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.font = '700 10px "JetBrains Mono", monospace';
-  ctx.fillStyle = DANGER; ctx.textAlign = 'center';
-  ctx.fillText('ZONA DE FRENADA', 460, 162);
-  ctx.setLineDash([5, 5]); ctx.lineWidth = 2.5;
-  ctx.strokeStyle = ACC; ctx.beginPath(); ctx.moveTo(350, 170); ctx.lineTo(350, 270); ctx.stroke();
-  ctx.strokeStyle = DANGER; ctx.beginPath(); ctx.moveTo(410, 170); ctx.lineTo(410, 270); ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.font = '700 10px "JetBrains Mono", monospace'; ctx.textAlign = 'center';
-  ctx.fillStyle = ACC; ctx.fillText('TÚ', 350, 286); ctx.fillText('ANTES', 350, 299);
-  ctx.fillStyle = DANGER; ctx.fillText('RIVAL', 410, 286); ctx.fillText('TARDE', 410, 299);
-  ctx.restore();
-
-  // ── Física simplificada (1 px = 1 m) ──
-  if (!S.rS) { S.rS = 80; S.mS = 20; S.rV = 240; S.mV = 255; S.fade = 0; }
-  S.rS += S.rV * dt; S.mS += S.mV * dt;
-  if (S.mS >= 350) S.mV = Math.max(80, S.mV - 240 * dt);
-  if (S.rS >= 410) S.rV = Math.max(70, S.rV - 170 * dt);
-  if (S.mS > 640) S.mV = Math.min(215, S.mV + 150 * dt);
-  if (S.rS > 640) S.rV = Math.min(200, S.rV + 130 * dt);
-  if (S.mS > 830 || S.rS > 830) {
-    S.fade += dt / 0.6;
-    if (S.fade >= 1.8) { S.rS = 80; S.mS = 20; S.rV = 240; S.mV = 255; S.fade = 0; }
-  } else {
-    S.fade = Math.max(0, S.fade - dt / 0.6);
-  }
-  const alpha = S.fade >= 1 ? 1 - (S.fade - 1) : (S.fade > 0 ? S.fade : 1);
-
-  // ── Cono de rebufo ──
-  const rP = pos1A(S.rS, 'in'), mP = pos1A(S.mS, 'out');
-  const gap = S.rS - S.mS;
-  if (gap > 0 && gap < 200) {
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    const g = ctx.createLinearGradient(rP[0], 0, mP[0], 0);
-    g.addColorStop(0, 'rgba(0,229,224,0)');
-    g.addColorStop(1, 'rgba(0,229,224,.2)');
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.moveTo(rP[0] + 28, rP[1] - 10);
-    ctx.lineTo(mP[0] - 28, mP[1] - 26);
-    ctx.lineTo(mP[0] - 28, mP[1] + 26);
-    ctx.lineTo(rP[0] + 28, rP[1] + 10);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-  }
-
-  // ── Autos ──
-  ctx.save();
-  ctx.globalAlpha = alpha;
-  drawCar(ctx, rP[0], rP[1], rP[2], 1.15, '#dfe5ee');
-  drawCar(ctx, mP[0], mP[1], mP[2], 1.15, ACC);
-  ctx.restore();
-
-  // ── Velocímetros ──
-  ctx.save();
-  ctx.globalAlpha = alpha;
-  ctx.textAlign = 'center';
-  ctx.font = '700 10px "JetBrains Mono", monospace';
-  ctx.fillStyle = 'rgba(223,229,238,.7)';
-  ctx.fillText('RIVAL', rP[0], rP[1] - 58);
-  ctx.font = '800 17px "JetBrains Mono", monospace';
-  ctx.fillStyle = '#dfe5ee';
-  ctx.fillText(Math.round(S.rV), rP[0], rP[1] - 38);
-  ctx.font = '600 8px "JetBrains Mono", monospace';
-  ctx.fillStyle = 'rgba(154,166,182,.6)';
-  ctx.fillText('KM/H', rP[0], rP[1] - 28);
-  ctx.font = '700 10px "JetBrains Mono", monospace';
-  ctx.fillStyle = 'rgba(0,229,224,.7)';
-  ctx.fillText('TÚ', mP[0], mP[1] + 50);
-  ctx.font = '800 17px "JetBrains Mono", monospace';
-  ctx.fillStyle = ACC;
-  ctx.fillText(Math.round(S.mV), mP[0], mP[1] + 70);
-  ctx.font = '600 8px "JetBrains Mono", monospace';
-  ctx.fillStyle = 'rgba(0,229,224,.5)';
-  ctx.fillText('KM/H', mP[0], mP[1] + 80);
-  ctx.restore();
-
-  // ── Etiquetas de fase (4 fases en 12 s) ──
-  const inCorner = S.mS > 540 || S.rS > 540;
-  let ph, pc;
-  if (S.mS < 300)            { ph = 'RECTA · +15 KM/H EN REBUFO';        pc = ACC;  }
-  else if (!inCorner)        { ph = 'ZONA DE FRENO · TÚ ANTES';          pc = WARN; }
-  else if (S.mS < 640)       { ph = 'ENTRADA · VÉRTICE';                 pc = ACC2; }
-  else                       { ph = 'SALIDA · ACELERÁ ANTES QUE ÉL';     pc = ACC;  }
-  tag(ctx, 410, 42, ph, pc, 16);
-  tag(ctx, 410, 440, 'REBUFO +15 KM/H → FRENA 60 m ANTES → CURVA LIMPIA', ACC, 13);
-}
-
-/* ── DEMO 1B · DOS CURVAS, DOS TRAZADAS ─────────────────────────────
-    Ciclo 14 s: 0–7 s Curva A (ancha/larga, trazada exterior),
-    7–14 s Curva B (angosta/cerrada, trazada interior).
-    El auto animado recorre la trazada activa; el rival se mantiene
-    en posición defensiva. Medidor de solape 50% cuando se acerca. */
-const C1B_A = { cx: 410, cy: 140, r: 200 };  // curva ancha (radio grande)
-const C1B_B = { cx: 410, cy: 330, r: 100 };  // curva angosta (radio corto)
-function p1BA(s, lane) {
-  // Curva A: entrada horizontal izquierda → arco de 90° a 0° → salida horizontal derecha
-  // Arco centrado en C1B_A, radio 200, de θ=180° a 0° (media curva arriba)
-  const { cx, cy, r } = C1B_A;
-  const off = lane === 'in' ? -25 : 25;
-  const total = Math.PI * r; // longitud del arco completo (180°)
-  const s2 = Math.max(0, Math.min(s, total));
-  const theta = Math.PI - s2 / (r + off);
-  return [cx + (r + off) * Math.cos(theta), cy - (r + off) * Math.sin(theta), -theta + Math.PI / 2];
-}
-function p1BB(s, lane) {
-  // Curva B: entrada horizontal izquierda → arco de 180° a 0° → salida horizontal derecha
-  const { cx, cy, r } = C1B_B;
-  const off = lane === 'in' ? -20 : 20;
-  const total = Math.PI * r;
-  const s2 = Math.max(0, Math.min(s, total));
-  const theta = Math.PI - s2 / (r + off);
-  return [cx + (r + off) * Math.cos(theta), cy - (r + off) * Math.sin(theta), -theta + Math.PI / 2];
-}
-function demo1B(ctx, u, S, dt) {
-  S.t += dt;
-  const t = S.t;
-  const CYCLE = 14;
-  const phase = t % CYCLE;
-  const isA = phase < 7;
-  // Fade de transición (primer/último 0.5 s de cada modo)
-  let fade = 1;
-  if (isA) {
-    if (phase < 0.5) fade = phase / 0.5;
-    else if (phase > 6.5) fade = (7 - phase) / 0.5;
-  } else {
-    if (phase < 7.5) fade = (phase - 7) / 0.5;
-    else if (phase > 13.5) fade = (14 - phase) / 0.5;
-  }
-  ctx.save();
-  ctx.globalAlpha = fade;
-
-  const C = isA ? C1B_A : C1B_B;
-  const pPos = isA ? p1BA : p1BB;
-  const traceColor = isA ? ACC : WARN;
-  // Rival: posición defensiva — en A, por el interior; en B, por el exterior
-  const rivalLane = isA ? 'in' : 'out';
-  const myLane = isA ? 'out' : 'in';
-
-  // ── Pista: arco de 90° + entradas/salidas horizontales ──
-  const { cx, cy, r } = C;
-  const trackW = isA ? 100 : 70;
-  // Asfalto
-  ctx.fillStyle = '#0a0d16';
-  const rOut = r + trackW / 2, rIn = r - trackW / 2;
-  ctx.beginPath();
-  // entrada horizontal
-  ctx.moveTo(cx - rOut - 60, cy - trackW / 2);
-  ctx.lineTo(cx - rIn, cy - trackW / 2);
-  ctx.arc(cx, cy, rIn, -Math.PI / 2, 0, false);
-  ctx.lineTo(cx + rIn + 60, cy - trackW / 2);
-  ctx.moveTo(cx + rOut + 60, cy + trackW / 2);
-  ctx.lineTo(cx + rOut, cy + trackW / 2);
-  ctx.arc(cx, cy, rOut, 0, Math.PI / 2, false);
-  ctx.lineTo(cx - rOut - 60, cy + trackW / 2);
-  ctx.closePath();
-  ctx.fill();
-  // Bordes
-  ctx.strokeStyle = 'rgba(255,255,255,.2)'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(cx - rOut - 60, cy - trackW / 2); ctx.lineTo(cx - rIn, cy - trackW / 2); ctx.stroke();
-  ctx.beginPath(); ctx.arc(cx, cy, rIn, -Math.PI / 2, 0, false); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx + rIn, cy - trackW / 2); ctx.lineTo(cx + rIn + 60, cy - trackW / 2); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx - rOut - 60, cy + trackW / 2); ctx.lineTo(cx - rOut, cy + trackW / 2); ctx.stroke();
-  ctx.beginPath(); ctx.arc(cx, cy, rOut, 0, Math.PI / 2, false); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx + rOut, cy + trackW / 2); ctx.lineTo(cx + rOut + 60, cy + trackW / 2); ctx.stroke();
-  // Línea central
-  ctx.setLineDash([18, 14]); ctx.lineDashOffset = -t * 120;
-  ctx.strokeStyle = 'rgba(255,255,255,.1)'; ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.arc(cx, cy, r, -Math.PI / 2, 0, false); ctx.stroke();
-  ctx.setLineDash([]);
-
-  // ── Punto de giro: línea vertical ámbar en la entrada ──
-  const apexX = cx - r;
-  ctx.save();
-  ctx.strokeStyle = WARN; ctx.lineWidth = 2; ctx.setLineDash([6, 5]);
-  ctx.beginPath(); ctx.moveTo(apexX, cy - trackW / 2 - 20); ctx.lineTo(apexX, cy + trackW / 2 + 20); ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.font = '700 10px "JetBrains Mono", monospace'; ctx.fillStyle = WARN; ctx.textAlign = 'center';
-  ctx.fillText('GIRO', apexX, cy - trackW / 2 - 28);
-  ctx.restore();
-
-  // ── Trazada: auto animado recorriendo el arco, velocidad variable ──
-  if (!S.s) S.s = 0;
-  const arcLen = Math.PI * r;
-  // Velocidad: en A mayor en salida, en B menor pero posición ganada
-  const speedBase = isA ? 280 : 180;
-  const s2 = S.s = (S.s + speedBase * dt) % (arcLen + 120);
-  const pMe = pPos(s2, myLane);
-  const pRv = pPos(Math.max(0, s2 - 40), rivalLane);
-
-  // Trazada activa (línea gruesa con glow)
-  ctx.save();
-  ctx.strokeStyle = traceColor; ctx.lineWidth = 3;
-  ctx.shadowColor = traceColor; ctx.shadowBlur = 14;
-  ctx.beginPath();
-  for (let ss = 0; ss <= arcLen; ss += 8) {
-    const p = pPos(ss, myLane);
-    ss === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]);
-  }
-  ctx.stroke();
-  ctx.restore();
-
-  // ── Medidor de solape 50% ──
-  const dist = Math.hypot(pMe[0] - pRv[0], pMe[1] - pRv[1]);
-  const overlap = Math.max(0, Math.min(1, 1 - dist / 100));
-  if (dist < 100) {
-    ctx.save();
-    const barX = pMe[0] + 40, barY = pMe[1] - 10;
-    ctx.font = '700 11px "JetBrains Mono", monospace'; ctx.textAlign = 'left';
-    ctx.fillStyle = overlap > 0.5 ? '#4ade80' : WARN;
-    ctx.fillText(Math.round(overlap * 100) + '%', barX + 70, barY + 4);
-    ctx.fillStyle = 'rgba(255,255,255,.15)';
-    roundRectPath(ctx, barX, barY, 60, 8, 4); ctx.fill();
-    ctx.fillStyle = overlap > 0.5 ? '#4ade80' : WARN;
-    roundRectPath(ctx, barX, barY, 60 * overlap, 8, 4); ctx.fill();
-    ctx.restore();
-  }
-
-  // ── Autos ──
-  ctx.save();
-  ctx.globalAlpha = fade;
-  drawCar(ctx, pRv[0], pRv[1], pRv[2], 1.1, '#dfe5ee');
-  drawCar(ctx, pMe[0], pMe[1], pMe[2], 1.1, ACC);
-  ctx.restore();
-
-  // ── Etiquetas de fase ──
-  const topLabel = isA
-    ? 'CURVA ANCHA/LARGA: EXTERIOR → APEX TARDÍO → EXTERIOR'
-    : 'CURVA ANGOSTA/CERRADA: INTERIOR DIRECTO';
-  tag(ctx, 410, 42, topLabel, isA ? ACC : WARN, 14);
-  tag(ctx, 410, 440, 'REGLA 50%: TROMPA AL 50% ANTES DEL GIRO = ESPACIO LEGAL', isA ? ACC : WARN, 12);
-  ctx.restore(); // alpha
-}
-
 /* ── DEMO B · AIRE SUCIO (rediseño v3) ──────────────────────────────
    Curva rápida cenital. Follower entra en la turbulencia del líder
    → pierde carga frontal → subviraje. Fase 2: otra línea, aire limpio. */
@@ -4091,8 +4022,6 @@ function stepDemo(d, dt) {
 function stepDemos(dt) { for (const d of demos) if (d.vis) stepDemo(d, dt); }
 
 function initDemos() {
-  registerDemo('cv1A', demo1A, 12);
-  registerDemo('cv1B', demo1B, 14);
   registerDemo('cvA', demoA, 9);
   registerDemo('cvB', demoB, 11);
   registerDemo('cvC', demoC, 13);
