@@ -3182,20 +3182,21 @@ function demoC(ctx, u, S, dt) {
   }
 }
 
-/* ── DEMO D · RESPIRACIÓN 4-4-4 (rediseño v2) ───────────────────────
-   ECG realista + óvalo de respiración + ciclo 4·4·4 numerado.      */
+/* ── DEMO D · RESPIRACIÓN 4-4-4 (rediseño v3) ──────────────────────
+   Óvalo de respiración + ECG realista + ciclo 4·4·4 numerado.
+   El ECG es una onda PQRST que se calma a medida que el ciclo avanza. */
 function demoD(ctx, u, S, dt) {
   S.t += dt;
   const t = S.t;
   const CYCLE = 12;
   const cyc = t % CYCLE;
-  const phase = cyc < 4 ? 0 : cyc < 8 ? 1 : 2; // 0=inhala, 1=sostén, 2=exhala
+  const phase = cyc < 4 ? 0 : cyc < 8 ? 1 : 2;
   const phaseP = (cyc % 4) / 4;
 
-  // Óvalo de respiración (centro arriba)
-  const cx = 410, cy = 110;
+  // Óvalo de respiración (centro)
+  const cx = 410, cy = 120;
   const breathe = phase === 0 ? phaseP : phase === 1 ? 1 : 1 - phaseP;
-  const rO = 20 + breathe * 45;
+  const rO = 22 + breathe * 48;
   ctx.save();
   ctx.strokeStyle = ACC; ctx.lineWidth = 2; ctx.globalAlpha = 0.5 + breathe * 0.4;
   ctx.shadowColor = ACC; ctx.shadowBlur = 16 * breathe;
@@ -3203,8 +3204,7 @@ function demoD(ctx, u, S, dt) {
   ctx.globalAlpha = 1; ctx.shadowBlur = 0;
   ctx.fillStyle = 'rgba(0,229,224,.08)';
   ctx.beginPath(); ctx.ellipse(cx, cy, rO, rO * 0.7, 0, 0, Math.PI * 2); ctx.fill();
-  // Número de fase
-  ctx.font = '800 40px "JetBrains Mono", monospace';
+  ctx.font = '800 36px "JetBrains Mono", monospace';
   ctx.fillStyle = ACC; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText(phase + 1, cx, cy);
   ctx.restore();
@@ -3212,35 +3212,39 @@ function demoD(ctx, u, S, dt) {
   // Etiqueta de fase
   const phaseNames = ['INHALA · 4s', 'SOSTÉN · 4s', 'EXHALA · 4s'];
   const phaseColors = [ACC, '#ffffff', ACC2];
-  tag(ctx, 410, 196, phaseNames[phase], phaseColors[phase], 17);
+  tag(ctx, 410, 200, phaseNames[phase], phaseColors[phase], 17);
 
-  // Barra de progreso del ciclo
+  // Barra de progreso
   ctx.save();
-  const bx = 100, by = 226, bw = 620, bh = 6;
+  const bx = 100, by = 230, bw = 620, bh = 6;
   ctx.fillStyle = 'rgba(255,255,255,.08)';
   ctx.fillRect(bx, by, bw, bh);
   ctx.fillStyle = ACC;
   ctx.fillRect(bx, by, bw * (cyc / CYCLE), bh);
-  // Marcadores
   [4, 8].forEach(mk => {
     ctx.fillStyle = 'rgba(255,255,255,.3)';
     ctx.fillRect(bx + bw * (mk / CYCLE), by - 4, 1, bh + 8);
   });
   ctx.restore();
 
-  // ECG (trazado inferior)
-  const ecy = 370, eamp = 60;
+  // ECG: onda PQRST que se calma (amplitud baja a medida que avanza el ciclo)
+  const ecy = 360, eamp = 65;
+  const calm = 1 - (cyc / CYCLE) * 0.5; // el pulso se calma
   ctx.save();
   ctx.strokeStyle = ACC; ctx.lineWidth = 2.2; ctx.shadowColor = ACC; ctx.shadowBlur = 8;
   ctx.beginPath();
   let first = true;
   for (let x = 0; x <= 780; x += 2) {
     const tx = t - x * 0.008;
-    // QRS: pico agudo cada 1s
-    const beat = Math.max(0, Math.sin(tx * Math.PI * 2));
-    const qrs = beat > 0.92 ? (beat - 0.92) / 0.08 * eamp : 0;
-    const baseline = Math.sin(tx * 0.8) * 4;
-    const y = ecy - qrs - baseline;
+    // PQRST simplificado: onda P (pequeña), QRS (grande), T (media)
+    const beatPhase = (tx % 1);
+    let wave = 0;
+    if (beatPhase < 0.15) wave = Math.sin(beatPhase / 0.15 * Math.PI) * 0.2;    // P
+    else if (beatPhase < 0.25) wave = 1;                                           // QRS
+    else if (beatPhase < 0.35) wave = -0.3;                                         // S
+    else if (beatPhase < 0.55) wave = Math.sin((beatPhase - 0.35) / 0.2 * Math.PI) * 0.5; // T
+    const baseline = Math.sin(tx * 0.5) * 2;
+    const y = ecy - wave * eamp * calm - baseline;
     first ? ctx.moveTo(40 + x, y) : ctx.lineTo(40 + x, y);
     first = false;
   }
@@ -3251,7 +3255,7 @@ function demoD(ctx, u, S, dt) {
   ctx.beginPath(); ctx.moveTo(40, ecy); ctx.lineTo(820, ecy); ctx.stroke();
   ctx.restore();
 
-  miniLabel(ctx, 60, ecy + 40, 'PULSO', 'rgba(154,166,182,.8)', 10);
+  miniLabel(ctx, 60, ecy + 50, 'PULSO', 'rgba(154,166,182,.8)', 10);
   tag(ctx, 410, 445, '4s INHALA · 4s SOSTÉN · 4s EXHALA — REPITE EN CADA RECTA', ACC, 13);
 }
 
