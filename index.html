@@ -1422,19 +1422,38 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
           <div class="field">
             <label for="fCoche">Coche</label>
             <select id="fCoche" name="coche">
-              <option value="LMP2 (Oreca 07)">LMP2 · Oreca 07</option>
-              <option value="GT3">GT3</option>
-              <option value="GT4">GT4</option>
-              <option value="Mazda MX-5 Cup">Mazda MX-5 Cup</option>
-              <option value="Fórmula (SF23 / IR-18)">Fórmula (SF23 / IR-18)</option>
+              <optgroup label="Monoplaza">
+                <option value="Formula Ford">Formula Ford</option>
+                <option value="Formula RSS 3 2026 V6">Formula RSS 3 2026 V6</option>
+                <option value="Fórmula (SF23 / IR-18)">Fórmula (SF23 / IR-18)</option>
+              </optgroup>
+              <optgroup label="Turismo / GT">
+                <option value="TC2000">TC2000</option>
+                <option value="Mazda MX-5 Cup">Mazda MX-5 Cup</option>
+                <option value="GT4">GT4</option>
+                <option value="GT3">GT3</option>
+              </optgroup>
+              <optgroup label="Prototipo">
+                <option value="PLM (Prototipo Le Mans)">PLM · Prototipo Le Mans</option>
+                <option value="LMP2 (Oreca 07)">LMP2 · Oreca 07</option>
+              </optgroup>
             </select>
           </div>
           <div class="field">
             <label for="fCircuito">Circuito</label>
             <select id="fCircuito" name="circuito">
-              <option value="Le Mans (Circuit de la Sarthe)">Le Mans · Circuit de la Sarthe</option>
-              <option value="Mónaco">Mónaco</option>
-              <option value="Madring (Madrid)">Madring · Madrid</option>
+              <optgroup label="Callejeros">
+                <option value="Mónaco">Mónaco</option>
+              </optgroup>
+              <optgroup label="Técnicos medios">
+                <option value="Red Bull Ring">Red Bull Ring</option>
+                <option value="Autódromo Termas de Río Hondo">Termas de Río Hondo</option>
+                <option value="Autódromo San Juan Villicum">San Juan Villicum</option>
+              </optgroup>
+              <optgroup label="Alta dificultad">
+                <option value="Le Mans (Circuit de la Sarthe)">Le Mans · Circuit de la Sarthe</option>
+                <option value="Madring (Madrid)">Madring · Madrid</option>
+              </optgroup>
               <option value="Otro">Otro…</option>
             </select>
           </div>
