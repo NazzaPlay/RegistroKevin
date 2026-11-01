@@ -1058,6 +1058,13 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
             <label for="fNota">¿En qué curva te frustraste, sentiste nervios o bloqueaste los frenos? <b>*</b></label>
             <textarea id="fNota" name="nota" placeholder="Sé específico: curva, vuelta y qué sentiste. Ej: New Chicane (Le Mans), vuelta 4 — llegué en rebufo, frené tarde y bloqueé el eje delantero. En la Arcada (Mónaco) dudé en el punto de frenada…"></textarea>
           </div>
+
+          <!-- SETUP EXTRA PRO (Fase 6) -->
+          <div class="field span2 pro-setup-input" id="fSetupWrap" style="display:none; margin-top:10px;">
+            <label for="fSetup">Setup del Coche (Opcional)</label>
+            <input type="text" id="fSetup" name="setup" placeholder="Alerón 35°, Presión Neumáticos 22 PSI, Freno 40%">
+          </div>
+
         </div>
         <div class="form-actions">
           <button class="btn btn-primary" id="btnGuardar" type="submit">
@@ -2504,6 +2511,7 @@ function initDiario() {
       ansAtacar: radios('ansAtacar')?.value || '3',
       ansDefender: radios('ansDefender')?.value || '3',
       ansLentas: radios('ansLentas')?.value || '3',
+      setup: $('#fSetup').value.trim(),
       nota,
       registrado: new Date().toISOString(),
     };
@@ -2817,6 +2825,8 @@ function initProFeatures() {
                     <input type="file" accept=".json" style="display:none;" onchange="pro_importBackup(this.files[0])">
                 </label>
                 <button onclick="openProDashboard()" style="background:#3b82f6; color:#fff; border:none; padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">Dashboard Profe</button>
+                <button onclick="openComparadorSetups()" style="background:#a855f7; color:#fff; border:none; padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">Setups</button>
+                <button onclick="toggleSetupField()" style="background:#555; color:#fff; border:none; padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">Setup en Diario</button>
             </div>
         `;
         nav.insertBefore(profePanel, nav.children[1]); // Put it after logo
@@ -3112,6 +3122,105 @@ const QUIZ_ANSWERS = {
     'concepto-b': { correct: 'b', explanation: "El aire sucio reduce la carga de la trompa, haciendo el volante ligero." },
     'concepto-c': { correct: 'a', explanation: "La regla del 50% garantiza que el espacio es legal y el duelo limpio." }
 };
+
+/* ══════════════════════════════════════════════════════════════
+   PRO EDITION - COMPARADOR DE SETUPS (Fase 6)
+   ══════════════════════════════════════════════════════════════ */
+const LS_PROFE_SETUPS = 'LS_PROFE_SETUPS';
+
+function getProfeSetups() {
+    try { return JSON.parse(localStorage.getItem(LS_PROFE_SETUPS)) || {}; }
+    catch(e) { return {}; }
+}
+
+function openComparadorSetups() {
+    let modal = document.getElementById('setupComparadorModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'setupComparadorModal';
+        modal.style.cssText = "position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0a0a0cee;z-index:9998;overflow-y:auto;padding:20px;font-family:JetBrains Mono;";
+        document.body.appendChild(modal);
+    }
+
+    const pilotos = getListaPilotos();
+    const entries = getEntries();
+    // Group entries by circuito and pilot
+    const byCircuit = {};
+    entries.forEach(e => {
+        const key = e.circuito || 'Sin circuito';
+        if (!byCircuit[key]) byCircuit[key] = [];
+        byCircuit[key].push(e);
+    });
+
+    const profeSetups = getProfeSetups();
+    const circuitos = Object.keys(byCircuit);
+
+    let html = `<div style="max-width:900px;margin:0 auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <h2 style="color:var(--acc);">COMPARADOR DE SETUPS</h2>
+            <button onclick="document.getElementById('setupComparadorModal').remove()" style="background:transparent;border:1px solid #fff;color:#fff;padding:4px 12px;cursor:pointer;">Cerrar</button>
+        </div>
+        <div style="margin-bottom:20px;background:#1a1a1a;padding:15px;border-radius:8px;">
+            <h4 style="color:#fff;margin-bottom:10px;">Guardar Setup de Referencia del Profe</h4>
+            <select id="setupCircuito" style="background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;margin-right:10px;">
+                ${circuitos.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('')}
+            </select>
+            <input id="setupProfeInput" type="text" placeholder="Alerón 35°, Freno 40%, Neumáticos 22 PSI" style="background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;width:350px;">
+            <button onclick="guardarSetupProfe()" style="background:var(--acc);color:#000;border:none;padding:8px 16px;border-radius:4px;font-weight:bold;cursor:pointer;margin-left:10px;">Guardar</button>
+        </div>`;
+
+    if (circuitos.length === 0) {
+        html += `<p style="color:#888;">No hay sesiones registradas con circuito.</p>`;
+    } else {
+        circuitos.forEach(circ => {
+            const sesiones = byCircuit[circ];
+            const profeSetup = profeSetups[circ] || '—';
+            html += `<div style="background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:15px;margin-bottom:15px;">
+                <h3 style="color:var(--acc);border-bottom:1px solid #333;padding-bottom:8px;margin-bottom:12px;">🏁 ${escapeHtml(circ)}</h3>
+                <p style="color:#aaa;margin-bottom:10px;font-size:13px;">SETUP PROFE: <b style="color:#fff">${escapeHtml(profeSetup)}</b></p>
+                <table style="width:100%;border-collapse:collapse;color:#fff;font-size:13px;">
+                    <thead><tr style="border-bottom:1px solid #444;">
+                        <th style="padding:5px;">Piloto</th>
+                        <th>Fecha</th>
+                        <th>Mejor Vuelta</th>
+                        <th>Setup Piloto</th>
+                    </tr></thead>
+                    <tbody>
+                        ${sesiones.slice(0, 5).map(s => `<tr style="border-bottom:1px solid #222;">
+                            <td style="padding:6px;">${escapeHtml(s.piloto || '—')}</td>
+                            <td>${escapeHtml(s.fecha || '—')}</td>
+                            <td>${escapeHtml(s.mejor || '—')}</td>
+                            <td style="color:${s.setup ? '#00E5E0' : '#555'}">${escapeHtml(s.setup || '(sin setup)')}</td>
+                        </tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>`;
+        });
+    }
+
+    html += `</div>`;
+    modal.innerHTML = html;
+    modal.style.display = 'block';
+}
+
+function guardarSetupProfe() {
+    const circ = document.getElementById('setupCircuito')?.value;
+    const val = document.getElementById('setupProfeInput')?.value.trim();
+    if (!circ || !val) { toast('Completa circuito y setup', 'err'); return; }
+    const setups = getProfeSetups();
+    setups[circ] = val;
+    localStorage.setItem(LS_PROFE_SETUPS, JSON.stringify(setups));
+    toast('Setup del profe guardado', 'ok');
+    openComparadorSetups(); // Refresh
+}
+
+function toggleSetupField() {
+    const wrap = document.getElementById('fSetupWrap');
+    if (!wrap) return;
+    const visible = wrap.style.display !== 'none';
+    wrap.style.display = visible ? 'none' : 'block';
+    toast(visible ? 'Campo de setup oculto' : 'Campo de setup visible en el diario', 'ok');
+}
 
 function toggleQuiz(id) {
     const content = document.querySelector(`#quiz-${id} .quiz-content`);
