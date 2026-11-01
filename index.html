@@ -1832,8 +1832,14 @@ function renderProfileCard() {
       const low = val < 4 ? ' low' : '';
       return `<div class="stat-bar${low}" style="--w:${pct}%"><div class="sb-head"><span>${escapeHtml(label)}</span><b>${val}</b></div><div class="sb-track"><i></i></div></div>`;
     }).join('')}
-    <div id="graphEvolucion" style="width:100%; height:180px; margin-top:10px; border:1px solid var(--line); border-radius:var(--radius-sm); position:relative;">
-        <canvas id="canvasEvolucion" width="400" height="180"></canvas>
+    <div id="graphEvolucion" style="width:100%; height:180px; margin-top:10px; border:1px solid var(--line); border-radius:var(--radius-sm); position:relative; overflow:hidden;">
+        <canvas id="canvasEvolucion" style="width:100%;height:100%;display:block;"></canvas>
+        <div id="graphTooltip" style="display:none;position:absolute;background:#1a1a1a;border:1px solid var(--acc);color:#fff;padding:6px 10px;border-radius:4px;font-size:11px;font-family:JetBrains Mono;pointer-events:none;white-space:nowrap;z-index:10;"></div>
+        <div style="position:absolute;bottom:4px;right:6px;display:flex;gap:8px;font-size:10px;font-family:JetBrains Mono;">
+          <span style="color:#00E5E0;">● Atacar</span>
+          <span style="color:#3b82f6;">● Defender</span>
+          <span style="color:#ef4444;">● Curvas</span>
+        </div>
     </div>
     <p class="profile-note">Lectura inicial del entrenador · se recalibra cada mes con los datos del diario.</p>
   `;
@@ -3094,6 +3100,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ── PRO EDITION HOOKS ─────────────────────────────────────────── */
   safe(initProFeatures);
   safe(initSlideshowAnnotations);
+  safe(initQuizProgress);
   /* ── CLOUD + AUTH (Fase 7) ──────────────────────────────────────── */
   safe(initAuthUI);
   sbPullAll();
@@ -3195,54 +3202,133 @@ function pro_autoBackup() {
 function renderGraphEvolucion(pilotoName) {
     const canvas = document.getElementById('canvasEvolucion');
     if (!canvas) return;
+    // Dimensión real tras layout
+    canvas.width  = canvas.offsetWidth  || canvas.parentElement.offsetWidth  || 400;
+    canvas.height = canvas.offsetHeight || canvas.parentElement.offsetHeight || 180;
     const ctx = canvas.getContext('2d');
-    const entries = getEntries().filter(e => e.piloto === pilotoName).slice(0, 10).reverse();
-    
-    // Clear
+
+    // Últimas 10 sesiones del piloto, orden cronológico
+    const entries = getEntries()
+        .filter(e => e.piloto === pilotoName)
+        .sort((a, b) => new Date(a.registrado) - new Date(b.registrado))
+        .slice(-10);
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     if (entries.length === 0) {
-        ctx.fillStyle = '#888';
-        ctx.font = '12px JetBrains Mono';
-        ctx.fillText("Sin sesiones registradas para gráfica", 20, 90);
+        ctx.fillStyle = '#555';
+        ctx.font = '11px JetBrains Mono';
+        ctx.fillText('Sin sesiones registradas', 14, canvas.height / 2);
         return;
     }
-    
-    const pad = 20;
-    const w = canvas.width - pad*2;
-    const h = canvas.height - pad*2;
-    const stepX = w / Math.max(1, entries.length - 1);
-    
-    // 3 series: Atacar (cyan), Defender (blue), Lentas (red)
-    const series = [
-        { key: 'ansAtacar', color: '#00E5E0' },
-        { key: 'ansDefender', color: '#3b82f6' },
-        { key: 'ansLentas', color: '#ef4444' }
-    ];
-    
-    // Draw grid
-    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+
+    const padL = 28, padR = 10, padT = 10, padB = 22;
+    const W = canvas.width  - padL - padR;
+    const H = canvas.height - padT - padB;
+
+    // Grid horizontal (valores 1–5)
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
     ctx.lineWidth = 1;
-    for(let i=0; i<=5; i++) {
-        const y = pad + (h/5)*i;
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.font = '9px JetBrains Mono';
+    for (let v = 1; v <= 5; v++) {
+        const y = padT + H - ((v - 1) / 4) * H;
         ctx.beginPath();
-        ctx.moveTo(pad, y);
-        ctx.lineTo(pad+w, y);
+        ctx.moveTo(padL, y);
+        ctx.lineTo(padL + W, y);
         ctx.stroke();
+        ctx.fillText(v, 2, y + 3);
     }
-    
+
+    // Eje X — fechas abreviadas
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.font = '8px JetBrains Mono';
+    const stepX = entries.length > 1 ? W / (entries.length - 1) : W;
+    entries.forEach((e, i) => {
+        const x = padL + i * stepX;
+        const label = (e.fecha || '').slice(5); // MM-DD
+        ctx.fillText(label, x - 10, canvas.height - 4);
+    });
+
+    // Series
+    const series = [
+        { key: 'ansAtacar',   color: '#00E5E0' },
+        { key: 'ansDefender', color: '#3b82f6' },
+        { key: 'ansLentas',   color: '#ef4444' }
+    ];
+
+    const toY = val => padT + H - ((Math.min(5, Math.max(1, Number(val))) - 1) / 4) * H;
+
     series.forEach(s => {
+        // Área bajo la línea (sutil)
+        ctx.beginPath();
+        entries.forEach((e, i) => {
+            const x = padL + i * stepX;
+            const y = toY(e[s.key]);
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        });
+        ctx.lineTo(padL + (entries.length - 1) * stepX, padT + H);
+        ctx.lineTo(padL, padT + H);
+        ctx.closePath();
+        ctx.fillStyle = s.color + '18';
+        ctx.fill();
+
+        // Línea
         ctx.beginPath();
         ctx.strokeStyle = s.color;
         ctx.lineWidth = 2;
+        ctx.lineJoin = 'round';
         entries.forEach((e, i) => {
-            const x = pad + (i * stepX);
-            const y = pad + h - (Number(e[s.key]) / 5) * h;
-            if(i===0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
+            const x = padL + i * stepX;
+            const y = toY(e[s.key]);
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
         });
         ctx.stroke();
+
+        // Puntos
+        entries.forEach((e, i) => {
+            const x = padL + i * stepX;
+            const y = toY(e[s.key]);
+            ctx.beginPath();
+            ctx.arc(x, y, 3, 0, Math.PI * 2);
+            ctx.fillStyle = s.color;
+            ctx.fill();
+        });
     });
+
+    // Tooltip via mousemove — reusar mismo canvas, solo reemplazar handler
+    const wrap = canvas.parentElement;
+    const tooltip = wrap ? wrap.querySelector('#graphTooltip') : null;
+    if (!tooltip) return;
+
+    // Eliminar handlers previos con AbortController almacenado en el canvas
+    if (canvas._graphAbort) canvas._graphAbort.abort();
+    const ac = new AbortController();
+    canvas._graphAbort = ac;
+
+    canvas.addEventListener('mousemove', (ev) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = ev.clientX - rect.left;
+        let closest = -1, minDist = Infinity;
+        entries.forEach((_, i) => {
+            const x = padL + i * stepX;
+            const d = Math.abs(mx - x);
+            if (d < minDist) { minDist = d; closest = i; }
+        });
+        if (closest < 0 || minDist > 30) { tooltip.style.display = 'none'; return; }
+        const e = entries[closest];
+        const fecha = e.fecha || (e.registrado || '').slice(0, 10) || '?';
+        tooltip.innerHTML =
+            `<b style="color:#aaa">${fecha}</b><br>` +
+            `<span style="color:#00E5E0">Atacar: ${e.ansAtacar}/5</span><br>` +
+            `<span style="color:#3b82f6">Defender: ${e.ansDefender}/5</span><br>` +
+            `<span style="color:#ef4444">Curvas: ${e.ansLentas}/5</span>`;
+        const tx = padL + closest * stepX + 10;
+        tooltip.style.left = Math.min(tx, canvas.offsetWidth - 130) + 'px';
+        tooltip.style.top  = '8px';
+        tooltip.style.display = 'block';
+    }, { signal: ac.signal });
+    canvas.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; }, { signal: ac.signal });
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -3254,10 +3340,26 @@ function initProDashboard() {
     dashboard.style.cssText = "display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#0a0a0c; z-index:9999; overflow-y:auto; padding:20px; font-family:JetBrains Mono;";
     dashboard.innerHTML = `
         <div style="max-width:900px; margin:0 auto;">
-            <h2 style="color:var(--acc); font-size:20px; margin-bottom:20px;">DASHBOARD DEL PROFE</h2>
-            <button id="btnCerrarDash" style="float:right; background:transparent; border:1px solid #fff; color:#fff; padding:4px 12px; cursor:pointer;">Cerrar</button>
-            <div id="dashTable" style="border:1px solid var(--line); border-radius:var(--radius-sm); padding:15px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                <h2 style="color:var(--acc); font-size:20px; margin:0;">DASHBOARD DEL PROFE</h2>
+                <button id="btnCerrarDash" style="background:transparent; border:1px solid #fff; color:#fff; padding:4px 12px; cursor:pointer;">Cerrar</button>
+            </div>
+            <div id="dashTable" style="border:1px solid var(--line); border-radius:var(--radius-sm); padding:15px; margin-bottom:20px;">
                 <!-- Generado dinámicamente -->
+            </div>
+            <div id="dashComparador" style="border:1px solid #3b82f6; border-radius:var(--radius-sm); padding:15px;">
+                <h3 style="color:#3b82f6; font-size:14px; margin:0 0 12px 0;">COMPARADOR DE ANSIEDAD</h3>
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;">
+                    <select id="cmpPiloto1" style="background:#1a1a1a;color:#fff;border:1px solid #444;padding:6px 10px;border-radius:4px;font-family:JetBrains Mono;font-size:12px;">
+                        <option value="">— Piloto A —</option>
+                    </select>
+                    <span style="color:#555;font-size:18px;">vs</span>
+                    <select id="cmpPiloto2" style="background:#1a1a1a;color:#fff;border:1px solid #444;padding:6px 10px;border-radius:4px;font-family:JetBrains Mono;font-size:12px;">
+                        <option value="">— Piloto B —</option>
+                    </select>
+                    <button onclick="renderComparadorAnsiedad()" style="background:#3b82f6;color:#fff;border:none;padding:6px 14px;border-radius:4px;font-weight:bold;cursor:pointer;font-family:JetBrains Mono;font-size:12px;">Comparar</button>
+                </div>
+                <div id="cmpResult" style="display:none;"></div>
             </div>
         </div>
     `;
@@ -3314,6 +3416,93 @@ function renderProDashboard(container) {
     
     html += "</tbody></table>";
     tableWrap.innerHTML = html;
+
+    // Poblar selects del comparador
+    const sel1 = container.querySelector('#cmpPiloto1');
+    const sel2 = container.querySelector('#cmpPiloto2');
+    if (sel1 && sel2) {
+        const opts = pilotos.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
+        sel1.innerHTML = '<option value="">— Piloto A —</option>' + opts;
+        sel2.innerHTML = '<option value="">— Piloto B —</option>' + opts;
+    }
+}
+
+function renderComparadorAnsiedad() {
+    const p1 = (document.getElementById('cmpPiloto1')?.value || '').trim();
+    const p2 = (document.getElementById('cmpPiloto2')?.value || '').trim();
+    const result = document.getElementById('cmpResult');
+    if (!result) return;
+    if (!p1 || !p2) { result.style.display = 'block'; result.innerHTML = '<p style="color:#ef4444;font-size:12px;">Seleccioná dos pilotos distintos.</p>'; return; }
+    if (p1 === p2)  { result.style.display = 'block'; result.innerHTML = '<p style="color:#ef4444;font-size:12px;">Seleccioná dos pilotos distintos.</p>'; return; }
+
+    const all = getEntries();
+    const statsFor = (nombre) => {
+        const es = all.filter(e => e.piloto === nombre).sort((a,b) => new Date(b.registrado) - new Date(a.registrado));
+        if (!es.length) return null;
+        const last5 = es.slice(0, 5);
+        const avg = (key) => (last5.reduce((s, e) => s + Number(e[key]), 0) / last5.length).toFixed(2);
+        const trend = (key) => {
+            if (es.length < 2) return '—';
+            const d = Number(es[0][key]) - Number(es[1][key]);
+            return d < -0.1 ? '↘' : d > 0.1 ? '↗' : '→';
+        };
+        return {
+            sesiones: es.length,
+            ultima: es[0].fecha || (es[0].registrado || '').slice(0, 10),
+            avgAtacar:   avg('ansAtacar'),
+            avgDefender: avg('ansDefender'),
+            avgLentas:   avg('ansLentas'),
+            avgTotal: ((Number(avg('ansAtacar')) + Number(avg('ansDefender')) + Number(avg('ansLentas'))) / 3).toFixed(2),
+            trendAt: trend('ansAtacar'),
+            trendDef: trend('ansDefender'),
+            trendLen: trend('ansLentas'),
+        };
+    };
+
+    const s1 = statsFor(p1), s2 = statsFor(p2);
+    const fmt = (v1, v2, invert) => {
+        // verde al más bajo (ansiedad menor = mejor), a menos que invert=true
+        const n1 = Number(v1), n2 = Number(v2);
+        const c1 = n1 === n2 ? '#aaa' : (invert ? (n1 > n2 ? '#4ade80' : '#ef4444') : (n1 < n2 ? '#4ade80' : '#ef4444'));
+        const c2 = n1 === n2 ? '#aaa' : (invert ? (n2 > n1 ? '#4ade80' : '#ef4444') : (n2 < n1 ? '#4ade80' : '#ef4444'));
+        return [c1, c2];
+    };
+
+    const row = (label, v1, v2, t1, t2, invert) => {
+        const [c1, c2] = v1 && v2 ? fmt(v1, v2, invert) : ['#aaa', '#aaa'];
+        return `<tr style="border-bottom:1px solid #222;">
+            <td style="color:#888;font-size:11px;padding:6px 8px;">${label}</td>
+            <td style="color:${c1};font-weight:bold;padding:6px 8px;text-align:center;">${v1 ?? '—'} <span style="color:#555">${t1 || ''}</span></td>
+            <td style="color:${c2};font-weight:bold;padding:6px 8px;text-align:center;">${v2 ?? '—'} <span style="color:#555">${t2 || ''}</span></td>
+        </tr>`;
+    };
+
+    result.style.display = 'block';
+    result.innerHTML = `
+        <table style="width:100%;border-collapse:collapse;font-family:JetBrains Mono;font-size:12px;">
+            <thead>
+                <tr style="border-bottom:2px solid #3b82f6;">
+                    <th style="color:#666;text-align:left;padding:6px 8px;font-weight:normal;">Métrica (últ. 5 ses.)</th>
+                    <th style="color:#00E5E0;padding:6px 8px;">${escapeHtml(p1)}</th>
+                    <th style="color:#a855f7;padding:6px 8px;">${escapeHtml(p2)}</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${s1 && s2 ? [
+                    row('Sesiones totales', s1.sesiones, s2.sesiones, '', '', true),
+                    row('Última sesión', s1.ultima, s2.ultima, '', '', true),
+                    row('Ans. Atacar (avg)', s1.avgAtacar, s2.avgAtacar, s1.trendAt, s2.trendAt),
+                    row('Ans. Defender (avg)', s1.avgDefender, s2.avgDefender, s1.trendDef, s2.trendDef),
+                    row('Ans. Curvas (avg)', s1.avgLentas, s2.avgLentas, s1.trendLen, s2.trendLen),
+                    row('PROMEDIO GENERAL', s1.avgTotal, s2.avgTotal, '', ''),
+                ].join('') : `<tr><td colspan="3" style="color:#888;padding:10px 8px;">
+                    ${!s1 ? `<b style="color:#ef4444">${escapeHtml(p1)}</b> sin sesiones. ` : ''}
+                    ${!s2 ? `<b style="color:#ef4444">${escapeHtml(p2)}</b> sin sesiones.` : ''}
+                </td></tr>`}
+            </tbody>
+        </table>
+        <p style="color:#555;font-size:10px;margin:6px 0 0 0;">Verde = mejor (ansiedad más baja). Flechas: tendencia última sesión vs anterior.</p>
+    `;
 }
 
 function openProDashboard() {
@@ -3520,6 +3709,34 @@ function toggleSetupField() {
 function toggleQuiz(id) {
     const content = document.querySelector(`#quiz-${id} .quiz-content`);
     content.style.display = content.style.display === 'none' ? 'block' : 'none';
+}
+
+/* Marca con ✓ los quizzes ya aprobados por el piloto activo */
+function initQuizProgress() {
+    const pilot = getPilotoActual();
+    if (!pilot) return;
+    const perfil = getPerfil(pilot);
+    const aprobados = (perfil && perfil.progreso_quizzes) || {};
+    Object.keys(aprobados).forEach(id => {
+        if (!aprobados[id]) return;
+        const card = document.querySelector(`#quiz-${id}`);
+        if (!card) return;
+        const btn = card.querySelector('button.btn-ghost');
+        if (btn && !btn.dataset.checked) {
+            btn.dataset.checked = 'true';
+            btn.innerHTML = `<span style="color:#4ade80;margin-right:6px;">✓</span>Conocimiento verificado`;
+            btn.style.color = '#4ade80';
+            btn.style.borderColor = '#4ade80';
+            // Mostrar explicación directamente
+            const content = card.querySelector('.quiz-content');
+            if (content) {
+                content.style.display = 'block';
+                content.innerHTML = `<div style="background:#14532d;color:#4ade80;padding:8px 12px;border-radius:4px;font-size:12px;">
+                    ✓ Ya aprobaste este concepto. ${QUIZ_ANSWERS[id]?.explanation || ''}
+                </div>`;
+            }
+        }
+    });
 }
 
 function checkQuiz(id, answer) {
