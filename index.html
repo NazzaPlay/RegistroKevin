@@ -13,8 +13,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Patagonia Esports Racing Academy</title>
 <meta name="description" content="Academia de simracing profesional. Del karting virtual a los prototipos LMP2. Teoría, control emocional y práctica estructurada para pilotos de élite digital.">
-<meta name="theme-color" content="#0a0a0c">
+<meta name="theme-color" content="#00E5E0">
 <link rel="icon" href="logo-patagonia.png?v=2" type="image/png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Patagonia">
+<link rel="apple-touch-icon" href="logo-patagonia.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -3541,6 +3546,54 @@ function checkQuiz(id, answer) {
         toast("Respuesta incorrecta", "err");
     }
 }
+
+/* ── PWA SERVICE WORKER (Fase 8) ──────────────────────────────── */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/RegistroKevin/sw.js')
+      .then(reg => {
+        console.log('[SW] registrado:', reg.scope);
+        // Notificar al usuario si hay update disponible
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              toast('Nueva versión disponible. Recarga para actualizar.', 'ok');
+            }
+          });
+        });
+      })
+      .catch(err => console.warn('[SW] error:', err));
+  });
+}
+
+/* Botón "Instalar app" para PWA */
+let _deferredInstall = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _deferredInstall = e;
+  // Mostrar botón de instalación en el nav
+  const nav = document.querySelector('nav');
+  if (nav && !document.getElementById('btnInstallPWA')) {
+    const btn = document.createElement('button');
+    btn.id = 'btnInstallPWA';
+    btn.textContent = '📲 Instalar App';
+    btn.style.cssText = 'background:var(--acc);color:#000;border:none;padding:6px 14px;font-family:JetBrains Mono;font-size:12px;font-weight:bold;cursor:pointer;border-radius:4px;margin-top:6px;';
+    btn.onclick = () => {
+      _deferredInstall.prompt();
+      _deferredInstall.userChoice.then(r => {
+        if (r.outcome === 'accepted') { btn.remove(); toast('App instalada', 'ok'); }
+        _deferredInstall = null;
+      });
+    };
+    nav.appendChild(btn);
+  }
+});
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('btnInstallPWA')?.remove();
+  toast('Patagonia instalada como app', 'ok');
+});
 
 </script>
 </body>
