@@ -865,6 +865,17 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
           <p class="concept-tip"><b>Mentalidad:</b> el rebufo es una herramienta, no un compromiso. Úsalo, no te cases con él.</p>
         </div>
       </article>
+      <div class="quiz-card" id="quiz-concepto-a" style="margin-top:10px">
+        <button class="btn btn-ghost" onclick="toggleQuiz('concepto-a')" style="font-family:JetBrains Mono; font-size:12px;">Verificar conocimiento</button>
+        <div class="quiz-content" style="display:none; margin-top:10px;">
+            <p>¿En qué sector de Le Mans es crítico el aire sucio?</p>
+            <div style="display:grid; gap:5px; margin-top:5px">
+                <button onclick="checkQuiz('concepto-a', 'a')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">A) Mulsanne (recta final)</button>
+                <button onclick="checkQuiz('concepto-a', 'b')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">B) Porsche Curves</button>
+                <button onclick="checkQuiz('concepto-a', 'c')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">C) Hunaudieres</button>
+            </div>
+        </div>
+      </div>
 
       <!-- CONCEPTO B · AIRE SUCIO -->
       <article class="concept-card glass reveal">
@@ -893,6 +904,17 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
           <p class="concept-tip"><b>Clave:</b> en curvas rápidas, acercarse de más no presiona al rival — te sabotea a ti.</p>
         </div>
       </article>
+      <div class="quiz-card" id="quiz-concepto-b" style="margin-top:10px">
+        <button class="btn btn-ghost" onclick="toggleQuiz('concepto-b')" style="font-family:JetBrains Mono; font-size:12px;">Verificar conocimiento</button>
+        <div class="quiz-content" style="display:none; margin-top:10px;">
+            <p>¿Qué sientes en el G29 si estás en el aire sucio del rival?</p>
+            <div style="display:grid; gap:5px; margin-top:5px">
+                <button onclick="checkQuiz('concepto-b', 'a')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">A) Volante más pesado</button>
+                <button onclick="checkQuiz('concepto-b', 'b')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">B) Volante ligero / sin peso</button>
+                <button onclick="checkQuiz('concepto-b', 'c')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">C) Vibraciones en el chasis</button>
+            </div>
+        </div>
+      </div>
 
       <!-- CONCEPTO C · REGLA DEL 50% -->
       <article class="concept-card glass reveal">
@@ -921,6 +943,17 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
           <p class="concept-tip"><b>Para el piloto:</b> cuando la ansiedad de atacar apriete, esta regla es tu ancla — decide con geometría, no con adrenalina.</p>
         </div>
       </article>
+      <div class="quiz-card" id="quiz-concepto-c" style="margin-top:10px">
+        <button class="btn btn-ghost" onclick="toggleQuiz('concepto-c')" style="font-family:JetBrains Mono; font-size:12px;">Verificar conocimiento</button>
+        <div class="quiz-content" style="display:none; margin-top:10px;">
+            <p>¿Cuál es la regla de oro para exigir espacio legal en una curva?</p>
+            <div style="display:grid; gap:5px; margin-top:5px">
+                <button onclick="checkQuiz('concepto-c', 'a')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">A) Tu trompa debe estar al 50% del rival antes de que gire</button>
+                <button onclick="checkQuiz('concepto-c', 'b')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">B) Acelera fuerte y fuerza el espacio</button>
+                <button onclick="checkQuiz('concepto-c', 'c')" style="text-align:left; background:#222; color:#fff; border:1px solid #333; padding:8px; border-radius:4px; cursor:pointer;">C) El primero que llega siempre gana</button>
+            </div>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -1025,6 +1058,13 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
             <label for="fNota">¿En qué curva te frustraste, sentiste nervios o bloqueaste los frenos? <b>*</b></label>
             <textarea id="fNota" name="nota" placeholder="Sé específico: curva, vuelta y qué sentiste. Ej: New Chicane (Le Mans), vuelta 4 — llegué en rebufo, frené tarde y bloqueé el eje delantero. En la Arcada (Mónaco) dudé en el punto de frenada…"></textarea>
           </div>
+
+          <!-- SETUP EXTRA PRO (Fase 6) -->
+          <div class="field span2 pro-setup-input" id="fSetupWrap" style="display:none; margin-top:10px;">
+            <label for="fSetup">Setup del Coche (Opcional)</label>
+            <input type="text" id="fSetup" name="setup" placeholder="Alerón 35°, Presión Neumáticos 22 PSI, Freno 40%">
+          </div>
+
         </div>
         <div class="form-actions">
           <button class="btn btn-primary" id="btnGuardar" type="submit">
@@ -1271,8 +1311,10 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
       <button class="ss-exit" id="ssExit" type="button">Salir</button>
     </span>
   </div>
-  <div class="ss-stage" id="ssStage"></div>
-  <div class="ss-bottom">
+  <div class="ss-stage" id="ssStage">
+    <canvas id="ssCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:100; opacity:0.7;"></canvas>
+  </div>
+  <div class="ss-bottom" style="position:relative; z-index:200;">
     <button class="ss-btn" id="ssPrev" type="button" aria-label="Diapositiva anterior">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
     </button>
@@ -1281,6 +1323,11 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
     <button class="ss-btn" id="ssNext" type="button" aria-label="Diapositiva siguiente">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
     </button>
+    <!-- Toolbar de anotaciones -->
+    <div style="position:absolute; left:50%; transform:translateX(-50%); bottom:60px; display:flex; gap:10px; background:#111; padding:10px; border-radius:8px; border:1px solid #333; z-index:300;">
+        <button id="ssPen" title="Lápiz (D)" style="background:#333; color:#fff; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">✏️ DIBUJAR</button>
+        <button id="ssClear" title="Limpiar (L)" style="background:#333; color:#fff; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">LIMPIAR</button>
+    </div>
   </div>
 </div>
 
@@ -1357,7 +1404,10 @@ function getPerfiles() {
   try { return JSON.parse(localStorage.getItem(LS_PERFILES)) || {}; }
   catch (e) { return {}; }
 }
-function setPerfiles(p) { localStorage.setItem(LS_PERFILES, JSON.stringify(p)); }
+function setPerfiles(p) { 
+    localStorage.setItem(LS_PERFILES, JSON.stringify(p)); 
+    if (typeof pro_autoBackup === 'function') pro_autoBackup();
+}
 function getPerfil(nombre) {
   const ps = getPerfiles();
   return ps[nombre] || null;
@@ -1371,7 +1421,10 @@ function getRutas() {
   try { return JSON.parse(localStorage.getItem(LS_RUTAS)) || {}; }
   catch (e) { return {}; }
 }
-function setRutas(r) { localStorage.setItem(LS_RUTAS, JSON.stringify(r)); }
+function setRutas(r) { 
+    localStorage.setItem(LS_RUTAS, JSON.stringify(r)); 
+    if (typeof pro_autoBackup === 'function') pro_autoBackup();
+}
 function getRutaPiloto(nombre) {
   const rs = getRutas();
   return rs[nombre] || null;
@@ -1491,8 +1544,14 @@ function renderProfileCard() {
       const low = val < 4 ? ' low' : '';
       return `<div class="stat-bar${low}" style="--w:${pct}%"><div class="sb-head"><span>${escapeHtml(label)}</span><b>${val}</b></div><div class="sb-track"><i></i></div></div>`;
     }).join('')}
+    <div id="graphEvolucion" style="width:100%; height:180px; margin-top:10px; border:1px solid var(--line); border-radius:var(--radius-sm); position:relative;">
+        <canvas id="canvasEvolucion" width="400" height="180"></canvas>
+    </div>
     <p class="profile-note">Lectura inicial del entrenador · se recalibra cada mes con los datos del diario.</p>
   `;
+  
+  // Render the graph
+  renderGraphEvolucion(nombre);
 }
 function abrirWizardPerfil(nombre, edit) {
   // Wizard simplificado: prompt secuencial
@@ -2332,7 +2391,8 @@ function getEntries() {
   catch (e) { return []; }
 }
 function setEntries(list) {
-  localStorage.setItem(LS_KEY, JSON.stringify(list));
+    localStorage.setItem(LS_KEY, JSON.stringify(list));
+    if (typeof pro_autoBackup === 'function') pro_autoBackup();
 }
 
 /* CONEXIÓN CON GOOGLE SHEETS — ACTIVA.
@@ -2451,6 +2511,7 @@ function initDiario() {
       ansAtacar: radios('ansAtacar')?.value || '3',
       ansDefender: radios('ansDefender')?.value || '3',
       ansLentas: radios('ansLentas')?.value || '3',
+      setup: $('#fSetup').value.trim(),
       nota,
       registrado: new Date().toISOString(),
     };
@@ -2738,7 +2799,459 @@ document.addEventListener('DOMContentLoaded', () => {
   safe(initDiario);
   safe(initSlideshow);
   safe(initRuta);
+
+  /* ── PRO EDITION HOOKS ─────────────────────────────────────────── */
+  safe(initProFeatures);
+  safe(initSlideshowAnnotations);
 });
+
+/* ══════════════════════════════════════════════════════════════
+   PRO EDITION - DATA MANAGEMENT
+   ══════════════════════════════════════════════════════════════ */
+const PRO_DATA_KEYS = [LS_PILOTO_ACTUAL, LS_LISTA_PILOTOS, LS_PERFILES, LS_RUTAS, LS_KEY, LS_RUTA];
+const LS_PRO_AUTO_BACKUPS = 'LS_PRO_AUTO_BACKUPS';
+
+function initProFeatures() {
+    // Inject Profe UI panel
+    const nav = document.querySelector('nav');
+    if (nav) {
+        const profePanel = document.createElement('div');
+        profePanel.id = 'profePanel';
+        profePanel.style.cssText = "background:#1a1a1a; padding:10px; margin:10px 0; border-radius:8px; text-align:center; font-family:JetBrains Mono; display:none"; // hidden by default, we'll show if admin
+        profePanel.innerHTML = `
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; align-items:center;">
+                <button onclick="pro_exportBackup()" style="background:var(--acc); color:#000; border:none; padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">Descargar Backup</button>
+                <label style="background:transparent; color:#fff; border:1px solid var(--acc); padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">Restaurar
+                    <input type="file" accept=".json" style="display:none;" onchange="pro_importBackup(this.files[0])">
+                </label>
+                <button onclick="openProDashboard()" style="background:#3b82f6; color:#fff; border:none; padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">Dashboard Profe</button>
+                <button onclick="openComparadorSetups()" style="background:#a855f7; color:#fff; border:none; padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">Setups</button>
+                <button onclick="toggleSetupField()" style="background:#555; color:#fff; border:none; padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">Setup en Diario</button>
+            </div>
+        `;
+        nav.insertBefore(profePanel, nav.children[1]); // Put it after logo
+        
+        // Simple "Profe" password gate (for now just a button that shows the panel)
+        const profeBtn = document.createElement('button');
+        profeBtn.textContent = "MODO PROFE";
+        profeBtn.style.cssText = "background:#333; color:var(--acc); border:1px solid var(--acc); padding:4px 12px; font-family:JetBrains Mono; font-size:12px; cursor:pointer; margin-top:10px";
+        profeBtn.onclick = () => {
+            const pwd = prompt("Contraseña de Profe:");
+            if (pwd === "PATAGONIA_ADMIN_2026") { // Hardcoded for now, Phase 7 will improve
+                profePanel.style.display = "block";
+                profeBtn.style.display = "none";
+            } else {
+                alert("Contraseña incorrecta");
+            }
+        };
+        nav.appendChild(profeBtn);
+    }
+}
+
+function pro_exportBackup() {
+    const backup = {};
+    PRO_DATA_KEYS.forEach(key => {
+        backup[key] = localStorage.getItem(key);
+    });
+    backup['_meta'] = {
+        exportedAt: new Date().toISOString(),
+        version: 1
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `patagonia_backup_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast("Backup exportado exitosamente", "ok");
+}
+
+function pro_importBackup(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (!data || typeof data !== 'object') throw new Error("Formato JSON inválido");
+            const keys = Object.keys(data).filter(k => k !== '_meta');
+            if (keys.length === 0) throw new Error("Backup vacío o corrupto");
+            if (confirm("⚠️ Esta acción sobrescribirá todos los datos actuales. ¿Continuar?")) {
+                keys.forEach(key => {
+                    if (data[key] !== null) localStorage.setItem(key, data[key]);
+                });
+                location.reload();
+            }
+        } catch (err) {
+            alert("Error importando backup: " + err.message);
+        }
+    };
+    reader.readAsText(file);
+}
+
+function pro_autoBackup() {
+    const history = JSON.parse(localStorage.getItem(LS_PRO_AUTO_BACKUPS) || '[]');
+    const current = {};
+    PRO_DATA_KEYS.forEach(key => { current[key] = localStorage.getItem(key); });
+    const snapshot = { timestamp: new Date().toISOString(), data: current };
+    history.unshift(snapshot);
+    localStorage.setItem(LS_PRO_AUTO_BACKUPS, JSON.stringify(history.slice(0, 5)));
+}
+
+function renderGraphEvolucion(pilotoName) {
+    const canvas = document.getElementById('canvasEvolucion');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const entries = getEntries().filter(e => e.piloto === pilotoName).slice(0, 10).reverse();
+    
+    // Clear
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    if (entries.length === 0) {
+        ctx.fillStyle = '#888';
+        ctx.font = '12px JetBrains Mono';
+        ctx.fillText("Sin sesiones registradas para gráfica", 20, 90);
+        return;
+    }
+    
+    const pad = 20;
+    const w = canvas.width - pad*2;
+    const h = canvas.height - pad*2;
+    const stepX = w / Math.max(1, entries.length - 1);
+    
+    // 3 series: Atacar (cyan), Defender (blue), Lentas (red)
+    const series = [
+        { key: 'ansAtacar', color: '#00E5E0' },
+        { key: 'ansDefender', color: '#3b82f6' },
+        { key: 'ansLentas', color: '#ef4444' }
+    ];
+    
+    // Draw grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 1;
+    for(let i=0; i<=5; i++) {
+        const y = pad + (h/5)*i;
+        ctx.beginPath();
+        ctx.moveTo(pad, y);
+        ctx.lineTo(pad+w, y);
+        ctx.stroke();
+    }
+    
+    series.forEach(s => {
+        ctx.beginPath();
+        ctx.strokeStyle = s.color;
+        ctx.lineWidth = 2;
+        entries.forEach((e, i) => {
+            const x = pad + (i * stepX);
+            const y = pad + h - (Number(e[s.key]) / 5) * h;
+            if(i===0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+    });
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PRO EDITION - DASHBOARD DEL PROFE (Fase 3)
+   ══════════════════════════════════════════════════════════════ */
+function initProDashboard() {
+    const dashboard = document.createElement('div');
+    dashboard.id = 'proDashboard';
+    dashboard.style.cssText = "display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#0a0a0c; z-index:9999; overflow-y:auto; padding:20px; font-family:JetBrains Mono;";
+    dashboard.innerHTML = `
+        <div style="max-width:900px; margin:0 auto;">
+            <h2 style="color:var(--acc); font-size:20px; margin-bottom:20px;">DASHBOARD DEL PROFE</h2>
+            <button id="btnCerrarDash" style="float:right; background:transparent; border:1px solid #fff; color:#fff; padding:4px 12px; cursor:pointer;">Cerrar</button>
+            <div id="dashTable" style="border:1px solid var(--line); border-radius:var(--radius-sm); padding:15px;">
+                <!-- Generado dinámicamente -->
+            </div>
+        </div>
+    `;
+    document.body.appendChild(dashboard);
+    
+    document.getElementById('btnCerrarDash').onclick = () => { dashboard.style.display = 'none'; };
+    
+    // Populate the table
+    renderProDashboard(dashboard);
+    
+    return dashboard;
+}
+
+function renderProDashboard(container) {
+    const pilotos = getListaPilotos();
+    const tableWrap = container.querySelector('#dashTable');
+    
+    let html = `<table style="width:100%; border-collapse:collapse; color:#fff;">
+    <thead><tr style="border-bottom:2px solid var(--acc);">
+        <th>Piloto</th><th>Última Sesión</th><th>Promedio Ansiedad</th><th>Tendencia</th><th>Alerta</th>
+    </tr></thead><tbody>`;
+    
+    pilotos.forEach(p => {
+        const entries = getEntries().filter(e => e.piloto === p).sort((a,b) => new Date(b.registrado) - new Date(a.registrado));
+        const last = entries[0];
+        
+        // Average of the last 3
+        let avg = 0;
+        let alertBadge = "";
+        if(entries.length > 0) {
+            const last3 = entries.slice(0, 3);
+            avg = last3.reduce((sum, e) => sum + (Number(e.ansAtacar) + Number(e.ansDefender) + Number(e.ansLentas)) / 3, 0) / last3.length;
+            if (avg > 4) alertBadge = `<span style="background:#ef4444; color:#fff; padding:2px 6px; border-radius:4px; font-size:12px;">REQUIERE ATENCIÓN</span>`;
+        }
+        
+        let trend = "—";
+        if (entries.length >= 2) {
+            const prev = entries[1], curr = entries[0];
+            const dPrev = (Number(prev.ansAtacar)+Number(prev.ansDefender)+Number(prev.ansLentas))/3;
+            const dCurr = (Number(curr.ansAtacar)+Number(curr.ansDefender)+Number(curr.ansLentas))/3;
+            if (dCurr < dPrev - 0.2) trend = "↘ Mejorando";
+            else if (dCurr > dPrev + 0.2) trend = "↗ Empeorando";
+            else trend = "→ Estable";
+        }
+        
+        html += `<tr style="border-bottom:1px solid var(--line);">
+            <td><b>${p}</b></td>
+            <td>${last ? last.fecha : "—"}</td>
+            <td>${entries.length ? avg.toFixed(1) : "—"}</td>
+            <td>${trend}</td>
+            <td>${alertBadge}</td>
+        </tr>`;
+    });
+    
+    html += "</tbody></table>";
+    tableWrap.innerHTML = html;
+}
+
+function openProDashboard() {
+    let dash = document.getElementById('proDashboard');
+    if (!dash) {
+        dash = initProDashboard();
+    } else {
+        dash.style.display = 'block';
+        renderProDashboard(dash);
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PRO EDITION - CLASE CON ANOTACIONES (Fase 5)
+   ══════════════════════════════════════════════════════════════ */
+function initSlideshowAnnotations() {
+    const canvas = document.getElementById('ssCanvas');
+    const btnPen = document.getElementById('ssPen');
+    const btnClear = document.getElementById('ssClear');
+    if (!canvas || !btnPen || !btnClear) return;
+    
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+    let lastX = 0, lastY = 0;
+    
+    const resize = () => {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+    };
+    window.addEventListener('resize', resize);
+    resize();
+    
+    const getPos = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        };
+    };
+    
+    canvas.addEventListener('mousedown', (e) => {
+        if (!btnPen.dataset.active) return;
+        drawing = true;
+        const p = getPos(e);
+        lastX = p.x; lastY = p.y;
+    });
+    
+    canvas.addEventListener('mousemove', (e) => {
+        if (!drawing) return;
+        const p = getPos(e);
+        ctx.beginPath();
+        ctx.strokeStyle = '#00E5E0'; // Cyan
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+        lastX = p.x; lastY = p.y;
+    });
+    
+    canvas.addEventListener('mouseup', () => { drawing = false; });
+    canvas.addEventListener('mouseleave', () => { drawing = false; });
+    
+    // Tools
+    btnPen.addEventListener('click', () => {
+        const active = btnPen.dataset.active === 'true';
+        btnPen.dataset.active = !active;
+        btnPen.style.background = active ? '#333' : '#00E5E0';
+        btnPen.style.color = active ? '#fff' : '#000';
+        canvas.style.pointerEvents = active ? 'none' : 'auto';
+    });
+    
+    btnClear.addEventListener('click', () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+    
+    // Keyboard shortcuts for annotations
+    document.addEventListener('keydown', (e) => {
+        if (!slideshow.open) return;
+        if (e.key === 'd' || e.key === 'D') btnPen.click();
+        if (e.key === 'l' || e.key === 'L') btnClear.click();
+    });
+    
+    // Clear canvas on slide change
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach(m => {
+            if (m.target.id === 'ssStage' && m.type === 'childList') {
+                // Only clear if not currently drawing on a specific slide
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        });
+    });
+    observer.observe(document.getElementById('ssStage'), { childList: true });
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PRO EDITION - QUIZZES (Fase 4)
+   ══════════════════════════════════════════════════════════════ */
+const QUIZ_ANSWERS = {
+    'concepto-a': { correct: 'b', explanation: "Mulsanne es la recta donde el aire sucio y el rebufo son más críticos." },
+    'concepto-b': { correct: 'b', explanation: "El aire sucio reduce la carga de la trompa, haciendo el volante ligero." },
+    'concepto-c': { correct: 'a', explanation: "La regla del 50% garantiza que el espacio es legal y el duelo limpio." }
+};
+
+/* ══════════════════════════════════════════════════════════════
+   PRO EDITION - COMPARADOR DE SETUPS (Fase 6)
+   ══════════════════════════════════════════════════════════════ */
+const LS_PROFE_SETUPS = 'LS_PROFE_SETUPS';
+
+function getProfeSetups() {
+    try { return JSON.parse(localStorage.getItem(LS_PROFE_SETUPS)) || {}; }
+    catch(e) { return {}; }
+}
+
+function openComparadorSetups() {
+    let modal = document.getElementById('setupComparadorModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'setupComparadorModal';
+        modal.style.cssText = "position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0a0a0cee;z-index:9998;overflow-y:auto;padding:20px;font-family:JetBrains Mono;";
+        document.body.appendChild(modal);
+    }
+
+    const pilotos = getListaPilotos();
+    const entries = getEntries();
+    // Group entries by circuito and pilot
+    const byCircuit = {};
+    entries.forEach(e => {
+        const key = e.circuito || 'Sin circuito';
+        if (!byCircuit[key]) byCircuit[key] = [];
+        byCircuit[key].push(e);
+    });
+
+    const profeSetups = getProfeSetups();
+    const circuitos = Object.keys(byCircuit);
+
+    let html = `<div style="max-width:900px;margin:0 auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <h2 style="color:var(--acc);">COMPARADOR DE SETUPS</h2>
+            <button onclick="document.getElementById('setupComparadorModal').remove()" style="background:transparent;border:1px solid #fff;color:#fff;padding:4px 12px;cursor:pointer;">Cerrar</button>
+        </div>
+        <div style="margin-bottom:20px;background:#1a1a1a;padding:15px;border-radius:8px;">
+            <h4 style="color:#fff;margin-bottom:10px;">Guardar Setup de Referencia del Profe</h4>
+            <select id="setupCircuito" style="background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;margin-right:10px;">
+                ${circuitos.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('')}
+            </select>
+            <input id="setupProfeInput" type="text" placeholder="Alerón 35°, Freno 40%, Neumáticos 22 PSI" style="background:#222;color:#fff;border:1px solid #333;padding:8px;border-radius:4px;width:350px;">
+            <button onclick="guardarSetupProfe()" style="background:var(--acc);color:#000;border:none;padding:8px 16px;border-radius:4px;font-weight:bold;cursor:pointer;margin-left:10px;">Guardar</button>
+        </div>`;
+
+    if (circuitos.length === 0) {
+        html += `<p style="color:#888;">No hay sesiones registradas con circuito.</p>`;
+    } else {
+        circuitos.forEach(circ => {
+            const sesiones = byCircuit[circ];
+            const profeSetup = profeSetups[circ] || '—';
+            html += `<div style="background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:15px;margin-bottom:15px;">
+                <h3 style="color:var(--acc);border-bottom:1px solid #333;padding-bottom:8px;margin-bottom:12px;">🏁 ${escapeHtml(circ)}</h3>
+                <p style="color:#aaa;margin-bottom:10px;font-size:13px;">SETUP PROFE: <b style="color:#fff">${escapeHtml(profeSetup)}</b></p>
+                <table style="width:100%;border-collapse:collapse;color:#fff;font-size:13px;">
+                    <thead><tr style="border-bottom:1px solid #444;">
+                        <th style="padding:5px;">Piloto</th>
+                        <th>Fecha</th>
+                        <th>Mejor Vuelta</th>
+                        <th>Setup Piloto</th>
+                    </tr></thead>
+                    <tbody>
+                        ${sesiones.slice(0, 5).map(s => `<tr style="border-bottom:1px solid #222;">
+                            <td style="padding:6px;">${escapeHtml(s.piloto || '—')}</td>
+                            <td>${escapeHtml(s.fecha || '—')}</td>
+                            <td>${escapeHtml(s.mejor || '—')}</td>
+                            <td style="color:${s.setup ? '#00E5E0' : '#555'}">${escapeHtml(s.setup || '(sin setup)')}</td>
+                        </tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>`;
+        });
+    }
+
+    html += `</div>`;
+    modal.innerHTML = html;
+    modal.style.display = 'block';
+}
+
+function guardarSetupProfe() {
+    const circ = document.getElementById('setupCircuito')?.value;
+    const val = document.getElementById('setupProfeInput')?.value.trim();
+    if (!circ || !val) { toast('Completa circuito y setup', 'err'); return; }
+    const setups = getProfeSetups();
+    setups[circ] = val;
+    localStorage.setItem(LS_PROFE_SETUPS, JSON.stringify(setups));
+    toast('Setup del profe guardado', 'ok');
+    openComparadorSetups(); // Refresh
+}
+
+function toggleSetupField() {
+    const wrap = document.getElementById('fSetupWrap');
+    if (!wrap) return;
+    const visible = wrap.style.display !== 'none';
+    wrap.style.display = visible ? 'none' : 'block';
+    toast(visible ? 'Campo de setup oculto' : 'Campo de setup visible en el diario', 'ok');
+}
+
+function toggleQuiz(id) {
+    const content = document.querySelector(`#quiz-${id} .quiz-content`);
+    content.style.display = content.style.display === 'none' ? 'block' : 'none';
+}
+
+function checkQuiz(id, answer) {
+    const quiz = QUIZ_ANSWERS[id];
+    const container = document.querySelector(`#quiz-${id} .quiz-content`);
+    const pilot = getPilotoActual();
+    
+    if (answer === quiz.correct) {
+        // Success
+        container.innerHTML = `<div style="background:#00E5E0; color:#000; padding:10px; border-radius:4px; font-weight:bold;">✓ Correcto. ${quiz.explanation}</div>`;
+        
+        // Save to profile
+        if (pilot) {
+            let perfil = getPerfil(pilot) || {};
+            perfil.progreso_quizzes = perfil.progreso_quizzes || {};
+            perfil.progreso_quizzes[id] = true;
+            setPerfil(pilot, perfil);
+        }
+        toast("Quiz aprobado", "ok");
+    } else {
+        // Fail
+        container.innerHTML = `<div style="background:#ef4444; color:#fff; padding:10px; border-radius:4px; font-weight:bold;">✗ Incorrecto. ${quiz.explanation}</div>
+            <button onclick="toggleQuiz('${id}')" style="margin-top:10px; background:#333; color:#fff; border:none; padding:5px 15px; cursor:pointer;">Intentar de nuevo</button>`;
+        toast("Respuesta incorrecta", "err");
+    }
+}
+
 </script>
 </body>
 </html>
