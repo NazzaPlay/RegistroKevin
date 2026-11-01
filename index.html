@@ -2969,9 +2969,9 @@ function demoA(ctx, u, S, dt) {
   tag(ctx, 410, 440, 'EL REBUFO TE HACE LLEGAR +15 KM/H · FRENA 50–100 m ANTES', ACC, 13);
 }
 
-/* ── DEMO B · AIRE SUCIO (rediseño v2) ──────────────────────────────
-   Curva rápida cenital. Dos autos: el de atrás entra en la turbulencia
-   del líder → pierde carga frontal → subviraje (se va largo).        */
+/* ── DEMO B · AIRE SUCIO (rediseño v3) ──────────────────────────────
+   Curva rápida cenital. Follower entra en la turbulencia del líder
+   → pierde carga frontal → subviraje. Fase 2: otra línea, aire limpio. */
 const B_C2 = { cx: 220, cy: 290, r: 200, a0: -Math.PI * 0.65, a1: Math.PI * 0.25 };
 function bPos2(s, off) {
   const a = B_C2.a0 + s / B_C2.r;
@@ -2983,17 +2983,44 @@ function demoB(ctx, u, S, dt) {
   const CYCLE = 14;
   const p = (t % CYCLE) / CYCLE;
 
-  // Pista: curva de radio 200
-  const arc = arcPts(B_C2.cx, B_C2.cy, B_C2.r, B_C2.a0, B_C2.a1, 60);
+  // Pista: curva limpia, sin usar drawRoad (que generaba el bug)
+  // Dibujamos la curva a mano con arcos
+  const cx = B_C2.cx, cy = B_C2.cy, r = B_C2.r;
+  const a0 = B_C2.a0, a1 = B_C2.a1;
+  // Entrada y salida de la curva
   const p0 = bPos2(0, 0), p1 = bPos2(600, 0);
-  drawRoad(ctx, [[p0[0] - 20, p0[1] - 60], ...arc, [p1[0] + 20, p1[1] + 60]], 90);
+  
+  // Curva de asfalto (trazo grueso)
+  ctx.save();
+  ctx.strokeStyle = '#0a0d16'; ctx.lineWidth = 100; ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(p0[0] - 20, p0[1] - 60);
+  for (let i = 0; i <= 60; i++) {
+    const a = a0 + (a1 - a0) * i / 60;
+    const px = cx + r * Math.cos(a);
+    const py = cy + r * Math.sin(a);
+    i === 0 ? ctx.lineTo(px, py) : ctx.lineTo(px, py);
+  }
+  ctx.lineTo(p1[0] + 20, p1[1] + 60);
+  ctx.stroke();
+  // Bordes
+  ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r - 50, a0, a1); ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r + 50, a0, a1); ctx.stroke();
+  // Centro
+  ctx.setLineDash([16, 14]); ctx.strokeStyle = 'rgba(255,255,255,.08)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc(cx, cy, r, a0, a1); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
 
   // Fases
   const PHASE1_END = 0.45, PHASE2_START = 0.55;
   const phase1 = p < PHASE1_END;
   const phase2 = p >= PHASE2_START && p < 0.9;
 
-  // Posición del líder (adelante en la curva)
+  // Líder (adelante en la curva)
   const leaderDist = phase1 ? 80 + p / PHASE1_END * 260 : 340 + (p - PHASE2_START) / 0.4 * 260;
   const [lx, ly, la] = bPos2(leaderDist, 0);
   drawCar(ctx, lx, ly, la, 1.15, '#dfe5ee');
@@ -3002,9 +3029,8 @@ function demoB(ctx, u, S, dt) {
 
   // Follower
   if (phase1) {
-    const fDist = leaderDist - 90; // muy cerca
-    const [fx, fy, fa] = bPos2(fDist, -12);
-    // Turbulencia: ondas entre líder y follower
+    const fDist = leaderDist - 90;
+    // Turbulencia: ondas circulares entre líder y follower
     ctx.save();
     for (let k = 0; k < 4; k++) {
       const wave = Math.sin(t * 4 + k * 1.4);
@@ -3019,7 +3045,7 @@ function demoB(ctx, u, S, dt) {
     }
     ctx.globalAlpha = 1;
     ctx.restore();
-    // El follower se va largo (subviraje): desviado al exterior
+    // Follower se va largo (subviraje)
     const subvOff = -12 + 48 * Math.min(1, (p / PHASE1_END) * 1.4);
     const [sx, sy, sa] = bPos2(fDist, subvOff);
     const yawOff = 0.12 * Math.min(1, (p / PHASE1_END) * 1.4);
