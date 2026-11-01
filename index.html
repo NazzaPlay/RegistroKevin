@@ -393,10 +393,11 @@ kbd{
 /* ── 7 · PILAR 1 · TARJETAS DE CONCEPTOS — LAYOUT PREMIUM ────── */
 .concepts-grid{display:grid;grid-template-columns:1fr;gap:0px}
 
-/* Tarjeta full-width: diagrama arriba, cuerpo+quiz abajo en 2 col */
+/* Tarjeta: zona superior = canvas + texto lado a lado, quiz ancho completo */
 .concept-card{
   display:grid;
-  grid-template-rows:auto 1fr;
+  grid-template-rows:auto auto;
+  grid-template-areas:"top" "quiz";
   overflow:hidden;
   transition:border-color .35s ease, box-shadow .35s ease;
   position:relative;
@@ -419,11 +420,20 @@ kbd{
   pointer-events:none;
 }
 
-/* Zona del canvas/diagrama — más alta que antes */
+/* Zona superior: canvas (izq) + cuerpo (der), lado a lado */
+.concept-top{
+  grid-area:top;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0;
+  min-height:300px;
+  border-bottom:1px solid var(--line);
+}
+
+/* Zona del canvas/diagrama */
 .concept-canvas-wrap{
   position:relative;
-  aspect-ratio:21/8;
-  border-bottom:1px solid var(--line);
+  min-height:300px;
   background:
     radial-gradient(ellipse 70% 80% at 50% 50%, #0d1222, #060810),
     radial-gradient(ellipse 40% 60% at 20% 20%, rgba(0,229,224,.04), transparent);
@@ -431,34 +441,28 @@ kbd{
 }
 .concept-canvas-wrap::after{
   content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(180deg, transparent 75%, rgba(6,8,16,.85) 100%);
+  background:linear-gradient(90deg, transparent 80%, rgba(6,8,16,.55) 100%);
   z-index:1;
 }
 .concept-canvas-wrap canvas{
   position:absolute;inset:0;width:100%;height:100%;display:block;
 }
 
-/* Tag de categoría — arriba derecha */
+/* Tag de categoría — abajo derecha del canvas */
 .concept-tag{
-  position:absolute;top:16px;right:16px;z-index:2;
+  position:absolute;bottom:14px;right:16px;z-index:2;
   font:700 .58rem var(--font-mono);letter-spacing:.18em;color:var(--acc-2);
   background:rgba(5,8,12,.82);border:1px solid rgba(59,130,246,.25);
-  padding:7px 12px;border-radius:10px;
+  padding:6px 11px;border-radius:10px;
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
   text-transform:uppercase;
 }
 
-/* Parte inferior: texto izquierda + quiz derecha */
-.concept-lower{
-  display:grid;
-  grid-template-columns:1.1fr .9fr;
-  gap:0;
-  min-height:260px;
-}
+/* Cuerpo de texto — columna derecha */
 .concept-body{
-  padding:32px 36px 36px;
+  padding:36px 36px 36px 40px;
   display:flex;flex-direction:column;gap:16px;
-  border-right:1px solid var(--line);
+  background:rgba(255,255,255,.012);
 }
 .concept-body h3{
   font:700 1.65rem var(--font-ui);letter-spacing:.04em;text-transform:uppercase;
@@ -498,17 +502,18 @@ kbd{
 .legend .l-you{background:var(--acc);box-shadow:0 0 8px rgba(0,229,224,.7)}
 .legend .l-rival{background:#dfe5ee}
 
-/* ── QUIZ INTEGRADO — columna derecha ─────────────────────────── */
+/* ── QUIZ INTEGRADO — fila completa, ancho total ─────────────── */
 .concept-quiz{
-  padding:32px 36px 36px;
-  display:flex;flex-direction:column;gap:20px;
+  grid-area:quiz;
+  padding:28px 36px 32px;
+  display:grid;grid-template-columns:1fr 1.4fr;gap:32px;align-items:start;
   background:rgba(255,255,255,.018);
   position:relative;
 }
 .concept-quiz::before{
   content:"VERIFICAR CONOCIMIENTO";
   font:700 .55rem var(--font-mono);letter-spacing:.22em;
-  color:var(--faint);display:block;margin-bottom:-8px;
+  color:var(--faint);position:absolute;top:14px;right:20px;
 }
 .concept-quiz .quiz-question{
   font:600 1.05rem var(--font-ui);color:var(--text);
@@ -600,10 +605,10 @@ kbd{
 
 /* Responsive: en mobile todo apilado */
 @media(max-width:800px){
-  .concept-lower{grid-template-columns:1fr}
-  .concept-body{border-right:none;border-bottom:1px solid var(--line);padding:24px 22px}
-  .concept-quiz{padding:24px 22px}
-  .concept-canvas-wrap{aspect-ratio:16/9}
+  .concept-top{grid-template-columns:1fr}
+  .concept-body{padding:24px 22px;background:transparent}
+  .concept-quiz{grid-template-columns:1fr;padding:24px 22px;gap:16px}
+  .concept-canvas-wrap{min-height:220px;aspect-ratio:16/9}
 }
 
 /* ── 8 · PILAR 2 · DIARIO EMOCIONAL ──────────────────────────── */
@@ -903,9 +908,9 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
   .side{position:static}
   .clase-card{grid-template-columns:1fr;gap:28px;padding:36px}
   .protocols-grid{grid-template-columns:1fr 1fr}
-  .concept-lower{grid-template-columns:1fr}
-  .concept-body{border-right:none;border-bottom:1px solid var(--line);padding:28px 32px}
-  .concept-quiz{padding:28px 32px}
+  .concept-top{grid-template-columns:1fr}
+  .concept-body{padding:28px 32px;background:transparent}
+  .concept-quiz{grid-template-columns:1fr;padding:28px 32px;gap:16px}
 }
 @media (max-width:860px){
   .nav-links{display:none}
@@ -1061,11 +1066,11 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
 
       <!-- ── CONCEPTO A · REBUFO ────────────────────────────────── -->
       <article class="concept-card glass reveal" data-num="01">
-        <div class="concept-canvas-wrap">
-          <canvas id="cvA" width="820" height="460" aria-label="Animación: dos LMP2 en la recta de Mulsanne, el de atrás gana velocidad punta con el rebufo y debe anticipar la frenada"></canvas>
-          <span class="concept-tag">CONCEPTO A · RECTA DE MULSANNE</span>
-        </div>
-        <div class="concept-lower">
+        <div class="concept-top">
+          <div class="concept-canvas-wrap">
+            <canvas id="cvA" width="820" height="460" aria-label="Animación: dos LMP2 en la recta de Mulsanne, el de atrás gana velocidad punta con el rebufo y debe anticipar la frenada"></canvas>
+            <span class="concept-tag">CONCEPTO A · RECTA DE MULSANNE</span>
+          </div>
           <div class="concept-body">
             <h3>El <em>rebufo</em></h3>
             <p class="concept-text">
@@ -1086,25 +1091,29 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
             </ul>
             <p class="concept-tip"><b>Mentalidad:</b> el rebufo es una herramienta, no un compromiso. Usalo, no te cases con él.</p>
           </div>
-          <div class="concept-quiz" id="quiz-concepto-a">
+        </div>
+        <div class="concept-quiz" id="quiz-concepto-a">
+          <div class="quiz-left">
             <p class="quiz-question">¿Por qué en rebufo debés anticipar la frenada entre 50 y 100 m antes de tu referencia habitual?</p>
+            <div class="quiz-feedback"></div>
+          </div>
+          <div class="quiz-right">
             <div class="quiz-options">
               <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('concepto-a','a',this)">Porque el motor trabaja menos y hay menos frenado motor</button>
               <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('concepto-a','b',this)">Porque llegás más rápido y con menos margen por la reducción de resistencia aerodinámica</button>
               <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('concepto-a','c',this)">Para no bloquear al rival de adelante</button>
             </div>
-            <div class="quiz-feedback"></div>
           </div>
         </div>
       </article>
 
       <!-- ── CONCEPTO B · AIRE SUCIO ─────────────────────────────── -->
       <article class="concept-card glass reveal" data-num="02">
-        <div class="concept-canvas-wrap">
-          <canvas id="cvB" width="820" height="460" aria-label="Animación: en las Porsche Curves, seguir muy de cerca quita carga aerodinámica frontal y provoca subviraje"></canvas>
-          <span class="concept-tag">CONCEPTO B · PORSCHE CURVES</span>
-        </div>
-        <div class="concept-lower">
+        <div class="concept-top">
+          <div class="concept-canvas-wrap">
+            <canvas id="cvB" width="820" height="460" aria-label="Animación: en las Porsche Curves, seguir muy de cerca quita carga aerodinámica frontal y provoca subviraje"></canvas>
+            <span class="concept-tag">CONCEPTO B · PORSCHE CURVES</span>
+          </div>
           <div class="concept-body">
             <h3>Aire sucio = <em>subviraje</em></h3>
             <p class="concept-text">
@@ -1125,24 +1134,28 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
             </ul>
             <p class="concept-tip"><b>Clave:</b> en curvas rápidas, acercarse de más no presiona al rival — te sabotea a vos.</p>
           </div>
-          <div class="concept-quiz" id="quiz-concepto-b">
+        </div>
+        <div class="concept-quiz" id="quiz-concepto-b">
+          <div class="quiz-left">
             <p class="quiz-question">¿Qué sentís en el G29 cuando entrás en el aire sucio del rival en una curva rápida?</p>
-            <div class="quiz-options">
-              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('concepto-b','b',this)">El volante se pone más pesado de lo normal</button>
-              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('concepto-b','a',this)">El volante queda ligero, el auto no gira — subviraje</button>
-              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('concepto-b','b',this)">Se activa el ABS automáticamente</button>
-            </div>
             <div class="quiz-feedback"></div>
+          </div>
+          <div class="quiz-right">
+            <div class="quiz-options">
+              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('concepto-b','a',this)">El volante se pone más pesado de lo normal</button>
+              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('concepto-b','b',this)">El volante queda ligero, el auto no gira — subviraje</button>
+              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('concepto-b','c',this)">Se activa el ABS automáticamente</button>
+            </div>
           </div>
         </div>
       </article>
       <!-- ── CONCEPTO C · REGLA DEL 50% ─────────────────────────── -->
       <article class="concept-card glass reveal" data-num="03">
-        <div class="concept-canvas-wrap">
-          <canvas id="cvC" width="820" height="460" aria-label="Animación: la trompa debe estar al menos al 50 por ciento del auto rival antes del punto de giro para tener derecho al espacio"></canvas>
-          <span class="concept-tag">CONCEPTO C · REGLAMENTO DE DUELO</span>
-        </div>
-        <div class="concept-lower">
+        <div class="concept-top">
+          <div class="concept-canvas-wrap">
+            <canvas id="cvC" width="820" height="460" aria-label="Animación: la trompa debe estar al menos al 50 por ciento del auto rival antes del punto de giro para tener derecho al espacio"></canvas>
+            <span class="concept-tag">CONCEPTO C · REGLAMENTO DE DUELO</span>
+          </div>
           <div class="concept-body">
             <h3>La regla del <em>50%</em></h3>
             <p class="concept-text">
@@ -1163,26 +1176,31 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
             </ul>
             <p class="concept-tip"><b>Para el piloto:</b> cuando la ansiedad de atacar apriete, esta regla es tu ancla — decidí con geometría, no con adrenalina.</p>
           </div>
-          <div class="concept-quiz" id="quiz-concepto-c">
+        </div>
+        <div class="concept-quiz" id="quiz-concepto-c">
+          <div class="quiz-left">
             <p class="quiz-question">¿Cuál es la condición para exigir espacio legal en una curva?</p>
+            <div class="quiz-feedback"></div>
+          </div>
+          <div class="quiz-right">
             <div class="quiz-options">
               <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('concepto-c','a',this)">Tu trompa al 50% del rival antes de que inicie el giro</button>
               <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('concepto-c','b',this)">Acelerar fuerte y forzar el espacio</button>
               <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('concepto-c','c',this)">El primero que llega a la curva siempre gana</button>
             </div>
-            <div class="quiz-feedback"></div>
           </div>
         </div>
       </article>
 
       <!-- ── TARJETA 4 · RESPIRACIÓN ─────────────────────────────── -->
-      <article class="concept-card glass reveal" data-num="04">
-        <div class="concept-canvas-wrap">
+            <article class="concept-card glass reveal" data-num="04">
+        <div class="concept-top">
+          <div class="concept-canvas-wrap">
           <canvas id="cvD" width="820" height="460" aria-label="Animación: protocolo de respiración y control del pulso antes de una curva"></canvas>
           <span class="concept-tag">TARJETA 4 · MENTAL Y CONCENTRACIÓN</span>
         </div>
-        <div class="concept-lower">
           <div class="concept-body">
+            
             <h3>Respiración: <em>control bajo presión</em></h3>
             <p class="concept-text">
               En recta recta el cuerpo acumula tensión sin que te des cuenta: mandíbula apretada,
@@ -1198,26 +1216,31 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
             </ul>
             <p class="concept-tip"><b>Habito:</b> en recta, verificá tu respiración como revisás los espejos — es parte del procedimiento.</p>
           </div>
-          <div class="concept-quiz" id="quiz-respiracion">
+        </div>
+        <div class="concept-quiz" id="quiz-respiracion">
+          <div class="quiz-left">
             <p class="quiz-question">¿Cuál es el protocolo de respiración recomendado en recta para bajar el pulso antes de frenar?</p>
-            <div class="quiz-options">
-              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('respiracion','b',this)">Respirar rápido y superficial para oxigenar</button>
-              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('respiracion','a',this)">4s inhalar → 4s sostener → 4s exhalar (4·4·4)</button>
-              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('respiracion','b',this)">Aguantar la respiración hasta el apex</button>
-            </div>
             <div class="quiz-feedback"></div>
+          </div>
+          <div class="quiz-right">
+            <div class="quiz-options">
+              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('respiracion',''a'',this)">Respirar rápido y superficial para oxigenar</button>
+              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('respir'b'cion','a',this)">4s inhalar → 4s sostener → 4s exhalar (4·4·4)</button>
+              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('respiracion',''c'',this)">Aguantar la respiración hasta el apex</button>
+            </div>
           </div>
         </div>
       </article>
 
       <!-- ── TARJETA 5 · TRAZADA ─────────────────────────────────── -->
-      <article class="concept-card glass reveal" data-num="05">
-        <div class="concept-canvas-wrap">
+            <article class="concept-card glass reveal" data-num="05">
+        <div class="concept-top">
+          <div class="concept-canvas-wrap">
           <canvas id="cvE" width="820" height="460" aria-label="Animación cenital de trazada exterior-apex-exterior vs interior directa"></canvas>
           <span class="concept-tag">TARJETA 5 · TRAZADA</span>
         </div>
-        <div class="concept-lower">
           <div class="concept-body">
+            
             <h3>Trazada de <em>interior y exterior</em></h3>
             <p class="concept-text">
               No existe una única trazada correcta: depende de lo que viene después.
@@ -1233,26 +1256,31 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
             </ul>
             <p class="concept-tip"><b>Regla:</b> primero decidí qué viene después, después elegí la trazada.</p>
           </div>
-          <div class="concept-quiz" id="quiz-trazada">
+        </div>
+        <div class="concept-quiz" id="quiz-trazada">
+          <div class="quiz-left">
             <p class="quiz-question">En una chicana (dos curvas seguidas), ¿qué trazada usás en la primera?</p>
-            <div class="quiz-options">
-              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('trazada','b',this)">Exterior→Apex→Exterior para máxima velocidad en esa curva</button>
-              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('trazada','a',this)">Interior directa, sacrificás esa curva para ganar la segunda</button>
-              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('trazada','b',this)">La misma trazada en ambas curvas</button>
-            </div>
             <div class="quiz-feedback"></div>
+          </div>
+          <div class="quiz-right">
+            <div class="quiz-options">
+              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('trazada',''a'',this)">Exterior→Apex→Exterior para máxima velocidad en esa curva</button>
+              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('tr'b'zada','a',this)">Interior directa, sacrificás esa curva para ganar la segunda</button>
+              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('trazada',''c'',this)">La misma trazada en ambas curvas</button>
+            </div>
           </div>
         </div>
       </article>
 
       <!-- ── TARJETA 6 · FRENO MOTOR ─────────────────────────────── -->
-      <article class="concept-card glass reveal" data-num="06">
-        <div class="concept-canvas-wrap">
+            <article class="concept-card glass reveal" data-num="06">
+        <div class="concept-top">
+          <div class="concept-canvas-wrap">
           <canvas id="cvF" width="820" height="460" aria-label="Animación de curvas de velocidad: freno pedal vs freno motor vs freno regresivo"></canvas>
           <span class="concept-tag">TARJETA 6 · FRENADA</span>
         </div>
-        <div class="concept-lower">
           <div class="concept-body">
+            
             <h3>Freno motor y <em>freno regresivo</em></h3>
             <p class="concept-text">
               Son dos técnicas complementarias. El <b>freno motor</b> usa la resistencia del motor al levantar
@@ -1268,26 +1296,31 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
             </ul>
             <p class="concept-tip"><b>Regla:</b> el motor es tu primer freno, el pedal es el segundo.</p>
           </div>
-          <div class="concept-quiz" id="quiz-freno-motor">
+        </div>
+        <div class="concept-quiz" id="quiz-freno-motor">
+          <div class="quiz-left">
             <p class="quiz-question">¿Qué diferencia al freno regresivo del freno motor básico?</p>
-            <div class="quiz-options">
-              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('freno-motor','b',this)">El freno regresivo usa el pedal de freno más fuerte</button>
-              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('freno-motor','a',this)">Levantás el acelerador progresivo para transferir carga al delantero y ayudar a girar</button>
-              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('freno-motor','b',this)">Son lo mismo, solo cambia el nombre</button>
-            </div>
             <div class="quiz-feedback"></div>
+          </div>
+          <div class="quiz-right">
+            <div class="quiz-options">
+              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('freno-motor',''a'',this)">El freno regresivo usa el pedal de freno más fuerte</button>
+              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('freno-motor',''b'',this)">Levantás el acelerador progresivo para transferir carga al delantero y ayudar a girar</button>
+              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('freno-motor',''c'',this)">Son lo mismo, solo cambia el nombre</button>
+            </div>
           </div>
         </div>
       </article>
 
       <!-- ── TARJETA 7 · REBASE ──────────────────────────────────── -->
-      <article class="concept-card glass reveal" data-num="07">
-        <div class="concept-canvas-wrap">
+            <article class="concept-card glass reveal" data-num="07">
+        <div class="concept-top">
+          <div class="concept-canvas-wrap">
           <canvas id="cvG" width="820" height="460" aria-label="Animación de técnicas de rebase: rebufo y maniobra de tijera en recta"></canvas>
           <span class="concept-tag">TARJETA 7 · REBASE Y DUELO</span>
         </div>
-        <div class="concept-lower">
           <div class="concept-body">
+            
             <h3>Rebase: <em>rebufo y tijera</em></h3>
             <p class="concept-text">
               Adelantar no es solo ser más rápido: es elegir el momento y la herramienta correcta.
@@ -1303,26 +1336,31 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
             </ul>
             <p class="concept-tip"><b>Paciencia:</b> un adelantamiento se prepara 2–3 curvas antes, no en el último metro.</p>
           </div>
-          <div class="concept-quiz" id="quiz-rebase">
+        </div>
+        <div class="concept-quiz" id="quiz-rebase">
+          <div class="quiz-left">
             <p class="quiz-question">¿Cuántos movimientos de tijera podés hacer en una recta sin penalización?</p>
-            <div class="quiz-options">
-              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('rebase','b',this)">Dos: uno para cada lado</button>
-              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('rebase','a',this)">Uno solo — la tijera doble es penalizable</button>
-              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('rebase','b',this)">Los que quieras mientras no toqués al rival</button>
-            </div>
             <div class="quiz-feedback"></div>
+          </div>
+          <div class="quiz-right">
+            <div class="quiz-options">
+              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('re'a'ase','b',this)">Dos: uno para cada lado</button>
+              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('reb'b'se','a',this)">Uno solo — la tijera doble es penalizable</button>
+              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('re'c'ase','b',this)">Los que quieras mientras no toqués al rival</button>
+            </div>
           </div>
         </div>
       </article>
 
       <!-- ── TARJETA 8 · SETUP ───────────────────────────────────── -->
-      <article class="concept-card glass reveal" data-num="08">
-        <div class="concept-canvas-wrap">
+            <article class="concept-card glass reveal" data-num="08">
+        <div class="concept-top">
+          <div class="concept-canvas-wrap">
           <canvas id="cvH" width="820" height="460" aria-label="Animación de vista cenital del coche con zonas de ajuste de setup destacadas"></canvas>
           <span class="concept-tag">TARJETA 8 · SETUP</span>
         </div>
-        <div class="concept-lower">
           <div class="concept-body">
+            
             <h3>Setup: <em>lógica de ajustes</em></h3>
             <p class="concept-text">
               El setup traduce tus sensaciones en pista a cambios concretos en el auto.
@@ -1338,26 +1376,31 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
             </ul>
             <p class="concept-tip"><b>Metodología:</b> un ajuste → una sesión → anotar sensación en el Diario → repetir.</p>
           </div>
-          <div class="concept-quiz" id="quiz-setup">
+        </div>
+        <div class="concept-quiz" id="quiz-setup">
+          <div class="quiz-left">
             <p class="quiz-question">Si el coche tiene sobreviraje en la salida de curva, ¿qué ajustás primero?</p>
-            <div class="quiz-options">
-              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('setup','b',this)">Reducir el alerón delantero</button>
-              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('setup','a',this)">Aumentar el alerón trasero o la presión trasera</button>
-              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('setup','b',this)">Cambiar varios ajustes a la vez para solucionar rápido</button>
-            </div>
             <div class="quiz-feedback"></div>
+          </div>
+          <div class="quiz-right">
+            <div class="quiz-options">
+              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('setup',''a'',this)">Reducir el alerón delantero</button>
+              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('setup',''b'',this)">Aumentar el alerón trasero o la presión trasera</button>
+              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('setup',''c'',this)">Cambiar varios ajustes a la vez para solucionar rápido</button>
+            </div>
           </div>
         </div>
       </article>
 
       <!-- ── TARJETA 9 · MOTORES ─────────────────────────────────── -->
-      <article class="concept-card glass reveal" data-num="09">
-        <div class="concept-canvas-wrap">
+            <article class="concept-card glass reveal" data-num="09">
+        <div class="concept-top">
+          <div class="concept-canvas-wrap">
           <canvas id="cvI" width="820" height="460" aria-label="Animación comparativa de curvas de potencia: aspirado vs turbo vs supercargado"></canvas>
           <span class="concept-tag">TARJETA 9 · MECÁNICA</span>
         </div>
-        <div class="concept-lower">
           <div class="concept-body">
+            
             <h3>Motores: <em>Turbo vs Aspirado vs Superc.</em></h3>
             <p class="concept-text">
               El tipo de motor cambia radicalmente <b>dónde y cómo pisás a fondo</b> al salir de una curva.
@@ -1371,14 +1414,18 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
             </ul>
             <p class="concept-tip"><b>Regla:</b> con turbo, anticipá la aceleración. Con superc., controlá la tracción en salida.</p>
           </div>
-          <div class="concept-quiz" id="quiz-motores">
+        </div>
+        <div class="concept-quiz" id="quiz-motores">
+          <div class="quiz-left">
             <p class="quiz-question">¿Por qué con un motor turbo hay que anticipar la aceleración al salir de curva?</p>
-            <div class="quiz-options">
-              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('motores','b',this)">Porque tiene más caballos que un aspirado</button>
-              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('motores','a',this)">Para tener el boost disponible en recta y evitar el turbo-lag</button>
-              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('motores','b',this)">Para no perder tracción en la curva</button>
-            </div>
             <div class="quiz-feedback"></div>
+          </div>
+          <div class="quiz-right">
+            <div class="quiz-options">
+              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('motores',''a'',this)">Porque tiene más caballos que un aspirado</button>
+              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('motores',''b'',this)">Para tener el boost disponible en recta y evitar el turbo-lag</button>
+              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('motores',''c'',this)">Para no perder tracción en la curva</button>
+            </div>
           </div>
         </div>
       </article>
@@ -3065,6 +3112,410 @@ function demoC(ctx, u, S, dt) {
   }
 }
 
+/* === DEMO D · RESPIRACIÓN 4-4-4 ==================================== */
+function demoD(ctx, u, S, dt) {
+  S.t += dt;
+  const t = S.t;
+  // Pseudo-línea de pulso: sinusoides + ruido
+  const pulse = (ph) => {
+    let v = 0;
+    for (let i = 0; i < 4; i++) {
+      v += Math.sin(ph * (1 + i * 0.3) + i * 1.7) * (0.5 / (i + 1));
+    }
+    return v;
+  };
+  // Fondo grid
+  ctx.strokeStyle = 'rgba(255,255,255,.04)'; ctx.lineWidth = 1;
+  for (let gx = 0; gx < 820; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, 460); ctx.stroke(); }
+  for (let gy = 0; gy < 460; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(820, gy); ctx.stroke(); }
+
+  // Dos líneas: "con tensión" (roja, rápida) y "4-4-4" (cian, estable)
+  const midY = 200;
+  const draw = (fn, color, width, label, alpha) => {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    let lastY = midY;
+    for (let x = 0; x <= 800; x += 4) {
+      const v = fn((t * 60 + x) * 0.01);
+      const y = midY - v * 80;
+      x === 0 ? ctx.moveTo(20 + x, y) : ctx.lineTo(20 + x, y);
+      lastY = y;
+    }
+    ctx.strokeStyle = color; ctx.lineWidth = width;
+    ctx.shadowColor = color; ctx.shadowBlur = 10;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.font = '600 11px "JetBrains Mono", monospace';
+    ctx.fillStyle = color; ctx.textAlign = 'left';
+    ctx.fillText(label, 24, midY - 90);
+    ctx.restore();
+  };
+  const fnTension = ph => Math.sin(ph * 3.2) * 1.4 + Math.sin(ph * 7) * 0.4;
+  const fnBreath  = ph => {
+    // Ciclo 4-4-4 = 12s total → normalizado: fase inhala(0-1/3) sube, sostén(1/3-2/3) plano, exhala(2/3-1) baja
+    const c = ph % 1;
+    if (c < 1/3) return smooth(c / (1/3)) * 1.0;
+    if (c < 2/3) return 1.0;
+    return 1.0 - smooth((c - 2/3) / (1/3));
+  };
+  draw(fnTension, DANGER, 1.6, 'PULSO CON TENSIÓN', .8);
+  draw(fnBreath,  ACC,    2.2, 'PROT. 4·4·4', 1);
+
+  // Fase actual del ciclo 4-4-4
+  const cyc = (t % 12) / 12;
+  let fTxt, fCol;
+  if (cyc < 1/3)      { fTxt = 'INHALA · 4s'; fCol = ACC; }
+  else if (cyc < 2/3) { fTxt = 'SOSTÉN · 4s'; fCol = '#ffffff'; }
+  else                { fTxt = 'EXHALA · 4s'; fCol = ACC2; }
+
+  // Barra de progreso del ciclo
+  ctx.save();
+  const bx = 40, by = 380, bw = 740, bh = 14;
+  ctx.strokeStyle = 'rgba(255,255,255,.2)'; ctx.lineWidth = 1;
+  roundRectPath(ctx, bx, by, bw, bh, 7); ctx.stroke();
+  ctx.fillStyle = ACC; ctx.globalAlpha = .55;
+  roundRectPath(ctx, bx, by, bw * cyc, bh, 7); ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.font = '700 18px "JetBrains Mono", monospace';
+  ctx.fillStyle = fCol; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.fillText(fTxt, bx + bw / 2, by + 24);
+  ctx.restore();
+
+  // Puntos de control mandíbula/hombros
+  const jaw = pulse(t * 2);
+  ctx.save();
+  ctx.font = '600 11px "JetBrains Mono", monospace';
+  ctx.fillStyle = jaw > 0.3 ? WARN : 'rgba(154,166,182,.8)';
+  ctx.textAlign = 'left';
+  ctx.fillText(jaw > 0.3 ? 'MANDÍBULA: APRETADA ⚠' : 'MANDÍBULA: RELAJADA', 40, 440);
+  ctx.restore();
+}
+
+/* === DEMO E · TRAZADA ============================================= */
+function demoE(ctx, u, S, dt) {
+  S.t += dt;
+  const t = S.t;
+  const cx = 410, cy = 240;
+  // Pista: dos curvas enlazadas (chicana)
+  const chicane = [
+    [40, 160], [220, 160],
+    [290, 190], [360, 260], [360, 320], [290, 390],
+    [220, 390], [40, 390],
+    [40, 160],
+  ];
+  drawRoad(ctx, chicane, 90);
+  // Frenos (bandas)
+  ctx.save();
+  ctx.setLineDash([8, 8]); ctx.lineWidth = 3;
+  ctx.strokeStyle = WARN; ctx.globalAlpha = .5;
+  ctx.beginPath(); ctx.moveTo(220, 130); ctx.lineTo(220, 420); ctx.stroke();
+  ctx.restore();
+  miniLabel(ctx, 220, 445, 'APROXIMACIÓN', '#9aa6b6');
+  miniLabel(ctx, 430, 445, 'SALIDA', '#9aa6b6');
+
+  // Trazada 1: Exterior-Apex-Exterior (cian) — radio amplio
+  // Trazada 2: Interior directa (blanco) — corta y rápida
+  const ext = [ [50, 200], [200, 210], [320, 240], [360, 280], [320, 340], [200, 370], [50, 360] ];
+  const inr = [ [50, 300], [210, 270], [340, 255], [380, 280], [340, 305], [210, 290], [50, 315] ];
+  const line = (pts, color, prog, label, w) => {
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+    ctx.strokeStyle = color; ctx.lineWidth = w; ctx.lineCap = 'round';
+    ctx.setLineDash([5, 4]); ctx.shadowColor = color; ctx.shadowBlur = 12;
+    ctx.stroke(); ctx.shadowBlur = 0; ctx.setLineDash([]);
+    // Auto que recorre
+    const N = pts.length - 1;
+    const fp = ((t * 0.15 + prog) % 1) * N;
+    const i0 = Math.floor(fp), frac = fp - i0;
+    const p0 = pts[i0], p1 = pts[Math.min(i0 + 1, N)];
+    const ax = p0[0] + (p1[0] - p0[0]) * frac, ay = p0[1] + (p1[1] - p0[1]) * frac;
+    const ang = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]);
+    drawCar(ctx, ax, ay, ang, .72, color);
+    ctx.restore();
+  };
+  line(ext, ACC,  0,   'EXT-APX-EXT', 2.5);
+  line(inr, '#ffffff', .45, 'INTERIOR DIRECTA', 2);
+
+  // Etiquetas
+  const showL = t % 8 < 4;
+  if (showL) {
+    ctx.font = '700 14px Rajdhani, sans-serif';
+    ctx.fillStyle = ACC; ctx.textAlign = 'left';
+    ctx.fillText('MÁX. RADIO = MÁX. SALIDA', 430, 175);
+    ctx.fillStyle = '#fff';
+    ctx.fillText('CORTA = BLOQUEA SALIDA', 430, 385);
+  } else {
+    tag(ctx, cx, 120, 'CHICANA: SACRIFICÁ LA 1ª · GANÁ LA 2ª', ACC, 15);
+  }
+}
+
+/* === DEMO F · FRENO MOTOR / REGRESIVO ============================= */
+function demoF(ctx, u, S, dt) {
+  S.t += dt;
+  const t = S.t;
+  // Eje X = avance en pista (0..800), eje Y = velocidad (0..440)
+  const X0 = 60, X1 = 760, Y0 = 400, Y1 = 80;
+  const v = val => Y0 - (val / 280) * (Y0 - Y1);
+  // Curvas de velocidad según técnica
+  const curve = (k) => {
+    // k: 0 = pedal fuerte (quebrado), 1 = motor, 2 = regresivo
+    ctx.beginPath();
+    let first = true;
+    for (let x = 0; x <= 1; x += 0.01) {
+      let vv;
+      if (k === 0)      vv = 270 * (1 - Math.pow(Math.max(0, x - .30), 1.1) * 1.4); // quebra fuerte
+      else if (k === 1) vv = 270 * (1 - Math.pow(x, 0.85) * 0.55);                  // decreciente suave
+      else              vv = 270 * (1 - Math.pow(x, 0.6) * 0.75);                    // progresivo, baja más rápido
+      vv = Math.max(40, Math.min(280, vv));
+      const px = X0 + x * (X1 - X0), py = v(vv);
+      first ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      first = false;
+    }
+    return ctx;
+  };
+  // Ejes
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(X0, Y1); ctx.lineTo(X0, Y0); ctx.lineTo(X1, Y0); ctx.stroke();
+  ctx.font = '600 10px "JetBrains Mono", monospace'; ctx.fillStyle = '#9aa6b6';
+  ctx.textAlign = 'center'; ctx.fillText('AVANCE EN CURVA →', (X0+X1)/2, Y0 + 24);
+  ctx.textAlign = 'right'; ctx.fillText('280', X0 - 8, v(280)+4); ctx.fillText('140', X0 - 8, v(140)+4); ctx.fillText('0', X0 - 8, Y0+4);
+  ctx.restore();
+
+  const curves = [
+    { k:0, c:DANGER, lbl:'FRENO PEDAL (QUEBRADO)' },
+    { k:1, c:WARN,   lbl:'FRENO MOTOR' },
+    { k:2, c:ACC,    lbl:'FRENO REGRESIVO' },
+  ];
+  curves.forEach(({k, c, lbl}) => {
+    curve(k);
+    ctx.strokeStyle = c; ctx.lineWidth = 2.2; ctx.shadowColor = c; ctx.shadowBlur = 8;
+    ctx.stroke(); ctx.shadowBlur = 0;
+    ctx.font = '700 11px "JetBrains Mono", monospace';
+    ctx.fillStyle = c; ctx.textAlign = 'left';
+    ctx.fillText(lbl, X1 - 160, Y1 + 10 + curves.indexOf({k,c,lbl}) * 16);
+  });
+
+  // Punto "en vivo" que recorre el eje X
+  const px = X0 + ((t * 0.12) % 1) * (X1 - X0);
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,.3)'; ctx.lineWidth = 1; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(px, Y1); ctx.lineTo(px, Y0); ctx.stroke(); ctx.setLineDash([]);
+  // Marcadores en cada curva en ese px
+  curves.forEach(({k,c}) => {
+    let xN = (px - X0) / (X1 - X0);
+    let vv;
+    if (k === 0)      vv = 270 * (1 - Math.pow(Math.max(0, xN - .30), 1.1) * 1.4);
+    else if (k === 1) vv = 270 * (1 - Math.pow(xN, 0.85) * 0.55);
+    else              vv = 270 * (1 - Math.pow(xN, 0.6) * 0.75);
+    vv = Math.max(40, Math.min(280, vv));
+    ctx.fillStyle = c;
+    ctx.beginPath(); ctx.arc(px, v(vv), 5, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#05070a'; ctx.lineWidth = 2; ctx.stroke();
+  });
+  ctx.restore();
+
+  // Etiqueta dinámica
+  const xN = (px - X0) / (X1 - X0);
+  let v0 = 270 * (1 - Math.pow(Math.max(0, xN - .30), 1.1) * 1.4);
+  let v1 = 270 * (1 - Math.pow(xN, 0.85) * 0.55);
+  let v2 = 270 * (1 - Math.pow(xN, 0.6) * 0.75);
+  [v0,v1,v2].forEach((vv,i) => vv = Math.max(40, Math.min(280, vv)));
+  tag(ctx, clamp(px, 120, 680), 430,
+    `PEDAL ${Math.round(v0)} · MOTOR ${Math.round(v1)} · REGRESIVO ${Math.round(v2)}`, ACC, 12);
+}
+
+/* === DEMO G · REBASE / TIJERA ====================================== */
+function demoG(ctx, u, S, dt) {
+  S.t += dt;
+  const t = S.t;
+  const ROAD_Y = 220;
+  // Recta + curva final
+  const roadPts = [ [0, ROAD_Y], [520, ROAD_Y], ...arcPts(600, 310, 140, -Math.PI/2, 0, 40), [820, 360] ];
+  drawRoad(ctx, roadPts, 96);
+  // Marcas de "una tijera legal" (banda) y zona de penalización
+  ctx.save();
+  ctx.strokeStyle = ACC; ctx.globalAlpha = .35; ctx.lineWidth = 2; ctx.setLineDash([10,8]);
+  ctx.beginPath(); ctx.moveTo(430, ROAD_Y - 60); ctx.lineTo(430, ROAD_Y + 60); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+  miniLabel(ctx, 430, ROAD_Y - 76, 'TIJERA (ÚNICA)', ACC);
+  miniLabel(ctx, 430, ROAD_Y + 92, 'NO: SEGUNDA MANIOBRA → PENAL', DANGER);
+
+  // Rival: recto adelante
+  const rx = 180 + Math.sin(t * 0.5) * 20;
+  const ry = ROAD_Y - 24;
+  drawCar(ctx, rx, ry, 0, .92, '#dfe5ee', .95);
+  miniLabel(ctx, rx, ry + 44, 'RIVAL', '#dfe5ee');
+
+  // Tú: atrás, haz una tijera y quedás adelante
+  const ph = t % 8;
+  let fx, fy, fang, fcol;
+  if (ph < 3) {   // detrás, alineado
+    fx = 300 + ph * 40; fy = ROAD_Y + 26; fang = 0; fcol = ACC;
+  } else if (ph < 5) {  // tijera: desviás hacia adentro y salís
+    const p = (ph - 3) / 2;
+    fx = 300 + 3 * 40 + p * 80;
+    fy = ROAD_Y + 26 - p * 52;
+    fang = -p * 0.28; fcol = ACC;
+  } else {        // ya pasaste, salís por el exterior
+    const p = (ph - 5) / 3;
+    fx = 420 + p * 220; fy = ROAD_Y - 26 + p * 10;
+    fang = 0.1 * (1 - p); fcol = ACC;
+  }
+  drawCar(ctx, fx, fy, fang, 1, fcol);
+  miniLabel(ctx, fx, fy + 46, 'TÚ', ACC);
+
+  // Estela / rebufo visual
+  if (ph < 3) {
+    ctx.save();
+    ctx.globalAlpha = .25;
+    for (let i = 0; i < 6; i++) {
+      ctx.fillStyle = ACC;
+      ctx.beginPath(); ctx.arc(fx - 20 - i * 18, fy + 4, 3.5, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // Estado
+  if (ph < 3)    tag(ctx, 430, 130, 'REBUFO · TUMBO AL TROMPA', ACC2, 14);
+  if (ph >= 3 && ph < 5) tag(ctx, 480, 130, 'TIJERA DE 1 SÓLO — LEGAL', ACC, 15);
+  if (ph >= 5)  tag(ctx, 560, 130, 'TÚ PASA · RIVAL DEBE CEDER 1 ANCHO', WARN, 14);
+}
+
+/* === DEMO H · SETUP =============================================== */
+function demoH(ctx, u, S, dt) {
+  S.t += dt;
+  const t = S.t;
+  // Vista cenital del auto, grande y centrado
+  const cx = 410, cy = 215;
+  // Pista de fondo (arco)
+  drawRoad(ctx, arcPts(cx, cy + 190, 280, Math.PI, Math.PI * 1.5, 60), 70);
+
+  // Fases de ajuste (cada una ~3s, 4 ajustes = 12s ciclo)
+  const adj = [
+    { lbl:'ALERÓN TRASERO ▲', x: cx, y: cy - 30, r: 34, c: WARN,   desc:'+ downforce · menos punta' },
+    { lbl:'PRESIÓN NEUMÁTICO',x: cx, y: cy + 10, r: 30, c: ACC2,   desc:'equilibra grip eje' },
+    { lbl:'BALANCE F/T',      x: cx, y: cy + 60, r: 34, c: ACC,    desc:'migra carga al delantero' },
+    { lbl:'ANTIMUJILLA',      x: cx, y: cy - 70, r: 30, c: DANGER, desc:'estabiliza picadas' },
+  ];
+  const cyc = t % 12;
+  const idx = Math.floor(cyc / 3) % 4;
+
+  // Dibuja el auto grande (monocasco + ruedas)
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(1.6, 1.6);
+  drawCar(ctx, 0, 0, 0, 1, '#151a24', 1);
+  ctx.restore();
+  // Contorno del auto
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,.14)'; ctx.lineWidth = 1;
+  ctx.strokeRect(cx - 70, cy - 60, 140, 120);
+  ctx.restore();
+
+  adj.forEach((a, i) => {
+    const active = i === idx;
+    const alpha = active ? 1 : .35;
+    const pulse = active ? 1 + Math.sin(t * 5) * 0.15 : 1;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = a.c; ctx.lineWidth = active ? 2.5 : 1.2;
+    ctx.shadowColor = a.c; ctx.shadowBlur = active ? 18 : 0;
+    ctx.beginPath(); ctx.arc(a.x, a.y, a.r * pulse, 0, Math.PI * 2); ctx.stroke();
+    ctx.shadowBlur = 0;
+    if (active) {
+      ctx.fillStyle = a.c;
+      ctx.beginPath(); ctx.arc(a.x, a.y, 5, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  });
+
+  const a = adj[idx];
+  tag(ctx, 410, 350, a.lbl, a.c, 17);
+  ctx.font = '600 13px "JetBrains Mono", monospace';
+  ctx.fillStyle = '#c6cedb'; ctx.textAlign = 'center';
+  ctx.fillText(a.desc, 410, 380);
+
+  miniLabel(ctx, 410, 430, 'AJUSTA 1 COSA A LA VEZ · NUNCA VARIOS', '#9aa6b6');
+}
+
+/* === DEMO I · MOTORES TURBO/ASPIRADO/SUPERC ======================== */
+function demoI(ctx, u, S, dt) {
+  S.t += dt;
+  const t = S.t;
+  const X0 = 80, X1 = 760, Y0 = 400, Y1 = 80;
+  // Eje RPM 0..100%
+  const rp = p => X0 + p * (X1 - X0);
+  // Eje torque 0..1.0
+  const tp = p => Y0 - p * (Y0 - Y1);
+  // Curvas
+  const curves = [
+    { lbl:'ASPIRADO', c:'#ffffff', fn: p => p < .1 ? p * 9 : 0.95 + Math.sin(p * 8) * 0.02 },
+    { lbl:'TURBO',    c:ACC,       fn: p => p < .30 ? p * 1.4 : Math.min(1, 0.42 + Math.max(0, (p - .30)) * 2.2) + Math.sin(p * 20) * 0.015 },
+    { lbl:'SUPERC.',  c:WARN,      fn: p => Math.min(1, 0.35 + p * 0.75) },
+  ];
+  // Ejes
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(X0, Y1); ctx.lineTo(X0, Y0); ctx.lineTo(X1, Y0); ctx.stroke();
+  ctx.font = '600 10px "JetBrains Mono", monospace'; ctx.fillStyle = '#9aa6b6';
+  ctx.textAlign = 'center'; ctx.fillText('RPM →', (X0+X1)/2, Y0 + 22);
+  ctx.textAlign = 'right';
+  ctx.fillText('1.0', X0 - 8, tp(1)+4);
+  ctx.fillText('0.5', X0 - 8, tp(.5)+4);
+  ctx.fillText('0', X0 - 8, Y0+4);
+  ctx.restore();
+
+  // Turbo lag zone
+  ctx.save();
+  ctx.fillStyle = 'rgba(255,176,32,.06)';
+  ctx.fillRect(rp(.3), Y1, rp(.55) - rp(.3), Y0 - Y1);
+  ctx.font = '600 10px "JetBrains Mono", monospace';
+  ctx.fillStyle = 'rgba(255,176,32,.7)'; ctx.textAlign = 'center';
+  ctx.fillText('ZONA TURBO-LAG', (rp(.3)+rp(.55))/2, Y1 + 14);
+  ctx.restore();
+
+  curves.forEach(({lbl, c, fn}) => {
+    ctx.beginPath();
+    let first = true;
+    for (let p = 0; p <= 1; p += 0.005) {
+      const v = fn(p);
+      const px = rp(p), py = tp(v);
+      first ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      first = false;
+    }
+    ctx.strokeStyle = c; ctx.lineWidth = 2; ctx.shadowColor = c; ctx.shadowBlur = 6;
+    ctx.stroke(); ctx.shadowBlur = 0;
+    // Etiqueta al final
+    ctx.font = '700 12px "JetBrains Mono", monospace';
+    ctx.fillStyle = c; ctx.textAlign = 'left';
+    ctx.fillText(lbl, X1 - 80, tp(fn(1)) - 6);
+  });
+
+  // Punto en vivo recorriendo las curvas
+  const pNow = ((t * 0.18) % 1);
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 1; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(rp(pNow), Y1); ctx.lineTo(rp(pNow), Y0); ctx.stroke(); ctx.setLineDash([]);
+  curves.forEach(({c, fn}) => {
+    ctx.fillStyle = c;
+    ctx.beginPath(); ctx.arc(rp(pNow), tp(fn(pNow)), 5, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#05070a'; ctx.lineWidth = 2; ctx.stroke();
+  });
+  ctx.restore();
+
+  // Lección dinámica
+  let lesson;
+  if (pNow < .3)       lesson = 'TURBO: NO HAY TORQUE → NO TOQUES EL ACELERADOR TODAVÍA';
+  else if (pNow < .55) lesson = 'ZONA LAG: EL BOOST ESTÁ LLEGANDO · MANTEN ESTABLE';
+  else                 lesson = 'TURBO A PLENO: PLANIFICÁ ESTE MOMENTO DESDE LA CURVA ANTERIOR';
+  tag(ctx, 410, 435, lesson, ACC, 13);
+}
+
 /* --- Registro y bucle principal del canvas -------------------------- */
 const heroIO = new IntersectionObserver(e => { heroVisible = e[0].isIntersecting; }, { threshold: 0.04 });
 
@@ -3085,6 +3536,12 @@ function initDemos() {
   registerDemo('cvA', demoA, 9);
   registerDemo('cvB', demoB, 11);
   registerDemo('cvC', demoC, 13);
+  registerDemo('cvD', demoD, 14);
+  registerDemo('cvE', demoE, 12);
+  registerDemo('cvF', demoF, 12);
+  registerDemo('cvG', demoG, 12);
+  registerDemo('cvH', demoH, 13);
+  registerDemo('cvI', demoI, 11);
   const hc = $('#heroCanvas');
   if (hc) heroIO.observe(hc);
 
@@ -4075,14 +4532,14 @@ function initSlideshowAnnotations() {
    ══════════════════════════════════════════════════════════════ */
 const QUIZ_ANSWERS = {
     'concepto-a': { correct: 'b', explanation: "Con el rebufo llegás más rápido al freno porque la resistencia aerodinámica baja — por eso hay que anticipar." },
-    'concepto-b': { correct: 'a', explanation: "El aire sucio reduce la carga aerodinámica delantera: volante ligero, subviraje." },
+    'concepto-b': { correct: 'b', explanation: "El aire sucio reduce la carga aerodinámica delantera: volante ligero, subviraje." },
     'concepto-c': { correct: 'a', explanation: "La regla del 50% garantiza que el espacio es legal y el duelo limpio." },
-    'respiracion': { correct: 'a', explanation: "El protocolo 4·4·4 activa el sistema parasimpático y baja el pulso antes del punto de frenada." },
-    'trazada':     { correct: 'a', explanation: "Interior directa en la primera curva te posiciona para máxima velocidad de salida en la segunda." },
-    'freno-motor': { correct: 'a', explanation: "El freno regresivo usa el levantamiento progresivo del acelerador para transferir carga al eje delantero." },
-    'rebase':      { correct: 'a', explanation: "Una sola tijera es legal. La tijera doble (dos movimientos) es penalizable en todas las categorías." },
-    'setup':       { correct: 'a', explanation: "Sobreviraje en salida = poco grip trasero. Más alerón trasero o más presión de neumáticos traseros." },
-    'motores':     { correct: 'a', explanation: "El turbo-lag significa que el boost no llega inmediato — anticipar la aceleración asegura tener potencia disponible al entrar en recta." },
+    'respiracion': { correct: 'b', explanation: "El protocolo 4·4·4 activa el sistema parasimpático y baja el pulso antes del punto de frenada." },
+    'trazada':     { correct: 'b', explanation: "Interior directa en la primera curva te posiciona para máxima velocidad de salida en la segunda." },
+    'freno-motor': { correct: 'b', explanation: "El freno regresivo usa el levantamiento progresivo del acelerador para transferir carga al eje delantero." },
+    'rebase':      { correct: 'b', explanation: "Una sola tijera es legal. La tijera doble (dos movimientos) es penalizable en todas las categorías." },
+    'setup':       { correct: 'b', explanation: "Sobreviraje en salida = poco grip trasero. Más alerón trasero o más presión de neumáticos traseros." },
+    'motores':     { correct: 'b', explanation: "El turbo-lag significa que el boost no llega inmediato — anticipar la aceleración asegura tener potencia disponible al entrar en recta." },
 };
 
 /* ══════════════════════════════════════════════════════════════
