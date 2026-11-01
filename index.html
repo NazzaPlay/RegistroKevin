@@ -2868,59 +2868,53 @@ function drawHero(dt) {
   }
 }
 
-/* ── DEMO A · REBUFO EN RECTA (rediseño v2) ─────────────────────────
-   Vista cenital de una recta. Rival adelante, tú detrás en rebufo.
-   El "cono" de rebufo muestra la estela de aire. Un contador grande
-   muestra los metros hasta la zona de frenada. Tú frenas antes.     */
+/* ── DEMO A · REBUFO EN RECTA (rediseño v3) ─────────────────────────
+   Vista cenital de una recta limpia. Rival adelante, tú detrás.
+   Cono de rebufo entre ambos + contadores de metros al freno.     */
 function demoA(ctx, u, S, dt) {
   S.t += dt;
   const t = S.t;
-  const CYCLE = 14; // segundos por ciclo
-  const p = (t % CYCLE) / CYCLE; // 0..1
+  const CYCLE = 14;
+  const p = (t % CYCLE) / CYCLE;
 
-  // Geometría: recta horizontal en el centro del canvas
-  const ROAD_Y = 230, ROAD_W = 96;
-  const BRAKE_ZONE = 560; // x donde empieza la zona de frenada
-  const FENCE = 780;      // x del final visible
+  // Geometría
+  const ROAD_Y = 230, ROAD_W = 100;
+  const BRAKE_ZONE = 560, FENCE = 780;
 
-  // Pista
+  // Pista: recta simple, bordes limpios
   ctx.save();
   ctx.fillStyle = '#0a0d16';
   ctx.fillRect(0, ROAD_Y - ROAD_W/2, 820, ROAD_W);
-  ctx.strokeStyle = 'rgba(255,255,255,.12)'; ctx.lineWidth = 2;
-  ctx.setLineDash([20, 16]); ctx.lineDashOffset = -t * 120;
+  ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 2;
+  ctx.setLineDash([24, 18]); ctx.lineDashOffset = -t * 140;
   ctx.beginPath(); ctx.moveTo(0, ROAD_Y); ctx.lineTo(820, ROAD_Y); ctx.stroke();
   ctx.setLineDash([]);
-  // Bordes
-  ctx.strokeStyle = 'rgba(255,255,255,.2)'; ctx.lineWidth = 3;
+  ctx.strokeStyle = 'rgba(255,255,255,.25)'; ctx.lineWidth = 3;
   ctx.beginPath(); ctx.moveTo(0, ROAD_Y - ROAD_W/2); ctx.lineTo(820, ROAD_Y - ROAD_W/2); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(0, ROAD_Y + ROAD_W/2); ctx.lineTo(820, ROAD_Y + ROAD_W/2); ctx.stroke();
   ctx.restore();
 
-  // Zona de frenada (banda roja)
+  // Zona de frenada
   ctx.save();
   ctx.fillStyle = 'rgba(239,68,68,.08)';
   ctx.fillRect(BRAKE_ZONE, ROAD_Y - ROAD_W/2, FENCE - BRAKE_ZONE, ROAD_W);
   ctx.strokeStyle = DANGER; ctx.lineWidth = 2; ctx.setLineDash([8, 6]);
   ctx.beginPath(); ctx.moveTo(BRAKE_ZONE, ROAD_Y - ROAD_W/2); ctx.lineTo(BRAKE_ZONE, ROAD_Y + ROAD_W/2); ctx.stroke();
   ctx.setLineDash([]);
-  ctx.font = '700 12px "JetBrains Mono", monospace';
+  ctx.font = '700 11px "JetBrains Mono", monospace';
   ctx.fillStyle = DANGER; ctx.textAlign = 'center';
-  ctx.fillText('ZONA DE FRENADA', (BRAKE_ZONE + FENCE) / 2, ROAD_Y - ROAD_W/2 - 8);
+  ctx.fillText('ZONA DE FRENADA', (BRAKE_ZONE + FENCE) / 2, ROAD_Y - ROAD_W/2 - 10);
   ctx.restore();
 
-  // Físicas: rival y tú avanzan a velocidades diferentes
-  // Rival: 0.45 → 0.7 (del ciclo). Tú: 0.5 → 0.75 (más rápido por rebufo)
+  // Físicas
   const rivalProg = p < 0.45 ? p * 0.55 : 0.45 + (p - 0.45) * (0.25 / 0.55);
   const myProg = p < 0.5 ? p * 0.5 : 0.5 + (p - 0.5) * (0.25 / 0.5);
   const rivalX = 30 + rivalProg * 740;
   const myX = 30 + myProg * 740;
-
-  // Distancias al freno
   const rivalDist = Math.max(0, BRAKE_ZONE - rivalX);
   const myDist = Math.max(0, BRAKE_ZONE - myX);
 
-  // Cono de rebufo entre los dos autos
+  // Cono de rebufo
   if (myX - rivalX < 220 && rivalX > 100) {
     ctx.save();
     const grad = ctx.createLinearGradient(rivalX, 0, myX, 0);
@@ -2937,42 +2931,41 @@ function demoA(ctx, u, S, dt) {
     ctx.restore();
   }
 
-  // Autos
-  drawCar(ctx, rivalX, ROAD_Y - 18, 0, 1.15, '#dfe5ee');
-  drawCar(ctx, myX, ROAD_Y + 18, 0, 1.15, ACC);
+  // Autos (centrados en la recta)
+  drawCar(ctx, rivalX, ROAD_Y, 0, 1.2, '#dfe5ee');
+  drawCar(ctx, myX, ROAD_Y, 0, 1.2, ACC);
 
   // Etiquetas fijas
   ctx.font = '700 11px "JetBrains Mono", monospace';
   ctx.textAlign = 'center';
   ctx.fillStyle = '#dfe5ee';
-  ctx.fillText('RIVAL', rivalX, ROAD_Y - 42);
+  ctx.fillText('RIVAL', rivalX, ROAD_Y - 44);
   ctx.fillStyle = ACC;
-  ctx.fillText('TÚ', myX, ROAD_Y + 52);
+  ctx.fillText('TÚ', myX, ROAD_Y + 54);
 
-  // Contadores de metros al freno
+  // Contadores de metros al freno (arriba de cada auto, centrados)
   ctx.save();
   const counter = (cx, dist, color, label) => {
     const pct = Math.min(1, dist / 400);
     ctx.font = '700 32px "JetBrains Mono", monospace';
     ctx.fillStyle = color; ctx.textAlign = 'center';
-    ctx.fillText(Math.round(dist) + ' m', cx, 100);
+    ctx.fillText(Math.round(dist) + ' m', cx, 90);
     ctx.font = '600 10px "JetBrains Mono", monospace';
     ctx.fillStyle = 'rgba(154,166,182,.8)';
-    ctx.fillText(label, cx, 122);
-    // Barra
+    ctx.fillText(label, cx, 112);
     ctx.fillStyle = 'rgba(255,255,255,.08)';
-    ctx.fillRect(cx - 60, 130, 120, 4);
+    ctx.fillRect(cx - 60, 120, 120, 4);
     ctx.fillStyle = color;
-    ctx.fillRect(cx - 60, 130, 120 * (1 - pct), 4);
+    ctx.fillRect(cx - 60, 120, 120 * (1 - pct), 4);
   };
-  counter(rivalX + 60, rivalDist, '#dfe5ee', 'AL FRENO');
-  counter(myX + 60, myDist, ACC, 'AL FRENO');
+  counter(rivalX, rivalDist, '#dfe5ee', 'RIVAL AL FRENO');
+  counter(myX, myDist, ACC, 'TÚ AL FRENO');
   ctx.restore();
 
   // Etiqueta superior
   const phase = myDist < 100 ? 'TÚ FRENAS ANTES' : myDist < 300 ? 'EN REBUFO · +15 KM/H' : 'MISMA VELOCIDAD';
   const phaseColor = myDist < 100 ? DANGER : ACC;
-  tag(ctx, 410, 42, phase, phaseColor, 15);
+  tag(ctx, 410, 30, phase, phaseColor, 15);
   tag(ctx, 410, 440, 'EL REBUFO TE HACE LLEGAR +15 KM/H · FRENA 50–100 m ANTES', ACC, 13);
 }
 
