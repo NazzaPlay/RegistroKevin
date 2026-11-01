@@ -1064,50 +1064,98 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
     </div>
     <div class="concepts-grid">
 
-      <!-- ── CONCEPTO A · REBUFO ────────────────────────────────── -->
-      <article class="concept-card glass reveal" data-num="01">
-        <div class="concept-top">
-          <div class="concept-canvas-wrap">
-            <canvas id="cvA" width="820" height="460" aria-label="Animación: dos LMP2 en la recta de Mulsanne, el de atrás gana velocidad punta con el rebufo y debe anticipar la frenada"></canvas>
-            <span class="concept-tag">CONCEPTO A · RECTA DE MULSANNE</span>
-          </div>
-          <div class="concept-body">
-            <h3>El <em>rebufo</em></h3>
-            <p class="concept-text">
-              Rodando a menos de un segundo del otro LMP2, tu velocidad punta sube entre
-              <b>10 y 15 km/h</b>: el auto de delante parte el aire y tu alerón trabaja menos.
-              Pero ese regalo llega con letra pequeña — llegás a la zona de frenada
-              <b>más rápido y con menos margen</b>. La regla es innegociable: anticipá la
-              frenada entre <b>50 y 100 metros</b> respecto a tu referencia habitual.
-            </p>
-            <div class="legend">
-              <span><i class="l-you"></i>Tú</span>
-              <span><i class="l-rival"></i>Rival</span>
-            </div>
-            <ul class="concept-list">
-              <li>Ganás velocidad punta, pagás anticipar la frenada.</li>
-              <li class="danger">Llegar tarde al freno en rebufo = bloqueo seguro.</li>
-              <li>Si en 2 intentos no sale, rompé la estela y reseteá.</li>
-            </ul>
-            <p class="concept-tip"><b>Mentalidad:</b> el rebufo es una herramienta, no un compromiso. Usalo, no te cases con él.</p>
-          </div>
-        </div>
-        <div class="concept-quiz" id="quiz-concepto-a">
-          <div class="quiz-left">
-            <p class="quiz-question">¿Por qué en rebufo debés anticipar la frenada entre 50 y 100 m antes de tu referencia habitual?</p>
-            <div class="quiz-feedback"></div>
-          </div>
-          <div class="quiz-right">
-            <div class="quiz-options">
-              <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('concepto-a','a',this)">Porque el motor trabaja menos y hay menos frenado motor</button>
-              <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('concepto-a','b',this)">Porque llegás más rápido y con menos margen por la reducción de resistencia aerodinámica</button>
-              <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('concepto-a','c',this)">Para no bloquear al rival de adelante</button>
-            </div>
-          </div>
-        </div>
-      </article>
+      <!-- ── CONCEPTO 1A · REBUFO EN RECTA ─────────────────────────────── -->
+<article class="concept-card glass reveal" data-num="1A">
+  <div class="concept-top">
+    <div class="concept-canvas-wrap">
+      <canvas id="cv1A" width="820" height="460" aria-label="Animación: vista cenital, dos LMP2 en la recta; el de atrás (tú) va más rápido por el rebufo y debe frenar 60 metros antes que el rival"></canvas>
+      <span class="concept-tag">CONCEPTO 1A · RECTA + CURVA</span>
+    </div>
+    <div class="concept-body">
+      <h3>El rebufo: <em>velocidad con letra chica</em></h3>
+      <p class="concept-text">
+        Rodando a menos de un segundo del otro LMP2, tu velocidad punta sube entre
+        <b>10 y 15 km/h</b>: el auto de delante parte el aire y tu alerón trabaja menos.
+        Pero ese regalo llega con letra pequeña — llegás a la zona de frenada
+        <b>más rápido y con menos margen</b>. La regla es innegociable: anticipá la
+        frenada entre <b>50 y 100 metros</b> respecto a tu referencia habitual.
+      </p>
+      <div class="legend">
+        <span><i class="l-you"></i>Tú</span>
+        <span><i class="l-rival"></i>Rival</span>
+      </div>
+      <ul class="concept-list">
+        <li>Ganás velocidad punta, pagás anticipar la frenada.</li>
+        <li class="danger">Llegar tarde al freno en rebufo = bloqueo seguro.</li>
+        <li>Si en 2 intentos no sale, rompé la estela y reseteá.</li>
+      </ul>
+      <p class="concept-tip"><b>Mentalidad:</b> el rebufo es una herramienta, no un compromiso. Usalo, no te cases con él.</p>
+    </div>
+  </div>
+  <div class="concept-quiz" id="quiz-1a">
+    <div class="quiz-left">
+      <p class="quiz-question">¿Por qué en rebufo debés anticipar la frenada entre 50 y 100 m antes de tu referencia habitual?</p>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-right">
+      <div class="quiz-options">
+        <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('1a','a',this)">Porque el motor trabaja menos y hay menos frenado motor</button>
+        <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('1a','b',this)">Porque llegás más rápido y con menos margen por la reducción de resistencia aerodinámica</button>
+        <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('1a','c',this)">Para no bloquear al rival de adelante</button>
+      </div>
+    </div>
+  </div>
+</article>
 
-      <!-- ── CONCEPTO B · AIRE SUCIO ─────────────────────────────── -->
+<!-- ── CONCEPTO 1B · ADELANTAMIENTO EN CURVA ─────────────────────────── -->
+<article class="concept-card glass reveal" data-num="1B">
+  <div class="concept-top">
+    <div class="concept-canvas-wrap">
+      <canvas id="cv1B" width="820" height="460" aria-label="Animación: dos curvas a la vez — una ancha y larga, y otra angosta y cerrada. Muestra las trazadas correctas para adelantar en cada geometría según la regla del 50%"></canvas>
+      <span class="concept-tag">CONCEPTO 1B · DOS CURVAS</span>
+    </div>
+    <div class="concept-body">
+      <h3>Adelantar en curva: <em>dos trazadas, dos curvas</em></h3>
+      <p class="concept-text">
+        Venías en rebufo, llegás más rápido… y ahora hay una curva. Tu exceso de
+        velocidad es real, pero la geometría de la curva decide tu trazada.
+        En curvas <b>ANCHAS Y LARGAS</b> (radio amplio): atacá por <b>EXTERIOR</b>,
+        buscá un apex tardío y salí por exterior para máxima velocidad de salida.
+        En curvas <b>ANGOSTAS Y CERRADAS</b> (radio corto): atacá por
+        <b>INTERIOR directo</b>, sacrificá velocidad en entrada para bloquear al
+        rival y salir limpio.
+        La regla del 50% aplica siempre: tu trompa al 50% del rival antes de que
+        inicie el giro = derecho al espacio.
+      </p>
+      <div class="legend">
+        <span><i class="l-you"></i>Tú (traçada ganadora)</span>
+        <span><i class="l-rival"></i>Rival (posición defensiva)</span>
+      </div>
+      <ul class="concept-list">
+        <li>Curva ancha/larga: exterior → apex tardío → exterior (radio máximo).</li>
+        <li>Curva angosta/cerrada: interior directo (bloqueás, salís limpio).</li>
+        <li class="warn">Apex temprano en curva ancha = te vas largo, perdés la salida.</li>
+        <li class="danger">Sin el 50% de trompa antes del giro = la curva es de él, levantá.</li>
+      </ul>
+      <p class="concept-tip"><b>Decisión:</b> la geometría de la curva elige por vos. Vos elegís si respetarla.</p>
+    </div>
+  </div>
+  <div class="concept-quiz" id="quiz-1b">
+    <div class="quiz-left">
+      <p class="quiz-question">Llegás en rebufo a una curva ANGOSTA y CERRADA. ¿Qué trazada usás para adelantar?</p>
+      <div class="quiz-feedback"></div>
+    </div>
+    <div class="quiz-right">
+      <div class="quiz-options">
+        <button class="quiz-opt" data-letter="A" onclick="checkQuizNew('1b','a',this)">Exterior → apex tardío → exterior, como siempre</button>
+        <button class="quiz-opt" data-letter="B" onclick="checkQuizNew('1b','b',this)">Interior directo: sacrificás entrada para bloquear y salir limpio</button>
+        <button class="quiz-opt" data-letter="C" onclick="checkQuizNew('1b','c',this)">La misma trazada que en curvas anchas, solo más lento</button>
+      </div>
+    </div>
+  </div>
+</article>
+
+<!-- ── CONCEPTO B · AIRE SUCIO ─────────────────────────────── -->
       <article class="concept-card glass reveal" data-num="02">
         <div class="concept-top">
           <div class="concept-canvas-wrap">
@@ -3016,6 +3064,289 @@ function demoA(ctx, u, S, dt) {
   tag(ctx, 410, 440, 'REBUFO +15 KM/H → FRENA 60 m ANTES → CURVA LIMPIA', ACC, 13);
 }
 
+/* ── DEMO 1A · REBUFO + CURVA — "La trampa del rebufo" ────────────────
+    Misma geometría que demoA (recta → curva derecha), pero con las
+    etiquetas de fase del rediseño: 4 fases en 12 s, velocímetros,
+    cono de rebufo, marcas de frenada. */
+function pos1A(s, lane) {
+  const CX = 540, CY = 0, R = 240;
+  const offset = lane === 'in' ? -38 : 38;
+  if (s <= 540) {
+    return lane === 'in' ? [s, 195, 0] : [s, 245, 0];
+  }
+  const theta = Math.PI / 2 - (s - 540) / R;
+  const px = CX + (R + offset) * Math.cos(theta);
+  const py = CY + (R + offset) * Math.sin(theta);
+  return [px, py, Math.PI / 2 - theta];
+}
+function demo1A(ctx, u, S, dt) {
+  S.t += dt;
+  const t = S.t;
+  const p = (t % 12) / 12;
+
+  // ── Pista: recta + curva (igual que demoA) ──
+  ctx.save();
+  ctx.fillStyle = '#0a0d16';
+  ctx.fillRect(0, 170, 540, 100);
+  ctx.beginPath();
+  ctx.arc(540, 0, 284, 0, Math.PI / 2, false);
+  ctx.arc(540, 0, 196, Math.PI / 2, 0, true);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.2)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, 170); ctx.lineTo(540, 170); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, 270); ctx.lineTo(540, 270); ctx.stroke();
+  ctx.beginPath(); ctx.arc(540, 0, 284, 0, Math.PI / 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(540, 0, 196, 0, Math.PI / 2); ctx.stroke();
+  ctx.setLineDash([22, 16]); ctx.lineDashOffset = -t * 160;
+  ctx.strokeStyle = 'rgba(255,255,255,.1)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, 220); ctx.lineTo(540, 220); ctx.stroke();
+  ctx.beginPath(); ctx.arc(540, 0, 240, 0, Math.PI / 2); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  // Zona de frenada (banda roja x 380–540)
+  ctx.save();
+  ctx.fillStyle = 'rgba(239,68,68,.08)';
+  ctx.fillRect(380, 170, 160, 100);
+  ctx.strokeStyle = DANGER; ctx.lineWidth = 1.5; ctx.setLineDash([8, 6]);
+  ctx.beginPath(); ctx.moveTo(380, 170); ctx.lineTo(380, 270); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font = '700 10px "JetBrains Mono", monospace';
+  ctx.fillStyle = DANGER; ctx.textAlign = 'center';
+  ctx.fillText('ZONA DE FRENADA', 460, 162);
+  ctx.setLineDash([5, 5]); ctx.lineWidth = 2.5;
+  ctx.strokeStyle = ACC; ctx.beginPath(); ctx.moveTo(350, 170); ctx.lineTo(350, 270); ctx.stroke();
+  ctx.strokeStyle = DANGER; ctx.beginPath(); ctx.moveTo(410, 170); ctx.lineTo(410, 270); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font = '700 10px "JetBrains Mono", monospace'; ctx.textAlign = 'center';
+  ctx.fillStyle = ACC; ctx.fillText('TÚ', 350, 286); ctx.fillText('ANTES', 350, 299);
+  ctx.fillStyle = DANGER; ctx.fillText('RIVAL', 410, 286); ctx.fillText('TARDE', 410, 299);
+  ctx.restore();
+
+  // ── Física simplificada (1 px = 1 m) ──
+  if (!S.rS) { S.rS = 80; S.mS = 20; S.rV = 240; S.mV = 255; S.fade = 0; }
+  S.rS += S.rV * dt; S.mS += S.mV * dt;
+  if (S.mS >= 350) S.mV = Math.max(80, S.mV - 240 * dt);
+  if (S.rS >= 410) S.rV = Math.max(70, S.rV - 170 * dt);
+  if (S.mS > 640) S.mV = Math.min(215, S.mV + 150 * dt);
+  if (S.rS > 640) S.rV = Math.min(200, S.rV + 130 * dt);
+  if (S.mS > 830 || S.rS > 830) {
+    S.fade += dt / 0.6;
+    if (S.fade >= 1.8) { S.rS = 80; S.mS = 20; S.rV = 240; S.mV = 255; S.fade = 0; }
+  } else {
+    S.fade = Math.max(0, S.fade - dt / 0.6);
+  }
+  const alpha = S.fade >= 1 ? 1 - (S.fade - 1) : (S.fade > 0 ? S.fade : 1);
+
+  // ── Cono de rebufo ──
+  const rP = pos1A(S.rS, 'in'), mP = pos1A(S.mS, 'out');
+  const gap = S.rS - S.mS;
+  if (gap > 0 && gap < 200) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    const g = ctx.createLinearGradient(rP[0], 0, mP[0], 0);
+    g.addColorStop(0, 'rgba(0,229,224,0)');
+    g.addColorStop(1, 'rgba(0,229,224,.2)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(rP[0] + 28, rP[1] - 10);
+    ctx.lineTo(mP[0] - 28, mP[1] - 26);
+    ctx.lineTo(mP[0] - 28, mP[1] + 26);
+    ctx.lineTo(rP[0] + 28, rP[1] + 10);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // ── Autos ──
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  drawCar(ctx, rP[0], rP[1], rP[2], 1.15, '#dfe5ee');
+  drawCar(ctx, mP[0], mP[1], mP[2], 1.15, ACC);
+  ctx.restore();
+
+  // ── Velocímetros ──
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.textAlign = 'center';
+  ctx.font = '700 10px "JetBrains Mono", monospace';
+  ctx.fillStyle = 'rgba(223,229,238,.7)';
+  ctx.fillText('RIVAL', rP[0], rP[1] - 58);
+  ctx.font = '800 17px "JetBrains Mono", monospace';
+  ctx.fillStyle = '#dfe5ee';
+  ctx.fillText(Math.round(S.rV), rP[0], rP[1] - 38);
+  ctx.font = '600 8px "JetBrains Mono", monospace';
+  ctx.fillStyle = 'rgba(154,166,182,.6)';
+  ctx.fillText('KM/H', rP[0], rP[1] - 28);
+  ctx.font = '700 10px "JetBrains Mono", monospace';
+  ctx.fillStyle = 'rgba(0,229,224,.7)';
+  ctx.fillText('TÚ', mP[0], mP[1] + 50);
+  ctx.font = '800 17px "JetBrains Mono", monospace';
+  ctx.fillStyle = ACC;
+  ctx.fillText(Math.round(S.mV), mP[0], mP[1] + 70);
+  ctx.font = '600 8px "JetBrains Mono", monospace';
+  ctx.fillStyle = 'rgba(0,229,224,.5)';
+  ctx.fillText('KM/H', mP[0], mP[1] + 80);
+  ctx.restore();
+
+  // ── Etiquetas de fase (4 fases en 12 s) ──
+  const inCorner = S.mS > 540 || S.rS > 540;
+  let ph, pc;
+  if (S.mS < 300)            { ph = 'RECTA · +15 KM/H EN REBUFO';        pc = ACC;  }
+  else if (!inCorner)        { ph = 'ZONA DE FRENO · TÚ ANTES';          pc = WARN; }
+  else if (S.mS < 640)       { ph = 'ENTRADA · VÉRTICE';                 pc = ACC2; }
+  else                       { ph = 'SALIDA · ACELERÁ ANTES QUE ÉL';     pc = ACC;  }
+  tag(ctx, 410, 42, ph, pc, 16);
+  tag(ctx, 410, 440, 'REBUFO +15 KM/H → FRENA 60 m ANTES → CURVA LIMPIA', ACC, 13);
+}
+
+/* ── DEMO 1B · DOS CURVAS, DOS TRAZADAS ─────────────────────────────
+    Ciclo 14 s: 0–7 s Curva A (ancha/larga, trazada exterior),
+    7–14 s Curva B (angosta/cerrada, trazada interior).
+    El auto animado recorre la trazada activa; el rival se mantiene
+    en posición defensiva. Medidor de solape 50% cuando se acerca. */
+const C1B_A = { cx: 410, cy: 140, r: 200 };  // curva ancha (radio grande)
+const C1B_B = { cx: 410, cy: 330, r: 100 };  // curva angosta (radio corto)
+function p1BA(s, lane) {
+  // Curva A: entrada horizontal izquierda → arco de 90° a 0° → salida horizontal derecha
+  // Arco centrado en C1B_A, radio 200, de θ=180° a 0° (media curva arriba)
+  const { cx, cy, r } = C1B_A;
+  const off = lane === 'in' ? -25 : 25;
+  const total = Math.PI * r; // longitud del arco completo (180°)
+  const s2 = Math.max(0, Math.min(s, total));
+  const theta = Math.PI - s2 / (r + off);
+  return [cx + (r + off) * Math.cos(theta), cy - (r + off) * Math.sin(theta), -theta + Math.PI / 2];
+}
+function p1BB(s, lane) {
+  // Curva B: entrada horizontal izquierda → arco de 180° a 0° → salida horizontal derecha
+  const { cx, cy, r } = C1B_B;
+  const off = lane === 'in' ? -20 : 20;
+  const total = Math.PI * r;
+  const s2 = Math.max(0, Math.min(s, total));
+  const theta = Math.PI - s2 / (r + off);
+  return [cx + (r + off) * Math.cos(theta), cy - (r + off) * Math.sin(theta), -theta + Math.PI / 2];
+}
+function demo1B(ctx, u, S, dt) {
+  S.t += dt;
+  const t = S.t;
+  const CYCLE = 14;
+  const phase = t % CYCLE;
+  const isA = phase < 7;
+  // Fade de transición (primer/último 0.5 s de cada modo)
+  let fade = 1;
+  if (isA) {
+    if (phase < 0.5) fade = phase / 0.5;
+    else if (phase > 6.5) fade = (7 - phase) / 0.5;
+  } else {
+    if (phase < 7.5) fade = (phase - 7) / 0.5;
+    else if (phase > 13.5) fade = (14 - phase) / 0.5;
+  }
+  ctx.save();
+  ctx.globalAlpha = fade;
+
+  const C = isA ? C1B_A : C1B_B;
+  const pPos = isA ? p1BA : p1BB;
+  const traceColor = isA ? ACC : WARN;
+  // Rival: posición defensiva — en A, por el interior; en B, por el exterior
+  const rivalLane = isA ? 'in' : 'out';
+  const myLane = isA ? 'out' : 'in';
+
+  // ── Pista: arco de 90° + entradas/salidas horizontales ──
+  const { cx, cy, r } = C;
+  const trackW = isA ? 100 : 70;
+  // Asfalto
+  ctx.fillStyle = '#0a0d16';
+  const rOut = r + trackW / 2, rIn = r - trackW / 2;
+  ctx.beginPath();
+  // entrada horizontal
+  ctx.moveTo(cx - rOut - 60, cy - trackW / 2);
+  ctx.lineTo(cx - rIn, cy - trackW / 2);
+  ctx.arc(cx, cy, rIn, -Math.PI / 2, 0, false);
+  ctx.lineTo(cx + rIn + 60, cy - trackW / 2);
+  ctx.moveTo(cx + rOut + 60, cy + trackW / 2);
+  ctx.lineTo(cx + rOut, cy + trackW / 2);
+  ctx.arc(cx, cy, rOut, 0, Math.PI / 2, false);
+  ctx.lineTo(cx - rOut - 60, cy + trackW / 2);
+  ctx.closePath();
+  ctx.fill();
+  // Bordes
+  ctx.strokeStyle = 'rgba(255,255,255,.2)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(cx - rOut - 60, cy - trackW / 2); ctx.lineTo(cx - rIn, cy - trackW / 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, rIn, -Math.PI / 2, 0, false); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx + rIn, cy - trackW / 2); ctx.lineTo(cx + rIn + 60, cy - trackW / 2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - rOut - 60, cy + trackW / 2); ctx.lineTo(cx - rOut, cy + trackW / 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, rOut, 0, Math.PI / 2, false); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx + rOut, cy + trackW / 2); ctx.lineTo(cx + rOut + 60, cy + trackW / 2); ctx.stroke();
+  // Línea central
+  ctx.setLineDash([18, 14]); ctx.lineDashOffset = -t * 120;
+  ctx.strokeStyle = 'rgba(255,255,255,.1)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc(cx, cy, r, -Math.PI / 2, 0, false); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── Punto de giro: línea vertical ámbar en la entrada ──
+  const apexX = cx - r;
+  ctx.save();
+  ctx.strokeStyle = WARN; ctx.lineWidth = 2; ctx.setLineDash([6, 5]);
+  ctx.beginPath(); ctx.moveTo(apexX, cy - trackW / 2 - 20); ctx.lineTo(apexX, cy + trackW / 2 + 20); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font = '700 10px "JetBrains Mono", monospace'; ctx.fillStyle = WARN; ctx.textAlign = 'center';
+  ctx.fillText('GIRO', apexX, cy - trackW / 2 - 28);
+  ctx.restore();
+
+  // ── Trazada: auto animado recorriendo el arco, velocidad variable ──
+  if (!S.s) S.s = 0;
+  const arcLen = Math.PI * r;
+  // Velocidad: en A mayor en salida, en B menor pero posición ganada
+  const speedBase = isA ? 280 : 180;
+  const s2 = S.s = (S.s + speedBase * dt) % (arcLen + 120);
+  const pMe = pPos(s2, myLane);
+  const pRv = pPos(Math.max(0, s2 - 40), rivalLane);
+
+  // Trazada activa (línea gruesa con glow)
+  ctx.save();
+  ctx.strokeStyle = traceColor; ctx.lineWidth = 3;
+  ctx.shadowColor = traceColor; ctx.shadowBlur = 14;
+  ctx.beginPath();
+  for (let ss = 0; ss <= arcLen; ss += 8) {
+    const p = pPos(ss, myLane);
+    ss === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // ── Medidor de solape 50% ──
+  const dist = Math.hypot(pMe[0] - pRv[0], pMe[1] - pRv[1]);
+  const overlap = Math.max(0, Math.min(1, 1 - dist / 100));
+  if (dist < 100) {
+    ctx.save();
+    const barX = pMe[0] + 40, barY = pMe[1] - 10;
+    ctx.font = '700 11px "JetBrains Mono", monospace'; ctx.textAlign = 'left';
+    ctx.fillStyle = overlap > 0.5 ? '#4ade80' : WARN;
+    ctx.fillText(Math.round(overlap * 100) + '%', barX + 70, barY + 4);
+    ctx.fillStyle = 'rgba(255,255,255,.15)';
+    roundRectPath(ctx, barX, barY, 60, 8, 4); ctx.fill();
+    ctx.fillStyle = overlap > 0.5 ? '#4ade80' : WARN;
+    roundRectPath(ctx, barX, barY, 60 * overlap, 8, 4); ctx.fill();
+    ctx.restore();
+  }
+
+  // ── Autos ──
+  ctx.save();
+  ctx.globalAlpha = fade;
+  drawCar(ctx, pRv[0], pRv[1], pRv[2], 1.1, '#dfe5ee');
+  drawCar(ctx, pMe[0], pMe[1], pMe[2], 1.1, ACC);
+  ctx.restore();
+
+  // ── Etiquetas de fase ──
+  const topLabel = isA
+    ? 'CURVA ANCHA/LARGA: EXTERIOR → APEX TARDÍO → EXTERIOR'
+    : 'CURVA ANGOSTA/CERRADA: INTERIOR DIRECTO';
+  tag(ctx, 410, 42, topLabel, isA ? ACC : WARN, 14);
+  tag(ctx, 410, 440, 'REGLA 50%: TROMPA AL 50% ANTES DEL GIRO = ESPACIO LEGAL', isA ? ACC : WARN, 12);
+  ctx.restore(); // alpha
+}
+
 /* ── DEMO B · AIRE SUCIO (rediseño v3) ──────────────────────────────
    Curva rápida cenital. Follower entra en la turbulencia del líder
    → pierde carga frontal → subviraje. Fase 2: otra línea, aire limpio. */
@@ -3760,6 +4091,8 @@ function stepDemo(d, dt) {
 function stepDemos(dt) { for (const d of demos) if (d.vis) stepDemo(d, dt); }
 
 function initDemos() {
+  registerDemo('cv1A', demo1A, 12);
+  registerDemo('cv1B', demo1B, 14);
   registerDemo('cvA', demoA, 9);
   registerDemo('cvB', demoB, 11);
   registerDemo('cvC', demoC, 13);
@@ -4758,6 +5091,8 @@ function initSlideshowAnnotations() {
    PRO EDITION - QUIZZES (Fase 4)
    ══════════════════════════════════════════════════════════════ */
 const QUIZ_ANSWERS = {
+    '1a': { correct: 'b', explanation: "Con el rebufo llegás más rápido al freno porque la resistencia aerodinámica baja — por eso hay que anticipar." },
+    '1b': { correct: 'b', explanation: "En curvas angostas y cerradas, el interior directo te permite bloquear al rival y salir limpio, aunque sacrifiques velocidad de entrada." },
     'concepto-a': { correct: 'b', explanation: "Con el rebufo llegás más rápido al freno porque la resistencia aerodinámica baja — por eso hay que anticipar." },
     'concepto-b': { correct: 'b', explanation: "El aire sucio reduce la carga aerodinámica delantera: volante ligero, subviraje." },
     'concepto-c': { correct: 'a', explanation: "La regla del 50% garantiza que el espacio es legal y el duelo limpio." },
