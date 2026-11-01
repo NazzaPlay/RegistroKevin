@@ -3073,48 +3073,69 @@ function demoB(ctx, u, S, dt) {
   }
 }
 
-/* ── DEMO C · REGLA 50% (rediseño v2) ───────────────────────────────
-   Vista cenital: recta + curva. El perseguidor llega al 50% del líder
-   ANTES del punto de giro → derecho al espacio.                      */
+/* ── DEMO C · REGLA 50% (rediseño v3) ───────────────────────────────
+   Recta + curva a mano. El perseguidor llega al 50% del líder ANTES
+   del punto de giro → derecho al espacio. Líder cede.               */
 function demoC(ctx, u, S, dt) {
   S.t += dt;
   const t = S.t;
   const CYCLE = 14;
   const p = (t % CYCLE) / CYCLE;
 
-  // Pista: recta → curva a la derecha
+  // Pista: recta horizontal + curva a la derecha (dibujada a mano)
   const cx = 520, cy = 360, r = 140;
-  const road = [[-20, 190], [cx - 40, 190], ...arcPts(cx, cy, r, -Math.PI/2, 0.4, 40), [cx + 30, cy + 10]];
-  drawRoad(ctx, road, 80);
+  const a0 = -Math.PI / 2, a1 = 0.4;
+
+  // Fondo de asfalto
+  ctx.save();
+  ctx.fillStyle = '#0a0d16';
+  // Recta
+  ctx.fillRect(0, 140, cx - 40, 100);
+  // Curva (arco)
+  ctx.beginPath();
+  ctx.moveTo(cx - 40, 140);
+  ctx.arc(cx, cy, r, a0, a1, false);
+  ctx.lineTo(cx + r * Math.cos(a1) + 40, cy + r * Math.sin(a1) + 40);
+  ctx.arc(cx, cy, r - 100, a1, a0, true);
+  ctx.closePath();
+  ctx.fill();
+  // Bordes
+  ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, 140); ctx.lineTo(cx - 40, 140); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, r, a0, a1); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, 240); ctx.lineTo(cx - 40, 240); ctx.stroke();
+  // Línea central punteada
+  ctx.setLineDash([16, 14]); ctx.strokeStyle = 'rgba(255,255,255,.08)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, 190); ctx.lineTo(cx - 40, 190); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, r - 50, a0, a1); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
   // Punto de giro (banda vertical)
   ctx.save();
   ctx.strokeStyle = WARN; ctx.lineWidth = 2; ctx.setLineDash([6, 6]);
-  ctx.beginPath(); ctx.moveTo(cx - 40, 130); ctx.lineTo(cx - 40, 250); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - 40, 120); ctx.lineTo(cx - 40, 260); ctx.stroke();
   ctx.setLineDash([]);
   ctx.font = '600 10px "JetBrains Mono", monospace';
   ctx.fillStyle = WARN; ctx.textAlign = 'center';
-  ctx.fillText('PUNTO DE GIRO', cx - 40, 120);
+  ctx.fillText('PUNTO DE GIRO', cx - 40, 110);
   ctx.restore();
 
-  // Posición
+  // Posición: el auto avanza por la recta
   const prog = p < 0.5 ? p * 1.1 : 0.55 + (p - 0.5) * 0.8;
-  const LX = 80 + prog * 360; // líder
-  const MX = 40 + prog * 360; // tú
-
-  // Fases
-  const inZone = LX > 280 && LX < 460; // cerca del punto de giro
-  const overlap = inZone ? Math.max(0, Math.min(1, (MX - (LX - 30)) / 60)) : 0; // 0..1 solape
+  const LX = 80 + prog * 360;
+  const MX = 40 + prog * 360;
+  const inZone = LX > 280 && LX < 460;
+  const overlap = inZone ? Math.max(0, Math.min(1, (MX - (LX - 30)) / 60)) : 0;
   const has50 = overlap >= 0.5;
 
-  // Líder
-  const lY = 190;
-  drawCar(ctx, LX, lY, 0, 1.15, '#dfe5ee');
-  miniLabel(ctx, LX, lY - 32, 'RIVAL', '#dfe5ee', 11);
+  // Líder (encima)
+  drawCar(ctx, LX, 170, 0, 1.2, '#dfe5ee');
+  miniLabel(ctx, LX, 138, 'RIVAL', '#dfe5ee', 11);
 
-  // Tú
-  const mY = 190 + 20;
-  drawCar(ctx, MX, mY, 0, 1.15, ACC);
-  miniLabel(ctx, MX, mY + 42, 'TÚ', ACC, 11);
+  // Tú (debajo)
+  drawCar(ctx, MX, 210, 0, 1.2, ACC);
+  miniLabel(ctx, MX, 242, 'TÚ', ACC, 11);
 
   // Cono de 50%
   if (inZone) {
@@ -3126,19 +3147,17 @@ function demoC(ctx, u, S, dt) {
     grad.addColorStop(1, has50 ? 'rgba(0,229,224,.25)' : 'rgba(239,68,68,.2)');
     ctx.fillStyle = grad;
     ctx.beginPath();
-    ctx.moveTo(LX - coneW, lY - 12);
-    ctx.lineTo(LX + 20, lY - 40);
-    ctx.lineTo(LX + 20, lY + 40);
-    ctx.lineTo(LX - coneW, lY + 12);
+    ctx.moveTo(LX - coneW, 158);
+    ctx.lineTo(LX + 20, 130);
+    ctx.lineTo(LX + 20, 250);
+    ctx.lineTo(LX - coneW, 222);
     ctx.closePath();
     ctx.fill();
     ctx.restore();
-  }
 
-  // Medidor de solape
-  if (inZone) {
+    // Medidor de solape
     ctx.save();
-    const bx = 40, by = 370, bw = 300, bh = 12;
+    const bx = 40, by = 360, bw = 300, bh = 12;
     ctx.strokeStyle = 'rgba(255,255,255,.2)'; ctx.lineWidth = 1;
     roundRectPath(ctx, bx, by, bw, bh, 6); ctx.stroke();
     ctx.fillStyle = has50 ? ACC : DANGER;
@@ -3151,19 +3170,15 @@ function demoC(ctx, u, S, dt) {
     ctx.fillText('SOLAPE TROMPA / RIVAL', bx + 90, by - 14);
     ctx.restore();
 
-    // Etiqueta de estado
     if (has50) {
-      tag(ctx, 410, 60, '50% ANTES DEL GIRO → DERECHO AL ESPACIO', ACC, 15);
-      // Líder se mueve al exterior
-      const extOff = 20 + 18 * Math.sin(t * 2);
-      drawCar(ctx, LX, 190 - extOff, 0, 1.15, '#dfe5ee');
-      miniLabel(ctx, LX, 190 - extOff - 32, 'RIVAL CEDE', '#dfe5ee', 11);
+      tag(ctx, 410, 50, '50% ANTES DEL GIRO → DERECHO AL ESPACIO', ACC, 15);
+      tag(ctx, 410, 440, 'RIVAL CEDE 1 AUTO DE ANCHURA · TÚ PASÁS LIMPIO', ACC, 13);
     } else {
-      tag(ctx, 410, 60, 'SOLO ' + Math.round(overlap * 100) + '% → LA CURVA ES DE ÉL', DANGER, 15);
+      tag(ctx, 410, 50, 'SOLO ' + Math.round(overlap * 100) + '% → LA CURVA ES DE ÉL', DANGER, 15);
+      tag(ctx, 410, 440, 'LEVANTÁ Y PEGATE A SU SALIDA', DANGER, 13);
     }
-    tag(ctx, 410, 440, 'ANTES DEL PUNTO DE GIRO: MIDE TU 50%', has50 ? ACC : DANGER, 13);
   } else {
-    tag(ctx, 410, 440, 'APROXIMACIÓN — TODAVÍA LEOJOS DEL PUNTO DE GIRO', 'rgba(154,166,182,.7)', 13);
+    tag(ctx, 410, 440, 'APROXIMACIÓN — LEJOS DEL PUNTO DE GIRO', 'rgba(154,166,182,.7)', 13);
   }
 }
 
