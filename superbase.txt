@@ -1,0 +1,6 @@
+Project URL: https://mvyqxlphwkyrqtsgphft.supabase.co
+Publishable key: sb_publishable_7iiwZf_8pmTB7dVu2eMkiQ_LiR1Pi6X
+Direct connection string: postgresql://postgres:[YOUR-PASSWORD]@db.mvyqxlphwkyrqtsgphft.supabase.co:5432/postgres
+CLI setup commans: supabase login
+supabase init
+supabase link --project-ref mvyqxlphwkyrqtsgphft

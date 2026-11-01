@@ -1366,6 +1366,287 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
 const GOOGLE_SHEETS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxFSyItRS6dv1c55IIocjRdWU45XaEJ8wzQi5lB6QdgCPlef3KRFWlp6UU9UuUeZJAldQ/exec';
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxFSyItRS6dv1c55IIocjRdWU45XaEJ8wzQi5lB6QdgCPlef3KRFWlp6UU9UuUeZJAldQ/exec";
 
+/* ── §0.6 · SUPABASE CONFIG (Fase 7) ───────────────────────────── */
+const SUPABASE_URL = 'https://mvyqxlphwkyrqtsgphft.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_7iiwZf_8pmTB7dVu2eMkiQ_LiR1Pi6X';
+const PROFE_MASTER_PASSWORD = 'PATAGONIA_ADMIN_2026';
+const LS_CLOUD_SESSION = 'LS_CLOUD_SESSION';  // { piloto, pin, role:'piloto'|'profe', token }
+const LS_SYNC_QUEUE   = 'LS_SYNC_QUEUE';      // [ { type, payload, ts } ]
+
+/* REST helper — usa fetch directo a la API REST de Supabase (sin SDK) */
+async function sbFetch(path, opts = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...opts,
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': opts.prefer || 'return=representation',
+      ...(opts.headers || {})
+    }
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Supabase ${res.status}: ${err}`);
+  }
+  return res.status === 204 ? null : res.json();
+}
+
+/* Cola de pendientes: push con retry al reconectar */
+function sbQueuePush(item) {
+  const q = JSON.parse(localStorage.getItem(LS_SYNC_QUEUE) || '[]');
+  q.push({ ...item, ts: Date.now() });
+  localStorage.setItem(LS_SYNC_QUEUE, JSON.stringify(q));
+}
+async function sbFlushQueue() {
+  const q = JSON.parse(localStorage.getItem(LS_SYNC_QUEUE) || '[]');
+  if (!q.length) return;
+  const failed = [];
+  for (const item of q) {
+    try {
+      if (item.type === 'sesion')   await sbUpsertSesion(item.payload, true);
+      if (item.type === 'perfil')   await sbUpsertPerfil(item.payload, true);
+      if (item.type === 'piloto')   await sbUpsertPiloto(item.payload, true);
+    } catch (e) { failed.push(item); }
+  }
+  localStorage.setItem(LS_SYNC_QUEUE, JSON.stringify(failed));
+  if (failed.length === 0 && q.length > 0) toast('Sincronización pendiente completada', 'ok');
+}
+
+/* ── SUPABASE: TABLAS ──────────────────────────────────────────────
+   pilotos  : id(pk), nombre, pin_hash, role, created_at
+   sesiones : id(pk), piloto, fecha, coche, circuito, mejor, referencia,
+              delta, ans_atacar, ans_defender, ans_lentas, setup, nota, registrado
+   perfiles : id(pk), piloto, datos (jsonb), updated_at
+   ────────────────────────────────────────────────────────────────── */
+
+/* Simple PIN hash (no criptografía real — PIN es de bajo riesgo) */
+async function hashPin(pin) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pin + SUPABASE_URL));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+/* PILOTOS */
+async function sbUpsertPiloto({ nombre, pin }, skipQueue) {
+  const pin_hash = await hashPin(String(pin));
+  try {
+    await sbFetch('pilotos', {
+      method: 'POST',
+      prefer: 'resolution=merge-duplicates',
+      body: JSON.stringify({ nombre, pin_hash, role: 'piloto' })
+    });
+  } catch(e) {
+    if (!skipQueue) sbQueuePush({ type: 'piloto', payload: { nombre, pin } });
+  }
+}
+
+/* SESIONES */
+async function sbUpsertSesion(datos, skipQueue) {
+  const payload = {
+    piloto: datos.piloto, fecha: datos.fecha, coche: datos.coche,
+    circuito: datos.circuito, mejor: datos.mejor || '', referencia: datos.referencia || '',
+    delta: datos.delta || '', ans_atacar: Number(datos.ansAtacar),
+    ans_defender: Number(datos.ansDefender), ans_lentas: Number(datos.ansLentas),
+    setup: datos.setup || '', nota: datos.nota || '',
+    registrado: datos.registrado || new Date().toISOString()
+  };
+  try {
+    await sbFetch('sesiones', { method: 'POST', body: JSON.stringify(payload) });
+  } catch(e) {
+    if (!skipQueue) sbQueuePush({ type: 'sesion', payload: datos });
+  }
+}
+
+/* PERFILES */
+async function sbUpsertPerfil(nombre, skipQueue) {
+  const datos = getPerfil(nombre);
+  try {
+    await sbFetch('perfiles', {
+      method: 'POST',
+      prefer: 'resolution=merge-duplicates',
+      body: JSON.stringify({ piloto: nombre, datos, updated_at: new Date().toISOString() })
+    });
+  } catch(e) {
+    if (!skipQueue) sbQueuePush({ type: 'perfil', payload: nombre });
+  }
+}
+
+/* PULL: al cargar, trae datos del profe (todas las sesiones de todos los pilotos) */
+async function sbPullAll() {
+  try {
+    // Traer sesiones
+    const sesiones = await sbFetch('sesiones?select=*&order=registrado.desc');
+    if (Array.isArray(sesiones) && sesiones.length) {
+      // Convertir keys snake_case → camelCase para compatibilidad local
+      const mapped = sesiones.map(s => ({
+        piloto: s.piloto, fecha: s.fecha, coche: s.coche, circuito: s.circuito,
+        mejor: s.mejor, referencia: s.referencia, delta: s.delta,
+        ansAtacar: String(s.ans_atacar), ansDefender: String(s.ans_defender),
+        ansLentas: String(s.ans_lentas), setup: s.setup, nota: s.nota,
+        registrado: s.registrado
+      }));
+      // Merge: local gana si timestamp más reciente
+      const local = getEntries();
+      const localKeys = new Set(local.map(e => e.registrado));
+      const toAdd = mapped.filter(s => !localKeys.has(s.registrado));
+      if (toAdd.length) {
+        const merged = [...local, ...toAdd].sort((a,b) => new Date(b.registrado) - new Date(a.registrado));
+        localStorage.setItem(LS_KEY, JSON.stringify(merged));
+        renderEntries();
+      }
+    }
+    // Traer perfiles
+    const perfiles = await sbFetch('perfiles?select=*');
+    if (Array.isArray(perfiles)) {
+      const local = getPerfiles();
+      perfiles.forEach(p => {
+        const localTs = local[p.piloto]?.fechaIngreso || '0';
+        const remoteTs = p.updated_at || '0';
+        if (remoteTs > localTs) local[p.piloto] = p.datos;
+      });
+      localStorage.setItem(LS_PERFILES, JSON.stringify(local));
+    }
+    // Traer lista de pilotos
+    const pilotos = await sbFetch('pilotos?select=nombre');
+    if (Array.isArray(pilotos)) {
+      const remote = pilotos.map(p => p.nombre);
+      const local = getListaPilotos();
+      const merged = [...new Set([...local, ...remote])];
+      if (merged.length !== local.length) {
+        localStorage.setItem(LS_LISTA_PILOTOS, JSON.stringify(merged));
+        refrescarUIPiloto();
+      }
+    }
+    sbFlushQueue();
+  } catch(e) {
+    console.warn('Supabase pull falló (offline):', e.message);
+  }
+}
+
+/* ── AUTH ──────────────────────────────────────────────────────────
+   Piloto: nombre + PIN 4 dígitos
+   Profe: contraseña maestra (no va a Supabase, se valida local)
+   ────────────────────────────────────────────────────────────────── */
+function getCloudSession() {
+  try { return JSON.parse(localStorage.getItem(LS_CLOUD_SESSION)) || null; }
+  catch(e) { return null; }
+}
+function setCloudSession(s) { localStorage.setItem(LS_CLOUD_SESSION, JSON.stringify(s)); }
+function clearCloudSession() { localStorage.removeItem(LS_CLOUD_SESSION); }
+
+async function sbLoginPiloto(nombre, pin) {
+  try {
+    const pin_hash = await hashPin(String(pin));
+    const rows = await sbFetch(`pilotos?nombre=eq.${encodeURIComponent(nombre)}&pin_hash=eq.${pin_hash}&select=nombre,role`);
+    if (!rows || rows.length === 0) return { ok: false, msg: 'Nombre o PIN incorrecto.' };
+    setCloudSession({ piloto: nombre, role: 'piloto' });
+    setPilotoActual(nombre);
+    return { ok: true };
+  } catch(e) {
+    return { ok: false, msg: 'Sin conexión. Puedes usar la app en modo local.' };
+  }
+}
+
+function initAuthUI() {
+  /* Crea el modal de login/registro flotante */
+  const modal = document.createElement('div');
+  modal.id = 'authModal';
+  modal.style.cssText = 'display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0a0a0cee;z-index:10000;font-family:JetBrains Mono;align-items:center;justify-content:center;';
+  modal.innerHTML = `
+    <div style="background:#111;border:1px solid var(--line);border-radius:12px;padding:32px;max-width:380px;width:90%;position:relative;">
+      <h3 style="color:var(--acc);margin-bottom:20px;letter-spacing:.1em;">ACCESO PATAGONIA</h3>
+      <div id="authTabs" style="display:flex;gap:8px;margin-bottom:20px;">
+        <button onclick="authTab('login')" id="tabLogin" style="flex:1;background:var(--acc);color:#000;border:none;padding:8px;border-radius:4px;font-weight:bold;cursor:pointer;">Entrar</button>
+        <button onclick="authTab('register')" id="tabRegister" style="flex:1;background:#333;color:#fff;border:none;padding:8px;border-radius:4px;cursor:pointer;">Registrarse</button>
+      </div>
+      <div id="authBody">
+        <div class="field" style="margin-bottom:14px;">
+          <label style="color:#aaa;font-size:13px;">Nombre del Piloto</label>
+          <input id="authNombre" type="text" placeholder="Tu nombre" style="width:100%;background:#1a1a1a;color:#fff;border:1px solid #333;padding:10px;border-radius:6px;margin-top:6px;box-sizing:border-box;">
+        </div>
+        <div class="field" style="margin-bottom:20px;">
+          <label style="color:#aaa;font-size:13px;">PIN (4 dígitos)</label>
+          <input id="authPin" type="password" inputmode="numeric" maxlength="4" placeholder="••••" style="width:100%;background:#1a1a1a;color:#fff;border:1px solid #333;padding:10px;border-radius:6px;margin-top:6px;box-sizing:border-box;">
+        </div>
+        <button id="authSubmit" onclick="authSubmit()" style="width:100%;background:var(--acc);color:#000;border:none;padding:12px;border-radius:6px;font-weight:bold;font-size:15px;cursor:pointer;">Entrar</button>
+        <p id="authMsg" style="color:#ef4444;margin-top:12px;font-size:13px;min-height:18px;"></p>
+        <hr style="border-color:#222;margin:16px 0;">
+        <button onclick="authProfe()" style="width:100%;background:#1a1a1a;color:var(--acc);border:1px solid var(--acc);padding:10px;border-radius:6px;cursor:pointer;font-size:13px;">MODO PROFE</button>
+        <button onclick="authSkip()" style="width:100%;background:transparent;color:#555;border:none;padding:8px;cursor:pointer;font-size:12px;margin-top:6px;">Continuar sin cuenta (solo local)</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+
+  // Mostrar si no hay sesión
+  const session = getCloudSession();
+  if (!session) {
+    modal.style.display = 'flex';
+  }
+}
+
+let _authMode = 'login';
+function authTab(mode) {
+  _authMode = mode;
+  document.getElementById('tabLogin').style.background   = mode==='login'    ? 'var(--acc)' : '#333';
+  document.getElementById('tabLogin').style.color        = mode==='login'    ? '#000' : '#fff';
+  document.getElementById('tabRegister').style.background= mode==='register' ? 'var(--acc)' : '#333';
+  document.getElementById('tabRegister').style.color     = mode==='register' ? '#000' : '#fff';
+  document.getElementById('authSubmit').textContent = mode==='login' ? 'Entrar' : 'Crear cuenta';
+  document.getElementById('authMsg').textContent = '';
+}
+
+async function authSubmit() {
+  const nombre = document.getElementById('authNombre').value.trim();
+  const pin    = document.getElementById('authPin').value.trim();
+  const msg    = document.getElementById('authMsg');
+  if (!nombre || pin.length < 4) { msg.textContent = 'Nombre y PIN de 4 dígitos requeridos.'; return; }
+
+  if (_authMode === 'register') {
+    await sbUpsertPiloto({ nombre, pin });
+    agregarPiloto(nombre);
+    setCloudSession({ piloto: nombre, role: 'piloto' });
+    toast('Cuenta creada', 'ok');
+    document.getElementById('authModal').style.display = 'none';
+    sbPullAll();
+  } else {
+    const r = await sbLoginPiloto(nombre, pin);
+    if (r.ok) {
+      toast(`Bienvenido, ${nombre}`, 'ok');
+      document.getElementById('authModal').style.display = 'none';
+      sbPullAll();
+    } else {
+      msg.textContent = r.msg;
+    }
+  }
+}
+
+function authProfe() {
+  const pwd = prompt('Contraseña de Profe:');
+  if (pwd === PROFE_MASTER_PASSWORD) {
+    setCloudSession({ piloto: '__profe__', role: 'profe' });
+    document.getElementById('authModal').style.display = 'none';
+    toast('Modo Profe activo', 'ok');
+    // Mostrar panel profe automáticamente
+    const pp = document.getElementById('profePanel');
+    if (pp) pp.style.display = 'block';
+    const pb = document.querySelector('#profePanel + button, nav > button:last-child');
+    if (pb && pb.textContent.includes('PROFE')) pb.style.display = 'none';
+    sbPullAll();
+  } else {
+    alert('Contraseña incorrecta');
+  }
+}
+
+function authSkip() {
+  setCloudSession({ piloto: null, role: 'guest' });
+  document.getElementById('authModal').style.display = 'none';
+}
+
+function authLogout() {
+  clearCloudSession();
+  location.reload();
+}
+
 /* ── §0.5 · ESTADO GLOBAL DEL PILOTO (multi-alumno) ────────────── */
 const LS_PILOTO_ACTUAL = 'pilotoActual';
 const LS_LISTA_PILOTOS = 'listaPilotos';
@@ -1416,6 +1697,8 @@ function setPerfil(nombre, datos) {
   const ps = getPerfiles();
   ps[nombre] = datos;
   setPerfiles(ps);
+  // Sync a Supabase (Fase 7)
+  sbUpsertPerfil(nombre);
 }
 function getRutas() {
   try { return JSON.parse(localStorage.getItem(LS_RUTAS)) || {}; }
@@ -2520,6 +2803,9 @@ function initDiario() {
     setEntries(entries);
     renderEntries();
 
+    // Push a Supabase (Fase 7) — offline-first: si falla va a la cola
+    sbUpsertSesion(datos);
+
     // Envío a Google Sheets con las 7 claves exactas: Piloto, Coche, Circuito, Ansiedad, Comentarios
     const params = new URLSearchParams();
     params.append('Piloto', datos.piloto);
@@ -2803,6 +3089,10 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ── PRO EDITION HOOKS ─────────────────────────────────────────── */
   safe(initProFeatures);
   safe(initSlideshowAnnotations);
+  /* ── CLOUD + AUTH (Fase 7) ──────────────────────────────────────── */
+  safe(initAuthUI);
+  sbPullAll();
+  window.addEventListener('online', sbFlushQueue);
 });
 
 /* ══════════════════════════════════════════════════════════════
