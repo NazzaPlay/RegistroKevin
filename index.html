@@ -3100,6 +3100,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ── PRO EDITION HOOKS ─────────────────────────────────────────── */
   safe(initProFeatures);
   safe(initSlideshowAnnotations);
+  safe(initQuizProgress);
   /* ── CLOUD + AUTH (Fase 7) ──────────────────────────────────────── */
   safe(initAuthUI);
   sbPullAll();
@@ -3708,6 +3709,34 @@ function toggleSetupField() {
 function toggleQuiz(id) {
     const content = document.querySelector(`#quiz-${id} .quiz-content`);
     content.style.display = content.style.display === 'none' ? 'block' : 'none';
+}
+
+/* Marca con ✓ los quizzes ya aprobados por el piloto activo */
+function initQuizProgress() {
+    const pilot = getPilotoActual();
+    if (!pilot) return;
+    const perfil = getPerfil(pilot);
+    const aprobados = (perfil && perfil.progreso_quizzes) || {};
+    Object.keys(aprobados).forEach(id => {
+        if (!aprobados[id]) return;
+        const card = document.querySelector(`#quiz-${id}`);
+        if (!card) return;
+        const btn = card.querySelector('button.btn-ghost');
+        if (btn && !btn.dataset.checked) {
+            btn.dataset.checked = 'true';
+            btn.innerHTML = `<span style="color:#4ade80;margin-right:6px;">✓</span>Conocimiento verificado`;
+            btn.style.color = '#4ade80';
+            btn.style.borderColor = '#4ade80';
+            // Mostrar explicación directamente
+            const content = card.querySelector('.quiz-content');
+            if (content) {
+                content.style.display = 'block';
+                content.innerHTML = `<div style="background:#14532d;color:#4ade80;padding:8px 12px;border-radius:4px;font-size:12px;">
+                    ✓ Ya aprobaste este concepto. ${QUIZ_ANSWERS[id]?.explanation || ''}
+                </div>`;
+            }
+        }
+    });
 }
 
 function checkQuiz(id, answer) {
