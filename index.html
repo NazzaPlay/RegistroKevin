@@ -1373,17 +1373,128 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
       <article class="concept-card glass reveal" data-num="02">
         <div class="concept-top">
           <div class="concept-canvas-wrap">
-            <canvas id="cvB" width="820" height="460" aria-label="Animación: en las Porsche Curves, seguir muy de cerca quita carga aerodinámica frontal y provoca subviraje"></canvas>
-            <span class="concept-tag">CONCEPTO B · PORSCHE CURVES</span>
+            <svg viewBox="0 0 820 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Infografía estática: vista cenital de una curva rápida con zonas de aire limpio y aire sucio, secuencia de pérdida de grip por subviraje y solución con lateralidad">
+              <defs>
+                <pattern id="g2" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.035)" stroke-width="1"/>
+                </pattern>
+                <filter id="glow2"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                <linearGradient id="dirtyAir" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="rgba(239,68,68,0.28)"/>
+                  <stop offset="100%" stop-color="rgba(239,68,68,0)"/>
+                </linearGradient>
+                <linearGradient id="cleanAir" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="rgba(0,229,224,0.10)"/>
+                  <stop offset="100%" stop-color="rgba(0,229,224,0)"/>
+                </linearGradient>
+              </defs>
+              <rect width="820" height="460" fill="#060810"/>
+              <rect width="820" height="460" fill="url(#g2)"/>
+              <text x="410" y="32" text-anchor="middle" font-family="Orbitron, sans-serif" font-weight="800" font-size="18" fill="#ffffff" letter-spacing="3">AIRE SUCIO EN CURVA RÁPIDA</text>
+              <!-- PISTA: curva 90° superior (centro abajo, r=180) -->
+              <path d="M 150 305 A 180 180 0 0 1 670 305" fill="none" stroke="#2a2f3a" stroke-width="80" stroke-linecap="round"/>
+              <path d="M 150 305 A 180 180 0 0 1 670 305" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="2"/>
+              <path d="M 150 305 A 180 180 0 0 1 670 305" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="1.5" stroke-dasharray="18 14"/>
+              <!-- ZONA DE AIRE LIMPIO (exterior de curva) -->
+              <path d="M 170 285 A 235 235 0 0 1 650 285 L 650 340 L 170 340 Z" fill="url(#cleanAir)" opacity="0.6"/>
+              <text x="560" y="185" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="13" fill="#00E5E0" letter-spacing="1">AIRE LIMPIO = GRIP COMPLETO</text>
+              <!-- ZONA DE AIRE SUCIO (cono detrás del rival) -->
+              <path d="M 335 160 L 335 200 L 205 218 L 205 142 Z" fill="url(#dirtyAir)"/>
+              <g stroke="rgba(239,68,68,0.4)" stroke-width="1.5" fill="none">
+                <path d="M 320 158 Q 290 172 260 168"/>
+                <path d="M 320 178 Q 285 192 250 188"/>
+                <path d="M 320 198 Q 290 212 262 208"/>
+              </g>
+              <text x="265" y="132" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#ef4444" letter-spacing="1">AIRE SUCIO = PÉRDIDA DE CARGA</text>
+              <!-- AUTO RIVAL (entrada, línea interior) -->
+              <g transform="translate(345, 190) rotate(-7)" filter="url(#glow2)">
+                <rect x="-24" y="-11" width="48" height="22" rx="5" fill="#dfe5ee"/>
+                <rect x="-18" y="-8" width="36" height="16" rx="3" fill="#2a2f3a"/>
+                <polygon points="24,0 32,-4 32,4" fill="#dfe5ee"/>
+              </g>
+              <text x="392" y="182" text-anchor="start" font-family="JetBrains Mono, monospace" font-weight="700" font-size="11" fill="#dfe5ee">RIVAL</text>
+              <!-- TÚ — POSICIÓN INCORRECTA (dentro de estela, subviraje) -->
+              <g transform="translate(245, 175) rotate(4)" filter="url(#glow2)">
+                <rect x="-24" y="-11" width="48" height="22" rx="5" fill="#ef4444"/>
+                <rect x="-18" y="-8" width="36" height="16" rx="3" fill="#2a2f3a"/>
+                <polygon points="24,0 32,-4 32,4" fill="#ef4444"/>
+              </g>
+              <path d="M 245 175 Q 285 215 345 265" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="8 6"/>
+              <path d="M 345 265 L 332 258 L 338 271 Z" fill="#ef4444"/>
+              <text x="205" y="150" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#ef4444">TÚ (DENTRO DE ESTELA)</text>
+              <text x="205" y="137" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">SUBVIRAJE: te vas largo</text>
+              <!-- TÚ — POSICIÓN CORRECTA (lateral, aire limpio) -->
+              <g transform="translate(560, 128) rotate(-48)" filter="url(#glow2)">
+                <rect x="-24" y="-11" width="48" height="22" rx="5" fill="#00E5E0"/>
+                <rect x="-18" y="-8" width="36" height="16" rx="3" fill="#0a0d16"/>
+                <polygon points="24,0 32,-4 32,4" fill="#00E5E0"/>
+              </g>
+              <path d="M 560 128 Q 605 170 635 230" fill="none" stroke="#00E5E0" stroke-width="3"/>
+              <path d="M 635 230 L 624 222 L 632 240 Z" fill="#00E5E0"/>
+              <text x="560" y="95" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#00E5E0">TÚ (LATERAL, AIRE LIMPIO)</text>
+              <!-- SECUENCIA 1→4 -->
+              <circle cx="245" cy="175" r="13" fill="#ffb020" filter="url(#glow2)"/>
+              <text x="245" y="179" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="12" fill="#0a0d16">1</text>
+              <text x="245" y="345" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="11" fill="#ffb020">1 · ENTRÁS EN ESTELA</text>
+              <text x="245" y="358" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">Trompa pierde carga aerodinámica</text>
+              <circle cx="300" cy="225" r="13" fill="#ffb020" filter="url(#glow2)"/>
+              <text x="300" y="229" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="12" fill="#0a0d16">2</text>
+              <text x="390" y="345" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="11" fill="#ffb020">2 · VOLANTE LIGERO</text>
+              <text x="390" y="358" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">Sin peso = sin grip frontal</text>
+              <circle cx="345" cy="265" r="13" fill="#ef4444" filter="url(#glow2)"/>
+              <text x="345" y="269" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="12" fill="#fff">3</text>
+              <text x="535" y="345" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="11" fill="#ef4444">3 · AUTO NO GIRA</text>
+              <text x="535" y="358" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">Subviraje: te vas largo al exterior</text>
+              <circle cx="420" cy="305" r="13" fill="#ef4444" filter="url(#glow2)"/>
+              <text x="420" y="309" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="12" fill="#fff">4</text>
+              <text x="680" y="345" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="11" fill="#ef4444">4 · PERDÉS LA CURVA</text>
+              <text x="680" y="358" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">Salida lenta + neumáticos castigados</text>
+              <!-- SOLUCIÓN A→C -->
+              <circle cx="180" cy="235" r="13" fill="#00E5E0" filter="url(#glow2)"/>
+              <text x="180" y="239" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="12" fill="#0a0d16">A</text>
+              <line x1="180" y1="248" x2="215" y2="372" stroke="#00E5E0" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
+              <text x="180" y="382" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="11" fill="#00E5E0">A · SALÍ DEL REBUFO</text>
+              <text x="180" y="395" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">Rompe la estela antes del giro</text>
+              <circle cx="270" cy="125" r="13" fill="#00E5E0" filter="url(#glow2)"/>
+              <text x="270" y="129" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="12" fill="#0a0d16">B</text>
+              <line x1="270" y1="138" x2="270" y2="152" stroke="#00E5E0" stroke-width="1" opacity="0.5"/>
+              <text x="270" y="172" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="11" fill="#00E5E0">B · LATERALIDAD</text>
+              <text x="270" y="185" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">Abríte: buscá aire limpio</text>
+              <circle cx="560" cy="128" r="13" fill="#00E5E0" filter="url(#glow2)"/>
+              <text x="560" y="132" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="12" fill="#0a0d16">C</text>
+              <text x="700" y="150" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="11" fill="#00E5E0">C · TU TRAZADA</text>
+              <text x="700" y="163" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">Girá con grip completo</text>
+              <!-- CAJAS INFERIORES -->
+              <g transform="translate(40, 370)">
+                <rect width="210" height="68" rx="8" fill="rgba(255,176,32,0.08)" stroke="rgba(255,176,32,0.5)" stroke-width="1"/>
+                <text x="14" y="22" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#ffb020" letter-spacing="1">SÍNTOMA EN EL G29</text>
+                <text x="14" y="40" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">• Volante sin peso a mitad de curva</text>
+                <text x="14" y="55" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">• El auto “empuja” hacia el exterior</text>
+              </g>
+              <g transform="translate(270, 370)">
+                <rect width="210" height="68" rx="8" fill="rgba(0,229,224,0.08)" stroke="rgba(0,229,224,0.5)" stroke-width="1"/>
+                <text x="14" y="22" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#00E5E0" letter-spacing="1">ANTÍDOTO</text>
+                <text x="14" y="40" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">✓ Distancia &gt;1 s + lateralidad</text>
+                <text x="14" y="55" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">✓ Buscá tu propia trazada limpia</text>
+              </g>
+              <g transform="translate(500, 370)">
+                <rect width="280" height="68" rx="8" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.5)" stroke-width="1"/>
+                <text x="14" y="22" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#ef4444" letter-spacing="1">⚠ CASTIGO</text>
+                <text x="14" y="40" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">Castigar neumáticos por impaciencia</text>
+                <text x="14" y="55" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">se paga a 3 vueltas (degradación)</text>
+              </g>
+            </svg>
+            <span class="concept-tag">CONCEPTO 02 · PORSCHE CURVES</span>
           </div>
           <div class="concept-body">
             <h3>Aire sucio = <em>subviraje</em></h3>
             <p class="concept-text">
-              En curvas rápidas de alta carga el aire limpio es parte del set-up. Si te metés a
-              menos de un segundo, la trompa <b>pierde carga aerodinámica</b>: el volante queda
-              ligero, el auto no gira y te vas largo al exterior. Eso es subviraje por
-              aire sucio. La solución no es girar más fuerte: es <b>no llegar ahí</b> —
-              salí del rebufo antes del punto de giro y buscá tu propia trazada.
+              En curvas rápidas de alta carga, el aire limpio es parte del set-up.
+              Si te metés a menos de un segundo del rival, la trompa <b>pierde carga
+              aerodinámica</b>: el volante queda ligero, el auto no gira y te vas largo
+              al exterior. Eso es subviraje por aire sucio. La solución no es girar más
+              fuerte: es <b>no llegar ahí</b> — salí del rebufo antes del punto de giro
+              y buscá tu propia trazada.
             </p>
             <div class="legend">
               <span><i class="l-you"></i>Tú</span>
@@ -3278,110 +3389,6 @@ function demoA(ctx, u, S, dt) {
   tag(ctx, 410, 440, 'REBUFO +15 KM/H → FRENA 60 m ANTES → CURVA LIMPIA', ACC, 13);
 }
 
-/* ── DEMO B · AIRE SUCIO (rediseño v3) ──────────────────────────────
-   Curva rápida cenital. Follower entra en la turbulencia del líder
-   → pierde carga frontal → subviraje. Fase 2: otra línea, aire limpio. */
-const B_C2 = { cx: 220, cy: 290, r: 200, a0: -Math.PI * 0.65, a1: Math.PI * 0.25 };
-function bPos2(s, off) {
-  const a = B_C2.a0 + s / B_C2.r;
-  return [B_C2.cx + (B_C2.r + off) * Math.cos(a), B_C2.cy + (B_C2.r + off) * Math.sin(a), a + Math.PI / 2];
-}
-function demoB(ctx, u, S, dt) {
-  S.t += dt;
-  const t = S.t;
-  const CYCLE = 14;
-  const p = (t % CYCLE) / CYCLE;
-
-  // Pista: curva limpia, sin usar drawRoad (que generaba el bug)
-  // Dibujamos la curva a mano con arcos
-  const cx = B_C2.cx, cy = B_C2.cy, r = B_C2.r;
-  const a0 = B_C2.a0, a1 = B_C2.a1;
-  // Entrada y salida de la curva
-  const p0 = bPos2(0, 0), p1 = bPos2(600, 0);
-  
-  // Curva de asfalto (trazo grueso)
-  ctx.save();
-  ctx.strokeStyle = '#0a0d16'; ctx.lineWidth = 100; ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(p0[0] - 20, p0[1] - 60);
-  for (let i = 0; i <= 60; i++) {
-    const a = a0 + (a1 - a0) * i / 60;
-    const px = cx + r * Math.cos(a);
-    const py = cy + r * Math.sin(a);
-    i === 0 ? ctx.lineTo(px, py) : ctx.lineTo(px, py);
-  }
-  ctx.lineTo(p1[0] + 20, p1[1] + 60);
-  ctx.stroke();
-  // Bordes
-  ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.arc(cx, cy, r - 50, a0, a1); ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(cx, cy, r + 50, a0, a1); ctx.stroke();
-  // Centro
-  ctx.setLineDash([16, 14]); ctx.strokeStyle = 'rgba(255,255,255,.08)'; ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.arc(cx, cy, r, a0, a1); ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.restore();
-
-  // Fases
-  const PHASE1_END = 0.45, PHASE2_START = 0.55;
-  const phase1 = p < PHASE1_END;
-  const phase2 = p >= PHASE2_START && p < 0.9;
-
-  // Líder (adelante en la curva)
-  const leaderDist = phase1 ? 80 + p / PHASE1_END * 260 : 340 + (p - PHASE2_START) / 0.4 * 260;
-  const [lx, ly, la] = bPos2(leaderDist, 0);
-  drawCar(ctx, lx, ly, la, 1.15, '#dfe5ee');
-  const [lxo, lyo] = bPos2(leaderDist, 24);
-  miniLabel(ctx, lxo, lyo, 'RIVAL', '#dfe5ee', 11);
-
-  // Follower
-  if (phase1) {
-    const fDist = leaderDist - 90;
-    // Turbulencia: ondas circulares entre líder y follower
-    ctx.save();
-    for (let k = 0; k < 4; k++) {
-      const wave = Math.sin(t * 4 + k * 1.4);
-      ctx.globalAlpha = 0.15 + 0.1 * wave;
-      ctx.strokeStyle = 'rgba(200,212,232,.5)';
-      ctx.lineWidth = 2 + wave;
-      ctx.beginPath();
-      const off = 10 + k * 18;
-      const [sx, sy] = bPos2(fDist + 20, off * (wave > 0 ? 1 : -1));
-      ctx.arc(sx, sy, 12 + k * 6, 0, Math.PI * 2);
-      ctx.stroke();
-    }
-    ctx.globalAlpha = 1;
-    ctx.restore();
-    // Follower se va largo (subviraje)
-    const subvOff = -12 + 48 * Math.min(1, (p / PHASE1_END) * 1.4);
-    const [sx, sy, sa] = bPos2(fDist, subvOff);
-    const yawOff = 0.12 * Math.min(1, (p / PHASE1_END) * 1.4);
-    drawCar(ctx, sx, sy, sa + yawOff, 1.15, ACC);
-    const [sxo, syo] = bPos2(fDist, subvOff + 28);
-    miniLabel(ctx, sxo, syo, 'TÚ', ACC, 11);
-    // Flecha de subviraje
-    ctx.save();
-    ctx.strokeStyle = DANGER; ctx.lineWidth = 3; ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(sx, sy);
-    ctx.lineTo(sx + 50, sy - 40); ctx.stroke();
-    ctx.fillStyle = DANGER;
-    ctx.beginPath(); ctx.arc(sx + 50, sy - 40, 5, 0, Math.PI * 2); ctx.fill();
-    ctx.restore();
-    tag(ctx, 420, 50, 'AIRE SUCIO · VOLANTE LIGERO · SUBVIRAJE', DANGER, 14);
-    tag(ctx, 420, 440, 'MENOS DE 1 s → PERDÉS CARGA FRONTAL', DANGER, 13);
-  } else if (phase2) {
-    const fDist = leaderDist - 200;
-    const [fx, fy, fa] = bPos2(fDist, 20);
-    drawCar(ctx, fx, fy, fa, 1.15, ACC);
-    const [fxo, fyo] = bPos2(fDist, 48);
-    miniLabel(ctx, fxo, fyo, 'TÚ', ACC, 11);
-    tag(ctx, 420, 50, '~2 s · OTRA LÍNEA · AIRE LIMPIO', ACC, 14);
-    tag(ctx, 420, 440, 'GRIP FRONTAL COMPLETO → GIRO NORMAL', ACC, 13);
-  }
-}
-
 /* ── DEMO C · REGLA 50% (rediseño v3) ───────────────────────────────
    Recta + curva a mano. El perseguidor llega al 50% del líder ANTES
    del punto de giro → derecho al espacio. Líder cede.               */
@@ -4023,7 +4030,6 @@ function stepDemos(dt) { for (const d of demos) if (d.vis) stepDemo(d, dt); }
 
 function initDemos() {
   registerDemo('cvA', demoA, 9);
-  registerDemo('cvB', demoB, 11);
   registerDemo('cvC', demoC, 13);
   registerDemo('cvD', demoD, 14);
   registerDemo('cvE', demoE, 12);
