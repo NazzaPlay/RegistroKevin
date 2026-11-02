@@ -1379,110 +1379,157 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
                   <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.035)" stroke-width="1"/>
                 </pattern>
                 <filter id="glow2"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-                <linearGradient id="dirtyAir" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stop-color="rgba(239,68,68,0.28)"/>
+                <linearGradient id="dirtyAir" x1="100%" y1="50%" x2="0%" y2="50%">
+                  <stop offset="0%" stop-color="rgba(239,68,68,0.30)"/>
                   <stop offset="100%" stop-color="rgba(239,68,68,0)"/>
                 </linearGradient>
-                <linearGradient id="cleanAir" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stop-color="rgba(0,229,224,0.10)"/>
+                <linearGradient id="cleanAir" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="rgba(0,229,224,0.12)"/>
                   <stop offset="100%" stop-color="rgba(0,229,224,0)"/>
                 </linearGradient>
               </defs>
+
+              <!-- FONDO -->
               <rect width="820" height="460" fill="#060810"/>
               <rect width="820" height="460" fill="url(#g2)"/>
-              <text x="410" y="32" text-anchor="middle" font-family="Orbitron, sans-serif" font-weight="800" font-size="18" fill="#ffffff" letter-spacing="3">AIRE SUCIO EN CURVA RÁPIDA</text>
-              <!-- PISTA: curva 90° superior (centro abajo, r=180) -->
-              <path d="M 150 305 A 180 180 0 0 1 670 305" fill="none" stroke="#2a2f3a" stroke-width="80" stroke-linecap="round"/>
-              <path d="M 150 305 A 180 180 0 0 1 670 305" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="2"/>
-              <path d="M 150 305 A 180 180 0 0 1 670 305" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="1.5" stroke-dasharray="18 14"/>
-              <!-- ZONA DE AIRE LIMPIO (exterior de curva) -->
-              <path d="M 170 285 A 235 235 0 0 1 650 285 L 650 340 L 170 340 Z" fill="url(#cleanAir)" opacity="0.6"/>
-              <text x="560" y="185" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="13" fill="#00E5E0" letter-spacing="1">AIRE LIMPIO = GRIP COMPLETO</text>
-              <!-- ZONA DE AIRE SUCIO (cono detrás del rival) -->
-              <path d="M 335 160 L 335 200 L 205 218 L 205 142 Z" fill="url(#dirtyAir)"/>
-              <g stroke="rgba(239,68,68,0.4)" stroke-width="1.5" fill="none">
-                <path d="M 320 158 Q 290 172 260 168"/>
-                <path d="M 320 178 Q 285 192 250 188"/>
-                <path d="M 320 198 Q 290 212 262 208"/>
+
+              <!-- TÍTULO -->
+              <text x="410" y="32" text-anchor="middle" font-family="Orbitron, sans-serif" font-weight="800" font-size="17" fill="#ffffff" letter-spacing="3">AIRE SUCIO EN CURVA RÁPIDA</text>
+
+              <!-- ═══ ZONA AIRE LIMPIO (exterior/abajo) ═══ -->
+              <rect x="30" y="240" width="760" height="110" rx="6" fill="url(#cleanAir)" opacity="0.5"/>
+              <text x="680" y="260" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#00E5E0" letter-spacing="1" opacity="0.7">AIRE LIMPIO = GRIP COMPLETO</text>
+
+              <!-- ═══ PISTA: curva 90° — centro (410,310), r=180 ═══ -->
+              <!-- Borde exterior -->
+              <path d="M 130 310 A 220 220 0 0 1 690 310" fill="none" stroke="rgba(255,255,255,0.20)" stroke-width="2"/>
+              <!-- Asfalto -->
+              <path d="M 130 310 A 220 220 0 0 1 690 310" fill="none" stroke="#2a2f3a" stroke-width="80" stroke-linecap="round"/>
+              <!-- Línea central discontinua -->
+              <path d="M 130 310 A 220 220 0 0 1 690 310" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="1.5" stroke-dasharray="18 14"/>
+              <!-- Borde interior -->
+              <path d="M 130 310 A 140 140 0 0 1 690 310" fill="none" stroke="rgba(255,255,255,0.20)" stroke-width="2"/>
+
+              <!-- ═══ CONO DE AIRE SUCIO (detrás del rival, hacia la izquierda) ═══ -->
+              <path d="M 340 130 L 140 90 L 140 170 Z" fill="url(#dirtyAir)"/>
+              <!-- Turbulencia -->
+              <g stroke="rgba(239,68,68,0.35)" stroke-width="1.5" fill="none">
+                <path d="M 320 125 Q 280 118 240 122"/>
+                <path d="M 310 135 Q 260 130 210 138"/>
+                <path d="M 300 145 Q 250 148 200 152"/>
               </g>
-              <text x="265" y="132" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#ef4444" letter-spacing="1">AIRE SUCIO = PÉRDIDA DE CARGA</text>
-              <!-- AUTO RIVAL (entrada, línea interior) -->
-              <g transform="translate(345, 190) rotate(-7)" filter="url(#glow2)">
+              <text x="210" y="80" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#ef4444" letter-spacing="1">AIRE SUCIO = PÉRDIDA DE CARGA</text>
+
+              <!-- ═══ AUTO RIVAL (ápex, línea interior) ═══ -->
+              <!-- Posición: ángulo -30° desde centro(410,310), r=180 → (410+156, 310-90) ≈ (566, 220) -->
+              <g transform="translate(540, 175) rotate(30)" filter="url(#glow2)">
                 <rect x="-24" y="-11" width="48" height="22" rx="5" fill="#dfe5ee"/>
                 <rect x="-18" y="-8" width="36" height="16" rx="3" fill="#2a2f3a"/>
                 <polygon points="24,0 32,-4 32,4" fill="#dfe5ee"/>
               </g>
-              <text x="392" y="182" text-anchor="start" font-family="JetBrains Mono, monospace" font-weight="700" font-size="11" fill="#dfe5ee">RIVAL</text>
-              <!-- TÚ — POSICIÓN INCORRECTA (dentro de estela, subviraje) -->
-              <g transform="translate(245, 175) rotate(4)" filter="url(#glow2)">
+              <text x="575" y="155" text-anchor="start" font-family="JetBrains Mono, monospace" font-weight="700" font-size="11" fill="#dfe5ee">RIVAL</text>
+
+              <!-- ═══ TÚ INCORRECTO (dentro de estela, subviraje) ═══ -->
+              <!-- Detrás del rival en la curva, dentro del cono rojo -->
+              <g transform="translate(370, 130) rotate(10)" filter="url(#glow2)">
                 <rect x="-24" y="-11" width="48" height="22" rx="5" fill="#ef4444"/>
                 <rect x="-18" y="-8" width="36" height="16" rx="3" fill="#2a2f3a"/>
                 <polygon points="24,0 32,-4 32,4" fill="#ef4444"/>
               </g>
-              <path d="M 245 175 Q 285 215 345 265" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="8 6"/>
-              <path d="M 345 265 L 332 258 L 338 271 Z" fill="#ef4444"/>
-              <text x="205" y="150" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#ef4444">TÚ (DENTRO DE ESTELA)</text>
-              <text x="205" y="137" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">SUBVIRAJE: te vas largo</text>
-              <!-- TÚ — POSICIÓN CORRECTA (lateral, aire limpio) -->
-              <g transform="translate(560, 128) rotate(-48)" filter="url(#glow2)">
+              <!-- Flecha subviraje: se va largo al exterior -->
+              <path d="M 370 130 Q 340 180 310 240" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="8 6"/>
+              <polygon points="310,240 304,228 316,232" fill="#ef4444"/>
+              <text x="370" y="108" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="11" fill="#ef4444">TÚ (DENTRO DE ESTELA)</text>
+              <text x="370" y="96" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">SUBVIRAJE: te vas largo</text>
+
+              <!-- ═══ TÚ CORRECTO (lateral, aire limpio, exterior) ═══ -->
+              <!-- Misma altura angular que el rival pero radio exterior +240 -->
+              <g transform="translate(610, 190) rotate(30)" filter="url(#glow2)">
                 <rect x="-24" y="-11" width="48" height="22" rx="5" fill="#00E5E0"/>
                 <rect x="-18" y="-8" width="36" height="16" rx="3" fill="#0a0d16"/>
                 <polygon points="24,0 32,-4 32,4" fill="#00E5E0"/>
               </g>
-              <path d="M 560 128 Q 605 170 635 230" fill="none" stroke="#00E5E0" stroke-width="3"/>
-              <path d="M 635 230 L 624 222 L 632 240 Z" fill="#00E5E0"/>
-              <text x="560" y="95" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#00E5E0">TÚ (LATERAL, AIRE LIMPIO)</text>
-              <!-- SECUENCIA 1→4 -->
-              <circle cx="245" cy="175" r="13" fill="#ffb020" filter="url(#glow2)"/>
-              <text x="245" y="179" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="12" fill="#0a0d16">1</text>
-              <text x="245" y="345" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="11" fill="#ffb020">1 · ENTRÁS EN ESTELA</text>
-              <text x="245" y="358" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">Trompa pierde carga aerodinámica</text>
-              <circle cx="300" cy="225" r="13" fill="#ffb020" filter="url(#glow2)"/>
-              <text x="300" y="229" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="12" fill="#0a0d16">2</text>
-              <text x="390" y="345" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="11" fill="#ffb020">2 · VOLANTE LIGERO</text>
-              <text x="390" y="358" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">Sin peso = sin grip frontal</text>
-              <circle cx="345" cy="265" r="13" fill="#ef4444" filter="url(#glow2)"/>
-              <text x="345" y="269" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="12" fill="#fff">3</text>
-              <text x="535" y="345" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="11" fill="#ef4444">3 · AUTO NO GIRA</text>
-              <text x="535" y="358" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">Subviraje: te vas largo al exterior</text>
-              <circle cx="420" cy="305" r="13" fill="#ef4444" filter="url(#glow2)"/>
-              <text x="420" y="309" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="12" fill="#fff">4</text>
-              <text x="680" y="345" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="11" fill="#ef4444">4 · PERDÉS LA CURVA</text>
-              <text x="680" y="358" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">Salida lenta + neumáticos castigados</text>
-              <!-- SOLUCIÓN A→C -->
-              <circle cx="180" cy="235" r="13" fill="#00E5E0" filter="url(#glow2)"/>
-              <text x="180" y="239" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="12" fill="#0a0d16">A</text>
-              <line x1="180" y1="248" x2="215" y2="372" stroke="#00E5E0" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
-              <text x="180" y="382" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="11" fill="#00E5E0">A · SALÍ DEL REBUFO</text>
-              <text x="180" y="395" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">Rompe la estela antes del giro</text>
-              <circle cx="270" cy="125" r="13" fill="#00E5E0" filter="url(#glow2)"/>
-              <text x="270" y="129" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="12" fill="#0a0d16">B</text>
-              <line x1="270" y1="138" x2="270" y2="152" stroke="#00E5E0" stroke-width="1" opacity="0.5"/>
-              <text x="270" y="172" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="11" fill="#00E5E0">B · LATERALIDAD</text>
-              <text x="270" y="185" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">Abríte: buscá aire limpio</text>
-              <circle cx="560" cy="128" r="13" fill="#00E5E0" filter="url(#glow2)"/>
-              <text x="560" y="132" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="12" fill="#0a0d16">C</text>
-              <text x="700" y="150" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="11" fill="#00E5E0">C · TU TRAZADA</text>
-              <text x="700" y="163" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">Girá con grip completo</text>
-              <!-- CAJAS INFERIORES -->
-              <g transform="translate(40, 370)">
-                <rect width="210" height="68" rx="8" fill="rgba(255,176,32,0.08)" stroke="rgba(255,176,32,0.5)" stroke-width="1"/>
-                <text x="14" y="22" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#ffb020" letter-spacing="1">SÍNTOMA EN EL G29</text>
-                <text x="14" y="40" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">• Volante sin peso a mitad de curva</text>
-                <text x="14" y="55" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">• El auto “empuja” hacia el exterior</text>
+              <!-- Flecha trazada limpia -->
+              <path d="M 610 190 Q 650 240 670 290" fill="none" stroke="#00E5E0" stroke-width="2.5"/>
+              <polygon points="670,290 662,278 674,280" fill="#00E5E0"/>
+              <text x="660" y="178" text-anchor="start" font-family="Rajdhani, sans-serif" font-weight="700" font-size="11" fill="#00E5E0">TÚ (LATERAL)</text>
+              <text x="660" y="166" text-anchor="start" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">Aire limpio, grip completo</text>
+
+              <!-- ═══ SECUENCIA 1→4 (pérdida de grip, a lo largo de la trayectoria incorrecta) ═══ -->
+              <!-- Los círculos siguen la flecha roja de subviraje -->
+              <!-- 1: entrada en estela -->
+              <circle cx="395" cy="140" r="12" fill="#ffb020" filter="url(#glow2)"/>
+              <text x="395" y="144" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="11" fill="#0a0d16">1</text>
+
+              <!-- 2: volante ligero -->
+              <circle cx="365" cy="170" r="12" fill="#ffb020" filter="url(#glow2)"/>
+              <text x="365" y="174" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="11" fill="#0a0d16">2</text>
+
+              <!-- 3: auto no gira -->
+              <circle cx="340" cy="205" r="12" fill="#ef4444" filter="url(#glow2)"/>
+              <text x="340" y="209" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="11" fill="#fff">3</text>
+
+              <!-- 4: perdés la curva -->
+              <circle cx="318" cy="238" r="12" fill="#ef4444" filter="url(#glow2)"/>
+              <text x="318" y="242" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="11" fill="#fff">4</text>
+
+              <!-- Leyenda de secuencia (debajo de las cajas, compacta) -->
+              <text x="140" y="365" font-family="Rajdhani, sans-serif" font-weight="700" font-size="10" fill="#ffb020">① Entrás en estela  ② Volante ligero  ③ Auto no gira  ④ Perdés la curva</text>
+
+              <!-- ═══ SOLUCIÓN A→C (trayectoria correcta, exterior) ═══ -->
+              <!-- A: salí del rebufo (antes de la curva) -->
+              <circle cx="200" cy="280" r="12" fill="#00E5E0" filter="url(#glow2)"/>
+              <text x="200" y="284" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="11" fill="#0a0d16">A</text>
+              <text x="200" y="300" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="10" fill="#00E5E0">SALÍ DEL REBUFO</text>
+
+              <!-- B: lateralidad (abrite) -->
+              <circle cx="410" cy="280" r="12" fill="#00E5E0" filter="url(#glow2)"/>
+              <text x="410" y="284" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="11" fill="#0a0d16">B</text>
+              <text x="410" y="300" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="10" fill="#00E5E0">LATERALIDAD</text>
+
+              <!-- C: tu trazada (grip completo) -->
+              <circle cx="620" cy="280" r="12" fill="#00E5E0" filter="url(#glow2)"/>
+              <text x="620" y="284" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="800" font-size="11" fill="#0a0d16">C</text>
+              <text x="620" y="300" text-anchor="middle" font-family="Rajdhani, sans-serif" font-weight="700" font-size="10" fill="#00E5E0">TU TRAZADA</text>
+
+              <!-- Línea conectora A→B→C -->
+              <line x1="212" y1="280" x2="398" y2="280" stroke="#00E5E0" stroke-width="1" stroke-dasharray="4 4" opacity="0.4"/>
+              <line x1="422" y1="280" x2="608" y2="280" stroke="#00E5E0" stroke-width="1" stroke-dasharray="4 4" opacity="0.4"/>
+
+              <!-- ═══ CAJAS INFERIORES (y=380, sin pisar pista) ═══ -->
+              <!-- Síntoma -->
+              <g transform="translate(30, 380)">
+                <rect width="240" height="65" rx="8" fill="rgba(255,176,32,0.08)" stroke="rgba(255,176,32,0.5)" stroke-width="1"/>
+                <text x="14" y="20" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#ffb020" letter-spacing="1">SÍNTOMA EN EL G29</text>
+                <text x="14" y="37" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">• Volante sin peso a mitad de curva</text>
+                <text x="14" y="53" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">• El auto “empuja” hacia el exterior</text>
               </g>
-              <g transform="translate(270, 370)">
-                <rect width="210" height="68" rx="8" fill="rgba(0,229,224,0.08)" stroke="rgba(0,229,224,0.5)" stroke-width="1"/>
-                <text x="14" y="22" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#00E5E0" letter-spacing="1">ANTÍDOTO</text>
-                <text x="14" y="40" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">✓ Distancia &gt;1 s + lateralidad</text>
-                <text x="14" y="55" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">✓ Buscá tu propia trazada limpia</text>
+
+              <!-- Antídoto -->
+              <g transform="translate(290, 380)">
+                <rect width="240" height="65" rx="8" fill="rgba(0,229,224,0.08)" stroke="rgba(0,229,224,0.5)" stroke-width="1"/>
+                <text x="14" y="20" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#00E5E0" letter-spacing="1">ANTÍDOTO</text>
+                <text x="14" y="37" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">✓ Distancia &gt;1 s antes del giro</text>
+                <text x="14" y="53" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">✓ Lateralidad: salí de su línea</text>
               </g>
-              <g transform="translate(500, 370)">
-                <rect width="280" height="68" rx="8" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.5)" stroke-width="1"/>
-                <text x="14" y="22" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#ef4444" letter-spacing="1">⚠ CASTIGO</text>
-                <text x="14" y="40" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">Castigar neumáticos por impaciencia</text>
-                <text x="14" y="55" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">se paga a 3 vueltas (degradación)</text>
+
+              <!-- Castigo -->
+              <g transform="translate(550, 380)">
+                <rect width="240" height="65" rx="8" fill="rgba(239,68,68,0.08)" stroke="rgba(239,68,68,0.5)" stroke-width="1"/>
+                <text x="14" y="20" font-family="Rajdhani, sans-serif" font-weight="700" font-size="12" fill="#ef4444" letter-spacing="1">⚠ CASTIGO</text>
+                <text x="14" y="37" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">Castigar neumáticos por impaciencia</text>
+                <text x="14" y="53" font-family="Rajdhani, sans-serif" font-weight="600" font-size="11" fill="#e8ecf4">se paga a 3 vueltas (degradación)</text>
               </g>
+
+              <!-- LEYENDA COMPACTA -->
+              <line x1="30" y1="355" x2="50" y2="355" stroke="#00E5E0" stroke-width="3"/>
+              <text x="56" y="359" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">TRAZADA CORRECTA</text>
+              <line x1="180" y1="355" x2="200" y2="355" stroke="#ef4444" stroke-width="3" stroke-dasharray="6 4"/>
+              <text x="206" y="359" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">ERROR: SUBVIRAJE</text>
+              <rect x="340" y="351" width="16" height="8" rx="2" fill="rgba(239,68,68,0.3)" stroke="#ef4444" stroke-width="0.5"/>
+              <text x="362" y="359" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">AIRE SUCIO</text>
+              <rect x="450" y="351" width="16" height="8" rx="2" fill="rgba(0,229,224,0.2)" stroke="#00E5E0" stroke-width="0.5"/>
+              <text x="472" y="359" font-family="Rajdhani, sans-serif" font-weight="600" font-size="10" fill="#9aa6b6">AIRE LIMPIO</text>
             </svg>
             <span class="concept-tag">CONCEPTO 02 · PORSCHE CURVES</span>
           </div>
