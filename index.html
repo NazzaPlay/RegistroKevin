@@ -447,9 +447,22 @@ kbd{
 .concept-canvas-wrap canvas{
   position:absolute;inset:0;width:100%;height:100%;display:block;
 }
-/* SVGs estáticos en tarjetas de infografía (1A/1B) */
+/* SVGs estáticos en tarjetas de infografía (1A/1B/02A/02B) */
 .concept-canvas-wrap svg{
   position:absolute;inset:0;width:100%;height:100%;display:block;
+}
+/* 02A/02B: compute-card fluida debajo del SVG, sin absolute */
+.concept-card[data-num="02A"] .concept-canvas-wrap,
+.concept-card[data-num="02B"] .concept-canvas-wrap{
+  display:flex;flex-direction:column;justify-content:flex-start;
+}
+.concept-card[data-num="02A"] .concept-canvas-wrap svg,
+.concept-card[data-num="02B"] .concept-canvas-wrap svg{
+  position:relative;inset:auto;width:100%;height:auto;aspect-ratio:820/460;flex:none;
+}
+.concept-card[data-num="02A"] .compute-card,
+.concept-card[data-num="02B"] .compute-card{
+  position:relative;margin-top:12px;flex:none;
 }
 
 /* Tarjeta de cómputo (glassmorphism) debajo de cada SVG */
@@ -1691,7 +1704,59 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
     </div>
   </div>
 </article>
-      <!-- ── CONCEPTO C · REGLA DEL 50% ─────────────────────────── -->                <text x="534" y="148" font-family="'JetBrains Mono',monospace" font-weight="800" font-size="11" fill="#ffb020">UMBRAL 50%</text>
+      <!-- ── CONCEPTO C · REGLA DEL 50% ─────────────────────────── -->
+      <article class="concept-card glass reveal" data-num="03" id="card-03">
+
+        <div class="concept-tabs">
+          <button class="tab-btn active cyan" data-tab="tab-c-ok" onclick="switchTab('card-03','ok',this,'c')" aria-pressed="true">🟢 CUMPLIDO: DERECHO A ESPACIO (&gt;50%)</button>
+          <button class="tab-btn" data-tab="tab-c-fail" onclick="switchTab('card-03','fail',this,'c')" aria-pressed="false">🔴 NO LLEGASTE: CURVA DEL RIVAL (&lt;50%)</button>
+        </div>
+
+        <!-- 2 columnas: pestañas SVG (izq) + texto (der) -->
+        <div class="concept-top">
+          <div class="concept-canvas-wrap">
+            <!-- PESTAÑA 1 · CUMPLIDO (>50%) — DERECHO A ESPACIO -->
+            <div class="tab-content active" id="tab-c-ok">
+              <svg viewBox="0 0 820 460" role="img" aria-label="Cenital: jugador supera la cota del 50% del rival antes del giro — derecho a espacio">
+                <defs>
+                  <pattern id="gridC3" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(154,166,182,.06)" stroke-width="1"/>
+                  </pattern>
+                  <marker id="arrowC3cyan" markerWidth="9" markerHeight="9" refX="5" refY="4" orient="auto">
+                    <path d="M1,1 L8,4 L1,7" fill="none" stroke="#00E5E0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </marker>
+                  <marker id="arrowC3gray" markerWidth="9" markerHeight="9" refX="5" refY="4" orient="auto">
+                    <path d="M1,1 L8,4 L1,7" fill="none" stroke="#dfe5ee" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </marker>
+                </defs>
+
+                <!-- Fondo + rejilla -->
+                <rect width="820" height="460" fill="#0d1222"/>
+                <rect width="820" height="460" fill="url(#gridC3)"/>
+
+                <!-- Título superior -->
+                <text x="410" y="34" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-weight="800" font-size="15" letter-spacing="2" fill="#00E5E0">CUMPLIDO (&gt;50%): DERECHO A ESPACIO</text>
+                <line x1="190" y1="44" x2="630" y2="44" stroke="rgba(0,229,224,.25)" stroke-width="1"/>
+
+                <!-- PISTA CENITAL · curva 90° amplia · centro (410,300) · asfalto #2a2f3a 80px -->
+                <!-- Arco interior r=140: de (550,300) a (410,160) -->
+                <path d="M 550 300 A 140 140 0 0 1 410 160" fill="none" stroke="#2a2f3a" stroke-width="80"/>
+                <!-- Borde exterior r=220 -->
+                <path d="M 630 300 A 220 220 0 0 1 410 80" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1.5"/>
+                <!-- Borde interior r=140 -->
+                <path d="M 550 300 A 140 140 0 0 1 410 160" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1.5"/>
+                <!-- Línea central discontinua r=180 -->
+                <path d="M 590 300 A 180 180 0 0 1 410 120" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="1.5" stroke-dasharray="14 12"/>
+
+                <!-- ═══ COTAS DE TELEMETRÍA ═══ -->
+
+                <!-- LÍNEA PUNTEADA DE CORTЕ: Punto de Giro (Turn-in) — vertical en x=480 -->
+                <line x1="480" y1="90" x2="480" y2="430" stroke="rgba(255,255,255,.35)" stroke-width="1.4" stroke-dasharray="8 6"/>
+                <text x="484" y="108" font-family="'JetBrains Mono',monospace" font-weight="700" font-size="11" fill="rgba(255,255,255,.7)">TURN-IN</text>
+
+                <!-- COTA TRANSVERSAL DISCONTINUA: Umbral 50% — vertical en x=530 -->
+                <line x1="530" y1="130" x2="530" y2="420" stroke="rgba(255,176,32,.55)" stroke-width="1.4" stroke-dasharray="4 6"/>
+                <text x="534" y="148" font-family="'JetBrains Mono',monospace" font-weight="800" font-size="11" fill="#ffb020">UMBRAL 50%</text>
 
                 <!-- FRANJA INTERIOR "1 AUTO DE ANCHURA" — banda r=140–180 resaltada en verde/cian -->
                 <path d="M 550 300 A 140 140 0 0 1 410 160" fill="none" stroke="rgba(0,229,224,.18)" stroke-width="40" opacity=".5"/>
