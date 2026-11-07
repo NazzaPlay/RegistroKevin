@@ -1058,9 +1058,57 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
         <input class="input-piloto-header" id="inputPilotoHeader" type="text" list="listaPilotosDatalist" placeholder="Piloto…" autocomplete="off" spellcheck="false" aria-label="Nombre del piloto activo">
         <datalist id="listaPilotosDatalist"></datalist>
         <button class="btn-gestion-pilotos" id="btnGestionPilotos" aria-label="Gestionar pilotos" type="button">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
+          <svg viewBox="0 0 820 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cenital: trazada limpia en aire limpio">
+        <defs>
+          <pattern id="gridB2B" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(154,166,182,.06)" stroke-width="1"/>
+          </pattern>
+          <linearGradient id="gradLimpio2B" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="rgba(0,229,224,0)"/>
+            <stop offset="1" stop-color="rgba(0,229,224,.25)"/>
+          </linearGradient>
+          <marker id="arrowCyan2B" markerWidth="9" markerHeight="9" refX="5" refY="4" orient="auto">
+            <path d="M1,1 L8,4 L1,7" fill="none" stroke="#00E5E0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <rect width="820" height="460" fill="#0d1222"/>
+        <rect width="820" height="460" fill="url(#gridB2B)"/>
+        
+        <!-- PISTA REALISTA (Misma base) -->
+        <path d="M 680 380 C 620 340, 520 220, 410 140 C 300 60, 200 200, 140 340" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="92"/>
+        <path d="M 680 380 C 620 340, 520 220, 410 140 C 300 60, 200 200, 140 340" fill="none" stroke="#2a2f3a" stroke-width="85"/>
+        <path d="M 680 380 C 620 340, 520 220, 410 140 C 300 60, 200 200, 140 340" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" transform="translate(0, -42)"/>
+        <path d="M 680 380 C 620 340, 520 220, 410 140 C 300 60, 200 200, 140 340" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" transform="translate(0, 42)"/>
+        
+        <!-- PIANOS BICOLOR -->
+        <path d="M 410 140 L 390 155" stroke="#ff0000" stroke-width="4" stroke-dasharray="6 4"/>
+        <path d="M 390 155 L 370 170" stroke="#ffffff" stroke-width="4" stroke-dasharray="6 4"/>
+        <path d="M 140 340 L 160 325" stroke="#ff0000" stroke-width="4" stroke-dasharray="6 4"/>
+        <path d="M 160 325 L 180 310" stroke="#ffffff" stroke-width="4" stroke-dasharray="6 4"/>
+
+        <!-- ZONA AIRE LIMPIO (Carril exterior) -->
+        <path d="M 680 380 C 620 340, 520 220, 410 140 C 300 60, 200 200, 140 340" fill="none" stroke="url(#gradLimpio2B)" stroke-width="120" transform="translate(0, 42)"/>
+
+        <!-- Auto Rival Gris (Misma posición que 02A para consistencia) -->
+        <g transform="translate(520, 240) rotate(-45)">
+          <rect x="-12" y="-6" width="24" height="12" fill="#dfe5ee" rx="3"/>
+          <rect x="-8" y="-4" width="16" height="8" fill="#b0b8c4" rx="2"/>
+        </g>
+
+        <!-- Auto Jugador Cian en carril exterior (620, 320) -->
+        <g transform="translate(620, 320) rotate(-45)">
+          <rect x="-12" y="-6" width="24" height="12" fill="#00E5E0" rx="3"/>
+          <rect x="-8" y="-4" width="16" height="8" fill="#00b8b4" rx="2"/>
+        </g>
+
+        <!-- Flecha Trazada Limpia (Carril exterior paralelo) -->
+        <path d="M 620 320 C 580 280, 540 220, 520 210 C 480 190, 400 140, 340 120" fill="none" stroke="#00E5E0" stroke-width="2.4" marker-end="url(#arrowCyan2B)"/>
+        
+        <!-- Círculos A-C -->
+        <circle cx="620" cy="320" r="13" fill="#00E5E0" opacity=".95"/><text x="620" y="324" text-anchor="middle" fill="#04110b" font-size="12">A</text>
+        <circle cx="520" cy="210" r="13" fill="#00E5E0" opacity=".95"/><text x="520" y="214" text-anchor="middle" fill="#04110b" font-size="12">B</text>
+        <circle cx="340" cy="120" r="13" fill="#00E5E0" opacity=".95"/><text x="340" y="124" text-anchor="middle" fill="#04110b" font-size="12">C</text>
+      </svg>
         </button>
       </div>
       <button class="btn btn-primary btn-sm" id="btnClase" type="button">
@@ -1461,7 +1509,7 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
 <article class="concept-card glass reveal" data-num="02A" id="card-02a">
   <div class="concept-top">
     <div class="concept-canvas-wrap">
-      <svg viewBox="0 0 820 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cenital: subviraje por aire sucio en estela del rival — secuencia 1 a 4">
+      <svg viewBox="0 0 820 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cenital: subviraje por aire sucio">
         <defs>
           <pattern id="gridB" width="40" height="40" patternUnits="userSpaceOnUse">
             <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(154,166,182,.06)" stroke-width="1"/>
@@ -1476,34 +1524,25 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
         </defs>
         <rect width="820" height="460" fill="#0d1222"/>
         <rect width="820" height="460" fill="url(#gridB)"/>
-        <!-- PISTA REALISTA 820x460: entrada (720,400) -> apex (410,150) -> salida (100,340) -->
-        <path d="M 720 400 C 660 380, 560 260, 410 150 C 260 80, 140 180, 100 340" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="92"/>
-        <path d="M 740 425 C 680 405, 580 275, 430 165 C 270 90, 130 190, 85 360" fill="none" stroke="#1a2138" stroke-width="28" stroke-dasharray="12 8" opacity="0.7"/>
+        
+        <!-- PISTA REALISTA -->
+        <path d="M 100 340 C 140 180, 260 80, 410 150 C 560 260, 660 380, 720 400 L 720 460 L 100 460 Z" fill="#1a1f2e" opacity="0.3"/>
+        <path d="M 720 400 C 660 380, 560 260, 410 150 C 260 80, 140 180, 100 340" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" transform="translate(0, -42)"/>
+        <path d="M 720 400 C 660 380, 560 260, 410 150 C 260 80, 140 180, 100 340" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" transform="translate(0, 42)"/>
         <path d="M 720 400 C 660 380, 560 260, 410 150 C 260 80, 140 180, 100 340" fill="none" stroke="#2a2f3a" stroke-width="85"/>
-        <path d="M 520 270 C 470 220, 440 190, 410 150" fill="none" stroke="#ef4444" stroke-width="10" stroke-dasharray="18 14"/>
-        <path d="M 520 270 C 470 220, 440 190, 410 150" fill="none" stroke="#ffffff" stroke-width="10" stroke-dasharray="18 14" stroke-dashoffset="18"/>
-        <path d="M 240 120 C 180 150, 130 210, 110 270" fill="none" stroke="#ef4444" stroke-width="10" stroke-dasharray="18 14"/>
-        <path d="M 240 120 C 180 150, 130 210, 110 270" fill="none" stroke="#ffffff" stroke-width="10" stroke-dasharray="18 14" stroke-dashoffset="18"/>
-        <polygon points="495,235 360,300 360,390" fill="url(#gradSucio)" stroke="rgba(239,68,68,.35)" stroke-width="1.2"/>
-        <g transform="translate(470,240) rotate(130)">
-          <rect x="-16" y="-7" width="32" height="14" rx="4" fill="#dfe5ee"/>
-          <rect x="-16" y="-7" width="11" height="14" rx="3" fill="rgba(0,0,0,.25)"/>
-        </g>
-        <g transform="translate(480,320) rotate(-10)">
-          <rect x="-16" y="-7" width="32" height="14" rx="4" fill="#ef4444"/>
-          <rect x="-16" y="-7" width="11" height="14" rx="3" fill="rgba(0,0,0,.25)"/>
-        </g>
-        <path d="M 460 300 Q 360 230, 240 220 Q 160 230, 110 310" fill="none" stroke="#ef4444" stroke-width="2.4" stroke-dasharray="7 6" marker-end="url(#arrowRed)"/>
-        <g font-family="'JetBrains Mono',monospace" font-weight="700">
-          <circle cx="460" cy="300" r="13" fill="#ffb020" opacity=".95"/>
-          <text x="460" y="304" text-anchor="middle" fill="#1a0f04" font-size="12">1</text>
-          <circle cx="360" cy="250" r="13" fill="#ffb020" opacity=".95"/>
-          <text x="360" y="254" text-anchor="middle" fill="#1a0f04" font-size="12">2</text>
-          <circle cx="260" cy="222" r="13" fill="#ffb020" opacity=".95"/>
-          <text x="260" y="226" text-anchor="middle" fill="#1a0f04" font-size="12">3</text>
-          <circle cx="165" cy="270" r="13" fill="#ef4444" opacity=".95"/>
-          <text x="165" y="274" text-anchor="middle" fill="#ffffff" font-size="12">4</text>
-        </g>
+        <path d="M 410 150 L 430 130" stroke="red" stroke-width="8" stroke-dasharray="10 10"/><path d="M 430 130 L 450 110" stroke="white" stroke-width="8" stroke-dasharray="10 10"/>
+        <path d="M 100 340 L 120 320" stroke="red" stroke-width="8" stroke-dasharray="10 10"/><path d="M 120 320 L 140 300" stroke="white" stroke-width="8" stroke-dasharray="10 10"/>
+
+        <g transform="translate(520,240) rotate(-45)"><rect x="-16" y="-7" width="32" height="14" rx="4" fill="#dfe5ee"/><rect x="-16" y="-7" width="11" height="14" rx="3" fill="rgba(0,0,0,.25)"/></g>
+        <polygon points="520,240 600,300 580,320" fill="url(#gradSucio)" opacity="0.6"/>
+        <g transform="translate(580,280) rotate(-30)"><rect x="-16" y="-7" width="32" height="14" rx="4" fill="#ef4444"/><rect x="-16" y="-7" width="11" height="14" rx="3" fill="rgba(0,0,0,.25)"/></g>
+        <path d="M 580 280 Q 530 240, 440 180 Q 350 170, 260 200" fill="none" stroke="#ef4444" stroke-width="2.4" stroke-dasharray="7 6" marker-end="url(#arrowRed)"/>
+        
+          <circle cx="530" cy="240" r="13" fill="#ffb020" opacity=".95"/><text x="530" y="244" text-anchor="middle" fill="#1a0f04" font-size="12">1</text>
+          <circle cx="440" cy="180" r="13" fill="#ffb020" opacity=".95"/><text x="440" y="184" text-anchor="middle" fill="#1a0f04" font-size="12">2</text>
+          <circle cx="350" cy="170" r="13" fill="#ffb020" opacity=".95"/><text x="350" y="174" text-anchor="middle" fill="#1a0f04" font-size="12">3</text>
+          <circle cx="260" cy="200" r="13" fill="#ef4444" opacity=".95"/><text x="260" y="204" text-anchor="middle" fill="#ffffff" font-size="12">4</text>
+
       </svg>
 
       <!-- Tarjeta de cómputo SÍNTOMA / CASTIGO -->
@@ -1560,46 +1599,35 @@ textarea{min-height:128px;resize:vertical;line-height:1.55}
 <article class="concept-card glass reveal" data-num="02B" id="card-02b">
   <div class="concept-top">
     <div class="concept-canvas-wrap">
-      <svg viewBox="0 0 820 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cenital: trazada en aire limpio y lateralidad fuera de la estela — secuencia A a C">
+      <svg viewBox="0 0 820 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cenital: trazada en aire limpio">
         <defs>
           <pattern id="gridB2" width="40" height="40" patternUnits="userSpaceOnUse">
             <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(154,166,182,.06)" stroke-width="1"/>
           </pattern>
-          <linearGradient id="gradLimpio" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="rgba(0,229,224,0)"/>
-            <stop offset="1" stop-color="rgba(0,229,224,.28)"/>
-          </linearGradient>
           <marker id="arrowCyan2" markerWidth="9" markerHeight="9" refX="5" refY="4" orient="auto">
             <path d="M1,1 L8,4 L1,7" fill="none" stroke="#00E5E0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
           </marker>
         </defs>
         <rect width="820" height="460" fill="#0d1222"/>
         <rect width="820" height="460" fill="url(#gridB2)"/>
-        <path d="M 720 400 C 660 380, 560 260, 410 150 C 260 80, 140 180, 100 340" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="92"/>
-        <path d="M 740 425 C 680 405, 580 275, 430 165 C 270 90, 130 190, 85 360" fill="none" stroke="#1a2138" stroke-width="28" stroke-dasharray="12 8" opacity="0.7"/>
+        
+        <!-- PISTA REALISTA -->
+        <path d="M 100 340 C 140 180, 260 80, 410 150 C 560 260, 660 380, 720 400 L 720 460 L 100 460 Z" fill="#1a1f2e" opacity="0.3"/>
+        <path d="M 720 400 C 660 380, 560 260, 410 150 C 260 80, 140 180, 100 340" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" transform="translate(0, -42)"/>
+        <path d="M 720 400 C 660 380, 560 260, 410 150 C 260 80, 140 180, 100 340" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" transform="translate(0, 42)"/>
         <path d="M 720 400 C 660 380, 560 260, 410 150 C 260 80, 140 180, 100 340" fill="none" stroke="#2a2f3a" stroke-width="85"/>
-        <path d="M 520 270 C 470 220, 440 190, 410 150" fill="none" stroke="#ef4444" stroke-width="10" stroke-dasharray="18 14"/>
-        <path d="M 520 270 C 470 220, 440 190, 410 150" fill="none" stroke="#ffffff" stroke-width="10" stroke-dasharray="18 14" stroke-dashoffset="18"/>
-        <path d="M 240 120 C 180 150, 130 210, 110 270" fill="none" stroke="#ef4444" stroke-width="10" stroke-dasharray="18 14"/>
-        <path d="M 240 120 C 180 150, 130 210, 110 270" fill="none" stroke="#ffffff" stroke-width="10" stroke-dasharray="18 14" stroke-dashoffset="18"/>
-        <path d="M 700 380 C 640 360, 540 240, 410 130 C 270 70, 150 170, 120 320" fill="none" stroke="url(#gradLimpio)" stroke-width="55" opacity="0.55"/>
-        <g transform="translate(470,240) rotate(130)">
-          <rect x="-16" y="-7" width="32" height="14" rx="4" fill="#dfe5ee"/>
-          <rect x="-16" y="-7" width="11" height="14" rx="3" fill="rgba(0,0,0,.25)"/>
-        </g>
-        <g transform="translate(650,340) rotate(-45)">
-          <rect x="-16" y="-7" width="32" height="14" rx="4" fill="#00E5E0"/>
-          <rect x="-16" y="-7" width="11" height="14" rx="3" fill="rgba(0,0,0,.25)"/>
-        </g>
-        <path d="M 650 320 C 620 260, 500 170, 410 135 C 300 90, 180 160, 140 250" fill="none" stroke="#00E5E0" stroke-width="2.4" marker-end="url(#arrowCyan2)"/>
-        <g font-family="'JetBrains Mono',monospace" font-weight="700">
-          <circle cx="640" cy="340" r="13" fill="#00E5E0" opacity=".95"/>
-          <text x="640" y="344" text-anchor="middle" fill="#04110b" font-size="12">A</text>
-          <circle cx="520" cy="210" r="13" fill="#00E5E0" opacity=".95"/>
-          <text x="520" y="214" text-anchor="middle" fill="#04110b" font-size="12">B</text>
-          <circle cx="340" cy="120" r="13" fill="#00E5E0" opacity=".95"/>
-          <text x="340" y="124" text-anchor="middle" fill="#04110b" font-size="12">C</text>
-        </g>
+        <path d="M 410 150 L 430 130" stroke="red" stroke-width="8" stroke-dasharray="10 10"/><path d="M 430 130 L 450 110" stroke="white" stroke-width="8" stroke-dasharray="10 10"/>
+        <path d="M 100 340 L 120 320" stroke="red" stroke-width="8" stroke-dasharray="10 10"/><path d="M 120 320 L 140 300" stroke="white" stroke-width="8" stroke-dasharray="10 10"/>
+
+        <path d="M 720 400 C 660 380, 560 260, 410 150 C 260 80, 140 180, 100 340" fill="none" stroke="rgba(0,229,224,.15)" stroke-width="120" transform="translate(0, 42)"/>
+        <g transform="translate(520,240) rotate(-45)"><rect x="-16" y="-7" width="32" height="14" rx="4" fill="#dfe5ee"/><rect x="-16" y="-7" width="11" height="14" rx="3" fill="rgba(0,0,0,.25)"/></g>
+        <g transform="translate(620,320) rotate(-45)"><rect x="-16" y="-7" width="32" height="14" rx="4" fill="#00E5E0"/><rect x="-16" y="-7" width="11" height="14" rx="3" fill="rgba(0,0,0,.25)"/></g>
+        <path d="M 620 320 Q 520 210, 340 120" fill="none" stroke="#00E5E0" stroke-width="2.4" marker-end="url(#arrowCyan2)"/>
+        
+          <circle cx="620" cy="320" r="13" fill="#00E5E0" opacity=".95"/><text x="620" y="324" text-anchor="middle" fill="#04110b" font-size="12">A</text>
+          <circle cx="520" cy="210" r="13" fill="#00E5E0" opacity=".95"/><text x="520" y="214" text-anchor="middle" fill="#04110b" font-size="12">B</text>
+          <circle cx="340" cy="120" r="13" fill="#00E5E0" opacity=".95"/><text x="340" y="124" text-anchor="middle" fill="#04110b" font-size="12">C</text>
+
       </svg>
 
       <!-- Tarjeta de cómputo ANTÍDOTO -->
