@@ -1,5 +1,9 @@
+// Service Worker for Patagonia Racing Academy
 const CACHE_NAME = 'patagonia-v1';
-const BASE = '/RegistroKevin';
+
+// Detect base path: '/' for Cloudflare Pages root, '/RegistroKevin' for GitHub Pages subfolder
+const BASE = self.location.pathname.startsWith('/RegistroKevin') ? '/RegistroKevin' : '';
+
 const PRECACHE = [
   `${BASE}/`,
   `${BASE}/index.html`,
@@ -8,7 +12,7 @@ const PRECACHE = [
   `${BASE}/logo-patagonia-texto.png`
 ];
 
-// Instalar: precachear shell
+// Install: precache static shell
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE_NAME)
@@ -17,38 +21,48 @@ self.addEventListener('install', e => {
   );
 });
 
-// Activar: limpiar caches viejos
+// Activate: clean old caches
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+      Promise.all(
+        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+      )
     ).then(() => self.clients.claim())
   );
 });
 
-// Fetch: network-first para Supabase, cache-first para assets
+// Fetch: network-first for external APIs, cache-first for static assets
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
-  // Supabase y Google Sheets — siempre network, sin caché
-  if (url.hostname.includes('supabase.co') || url.hostname.includes('googleapis.com') || url.hostname.includes('script.google.com')) {
+  // Bypass cache for API routes, non-GET methods, or explicit no-store
+  if (url.pathname.startsWith('/api/') || e.request.method !== 'GET') {
+    e.respondWith(fetch(e.request));
+    return;
+  }
+
+  // Supabase, Google Sheets – always network, no cache
+  if (url.hostname.includes('supabase.co') ||
+      url.hostname.includes('googleapis.com') ||
+      url.hostname.includes('script.google.com')) {
     e.respondWith(fetch(e.request).catch(() => new Response('', { status: 503 })));
     return;
   }
 
-  // Assets propios — cache-first con fallback a network
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
       return fetch(e.request).then(response => {
-        // Solo cachear respuestas válidas de nuestro origin
-        if (response.ok && url.hostname === self.location.hostname) {
+        // Do not cache responses that forbid it
+        const cc = response.headers.get('Cache-Control') || '';
+        if (response.ok && !cc.includes('no-store') && url.hostname === self.location.hostname) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
         }
         return response;
       }).catch(() => {
-        // Offline fallback: servir index.html para navegación
+        // Offline fallback: serve index.html for navigation
         if (e.request.mode === 'navigate') {
           return caches.match(`${BASE}/index.html`);
         }

@@ -2,8 +2,8 @@
   "name": "Patagonia Esports Racing Academy",
   "short_name": "Patagonia",
   "description": "Academia de simracing profesional. Diario emocional, teoría y modo clase.",
-  "start_url": "/RegistroKevin/",
-  "scope": "/RegistroKevin/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#0a0a0c",
@@ -11,13 +11,13 @@
   "lang": "es",
   "icons": [
     {
-      "src": "/RegistroKevin/logo-patagonia.png",
+      "src": "./logo-patagonia.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/RegistroKevin/logo-patagonia.png",
+      "src": "./logo-patagonia.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
