@@ -1,6 +1,6 @@
 // build.js – genera dist/ con whitelist explícita y validación estricta
 
-import { copyFileSync, mkdirSync, readdirSync, statSync, rmSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readdirSync, statSync, rmSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -17,8 +17,7 @@ const PUBLIC = [
   'logo-patagonia-texto.png',
   'assets',
   '_routes.json',
-  'functions',
-];
+]; // <-- 'functions' eliminado intencionalmente
 
 // --------- 2️⃣ crear / limpiar dist ----------
 const DIST = join(__dirname, 'dist');
@@ -74,7 +73,13 @@ function scan(dir) {
 }
 scan(DIST);
 
-// --------- 5️⃣ comprobar index.html obligatorio ----------
+// --------- 5️⃣ comprobación de funciones accidentalmente copiadas ----------
+if (existsSync(join(DIST, 'functions'))) {
+  console.error('❌  La carpeta functions se ha filtrado a dist/ – abortando build');
+  process.exit(1);
+}
+
+// --------- 6️⃣ comprobar index.html obligatorio ----------
 if (missingRequired || !statSync(join(DIST, 'index.html'), { throwIfNoEntry: false })) {
   console.error('❌  index.html es obligatorio y no se encontró');
   process.exit(1);

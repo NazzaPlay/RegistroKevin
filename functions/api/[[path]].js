@@ -2,7 +2,15 @@
 // Proxy seguro para /api/* → backend (Caddy en DuckDNS)
 
 export const onRequest = async ({ request, env }) => {
-  const secret = env.BACKEND_PROXY_SECRET;   // solo del entorno de Pages (secreto cifrado)
+  // Verificar variables de entorno obligatorias
+  if (!env.BACKEND_PROXY_SECRET || !env.BACKEND_URL) {
+    return new Response('Service unavailable', {
+      status: 503,
+      headers: { 'Cache-Control': 'no-store' }
+    });
+  }
+
+  const secret = env.BACKEND_PROXY_SECRET;
   const url = new URL(request.url);
 
   // lista explícita de endpoints permitidos (mapeo exacto)

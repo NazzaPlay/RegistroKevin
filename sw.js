@@ -1,5 +1,5 @@
 // Service Worker for Patagonia Racing Academy
-const CACHE_NAME = 'patagonia-v1';
+const CACHE_NAME = 'patagonia-v2'; // versión actual del cache
 
 // Detect base path: '/' for Cloudflare Pages root, '/RegistroKevin' for GitHub Pages subfolder
 const BASE = self.location.pathname.startsWith('/RegistroKevin') ? '/RegistroKevin' : '';
@@ -21,7 +21,7 @@ self.addEventListener('install', e => {
   );
 });
 
-// Activate: clean old caches
+// Activate: clean old caches (any cache not matching current version)
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
@@ -32,12 +32,12 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Fetch: network-first for external APIs, cache-first for static assets
+// Fetch: network-first for external APIs, cache‑first for static assets
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
-  // Bypass cache for API routes, non-GET methods, or explicit no-store
-  if (url.pathname.startsWith('/api/') || e.request.method !== 'GET') {
+  // Bypass cache for API routes, non‑GET methods, or requests with credentials
+  if (url.pathname.startsWith('/api/') || e.request.method !== 'GET' || e.request.credentials !== 'omit') {
     e.respondWith(fetch(e.request));
     return;
   }
@@ -54,9 +54,14 @@ self.addEventListener('fetch', e => {
     caches.match(e.request).then(cached => {
       if (cached) return cached;
       return fetch(e.request).then(response => {
-        // Do not cache responses that forbid it
+        // Do not cache responses that forbid it or are private
         const cc = response.headers.get('Cache-Control') || '';
-        if (response.ok && !cc.includes('no-store') && url.hostname === self.location.hostname) {
+        const isCacheable = response.ok &&
+          !cc.includes('no-store') &&
+          !cc.includes('private') &&
+          url.hostname === self.location.hostname &&
+          e.request.credentials === 'omit';
+        if (isCacheable) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
         }
