@@ -1,0 +1,25 @@
+:root{
+  --bg-0:#0a0a0c;
+  --bg-1:#0e0e11;
+  --bg-2:#121216;
+  --panel:rgba(20,20,20,.6);
+  --panel-2:rgba(255,255,255,.07);
+  --line:rgba(255,255,255,.08);
+  --line-2:rgba(255,255,255,.17);
+  --text:#ffffff;
+  --muted:#9aa6b6;
+  --faint:#5d6878;
+  --acc:#00E5E0;
+  --acc-2:#3b82f6;
+  --danger:#ef4444;
+  --warn:#ffb020;
+  --acc-dim:rgba(0,229,224,.12);
+  --acc2-dim:rgba(59,130,246,.12);
+  --font-display:'Orbitron',sans-serif;
+  --font-ui:'Rajdhani',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --radius:18px;
+  --radius-sm:12px;
+  --header-h:72px;
+  --shadow:0 18px 50px rgba(0,0,0,.45);
+}

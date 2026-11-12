@@ -1,5 +1,23 @@
 import './style.css';
-import './styles/tokens.css';
+import { register } from './router';
+import { renderDashboard } from './components/Dashboard';
+// Register routes
+register('', renderDashboard, { protected: true, role: 'ADMIN' });
+register('/dashboard', renderDashboard, { protected: true, role: 'ADMIN' });
+// Default route on load
+if (!location.hash) {
+  // Si está autenticado ir al dashboard, sino a login
+  import('./state/auth').then(mod => {
+    if (mod.isAuthenticated()) {
+      location.hash = '#/dashboard';
+    } else {
+      location.hash = '#/login';
+    }
+  });
+}
+import { renderNotFound } from './components/NotFound';
+// Register 404 route (wildcard)
+register('*', renderNotFound);
 import heroImg from './assets/hero.png'
 import typescriptLogo from './assets/typescript.svg'
 import viteLogo from './assets/vite.svg'
